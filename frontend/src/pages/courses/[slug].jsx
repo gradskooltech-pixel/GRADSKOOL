@@ -223,9 +223,9 @@ const XAT_DATA = {
   testimonials: CAT_DATA.testimonials,
   faqs: [
     { q:'What is the Decision Making section in XAT?', a:'Decision Making is the most distinctive and feared section of XAT. It tests your ability to evaluate business situations, identify the best course of action, weigh ethical trade-offs, and reason through complex scenarios. It cannot be cracked with CAT preparation alone — it requires dedicated frameworks which GRADSKOOL builds from the ground up.' },
-    { q:'Does XAT preparation at GRADSKOOL include GK?', a:'Yes. GRADSKOOL's XAT programme includes a dedicated GK module covering business awareness, current affairs, static GK, and international business. While GK does not contribute to the XAT percentile, it is considered by XLRI and other colleges during shortlisting and final admission.' },
+    { q:'Does XAT preparation at GRADSKOOL include GK?', a:'Yes. GRADSKOOL\'s XAT programme includes a dedicated GK module covering business awareness, current affairs, static GK, and international business. While GK does not contribute to the XAT percentile, it is considered by XLRI and other colleges during shortlisting and final admission.' },
     { q:'How many mocks are included in the XAT programme?', a:'The XAT programme includes 6 full-length XAT-pattern mocks, 12 sectional tests (DM, VALR, QADI), and 40 area-wise topic tests. Every mock is followed by a detailed post-test analysis.' },
-    { q:'Does GRADSKOOL prepare for XLRI interviews?', a:'Yes. GRADSKOOL's XAT programme includes XLRI PI preparation — panel format mock interviews, GD and essay preparation specifically for the XLRI process, and WAT preparation.' },
+    { q:'Does GRADSKOOL prepare for XLRI interviews?', a:'Yes. GRADSKOOL\'s XAT programme includes XLRI PI preparation — panel format mock interviews, GD and essay preparation specifically for the XLRI process, and WAT preparation.' },
   ],
   also_courses: CAT_DATA.also_courses,
   pricing_plans: [
@@ -295,7 +295,7 @@ const SNAP_DATA = {
     { q:'What is the no-sectional-time-limit advantage in SNAP?', a:'Unlike CAT, SNAP has no fixed section timings — you can move freely between all three sections within the 60-minute window. GRADSKOOL trains you to exploit this by starting with your strongest section, banking marks early, and managing time across all three for maximum score.' },
     { q:'Can I attempt SNAP multiple times?', a:'Yes. SNAP allows up to 3 attempts per year — conducted across 3 dates in December. No-shows do not count as attempts. Best score across attempts is used for all SIU admissions. This makes SNAP one of the most retake-friendly exams in India.' },
     { q:'Which colleges accept SNAP scores?', a:'SNAP scores are accepted exclusively by all 17 Symbiosis International University (SIU) institutes. The most targeted are SIBM Pune, SCMHRD Pune, SIIB Pune, SIBM Bengaluru and SCIT Pune.' },
-    { q:'How many mocks are included in GRADSKOOL's SNAP programme?', a:'The SNAP programme includes 20 full-length SNAP-pattern mocks, 12 sectional tests, and 60 area-wise tests. Every mock is followed by section-wise post-test analysis.' },
+    { q:'How many mocks are included in GRADSKOOL\'s SNAP programme?', a:'The SNAP programme includes 20 full-length SNAP-pattern mocks, 12 sectional tests, and 60 area-wise tests. Every mock is followed by section-wise post-test analysis.' },
   ],
   also_courses: CAT_DATA.also_courses,
   pricing_plans: [
@@ -367,8 +367,8 @@ const NMAT_DATA = {
   faqs: [
     { q:'What is the section order choice in NMAT?', a:'Unlike CAT, NMAT allows you to choose the order in which you attempt the three sections. This is a significant strategic advantage — most NMAT toppers recommend starting with Quantitative Skills (most time at 52 minutes), then LR, and finishing with Language Skills (tightest at 28 minutes). GRADSKOOL trains you to use this strategically.' },
     { q:'Does NMAT have negative marking?', a:'No. NMAT has zero negative marking — this is one of its biggest advantages. You should attempt every question, even if unsure. The strategy shifts from risk management (like in CAT/XAT) to pure accuracy maximisation.' },
-    { q:'Can I retake NMAT if my score is low?', a:'Yes. NMAT allows up to 3 attempts per cycle with a minimum 15-day gap between attempts. NMIMS considers your best score across all attempts. GRADSKOOL's programme builds a 3-attempt strategy — knowing when to retake and how to improve each time.' },
-    { q:'What colleges accept NMAT scores?', a:'NMAT is the primary exam for NMIMS Mumbai — one of India's top private B-schools with an average MBA package of ₹25+ LPA. It is also accepted by XIMB, KJ Somaiya, TAPMI, SDA Bocconi and 50+ other colleges globally.' },
+    { q:'Can I retake NMAT if my score is low?', a:'Yes. NMAT allows up to 3 attempts per cycle with a minimum 15-day gap between attempts. NMIMS considers your best score across all attempts. GRADSKOOL\'s programme builds a 3-attempt strategy — knowing when to retake and how to improve each time.' },
+    { q:'What colleges accept NMAT scores?', a:'NMAT is the primary exam for NMIMS Mumbai — one of India\'s top private B-schools with an average MBA package of ₹25+ LPA. It is also accepted by XIMB, KJ Somaiya, TAPMI, SDA Bocconi and 50+ other colleges globally.' },
   ],
   also_courses: CAT_DATA.also_courses,
   pricing_plans: [
