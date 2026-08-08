@@ -11,7 +11,6 @@ import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { SoftRoute } from '../../../../components/auth/SoftRoute'
 import { ProtectedRoute } from '../../../../components/auth/ProtectedRoute'
 import { useAuth } from '../../../../hooks/useAuth'
 import { CATQuiz } from '../../../../components/learn/CATQuiz'
@@ -46,7 +45,7 @@ const STEP_CONFIG = {
 }
 
 export default function TopicPage() {
-  return <SoftRoute><Inner /></ProtectedRoute>
+  return <ProtectedRoute><Inner /></ProtectedRoute>
 }
 
 function Inner() {
