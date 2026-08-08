@@ -1,0 +1,34 @@
+from rest_framework import serializers
+from .models import Pdf, PdfPurchase
+
+
+class PdfListSerializer(serializers.ModelSerializer):
+    exam_slug = serializers.CharField(source='exam.slug', default=None, read_only=True)
+    is_owned  = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Pdf
+        fields = [
+            'id', 'title', 'slug', 'description', 'cover_image_url',
+            'price_inr', 'is_free', 'page_count', 'exam_slug', 'is_owned',
+        ]
+
+    def get_is_owned(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return False
+        return PdfPurchase.objects.filter(user=request.user, pdf=obj, status='paid').exists()
+
+
+class PdfPurchaseSerializer(serializers.ModelSerializer):
+    pdf_title       = serializers.CharField(source='pdf.title', read_only=True)
+    pdf_slug        = serializers.CharField(source='pdf.slug', read_only=True)
+    pdf_cover_url   = serializers.CharField(source='pdf.cover_image_url', read_only=True)
+
+    class Meta:
+        model = PdfPurchase
+        fields = [
+            'id', 'pdf', 'pdf_title', 'pdf_slug', 'pdf_cover_url',
+            'amount_inr', 'status', 'created_at', 'paid_at',
+        ]
+        read_only_fields = fields

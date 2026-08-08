@@ -1,0 +1,2826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Preload & DNS prefetch for performance -->
+  <link rel="dns-prefetch" href="https://checkout.razorpay.com">
+  <link rel="dns-prefetch" href="https://wa.me">
+  <link rel="dns-prefetch" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://www.linkedin.com">
+  <link rel="preload" href="/assets/logo.png" as="image" type="image/png">
+
+  <title>GRE Vocabulary Tool — 759 High-Frequency Words | GRADSKOOL</title>
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="description" content="Free GRE Vocabulary tool — 759 high-frequency words with etymology, contextual sentences and usage notes. Essential for GRE Text Completion and Sentence Equivalence.">
+  <meta name="keywords" content="GRE vocabulary, GRE word list, high frequency GRE words, free GRE vocab tool, GRE prep">
+  <link rel="canonical" href="https://gradskool.in/gre-vocab-forge">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GRADSKOOL">
+  <meta property="og:title" content="GRE Vocabulary Tool — 759 High-Frequency Words | GRADSKOOL">
+  <meta property="og:description" content="Master the 500 most important GRE words with contextual sentences, etymology and spaced repetition. Free GRE vocabulary builder by GRADSKOOL.">
+  <meta property="og:url" content="https://gradskool.in/gre-vocab-forge">
+  <meta property="og:image" content="https://gradskool.in/assets/og-gre.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@gradskool_india">
+  <meta name="twitter:title" content="GRE Vocabulary Tool — 759 High-Frequency Words | GRADSKOOL">
+  <meta name="twitter:description" content="Master the 500 most important GRE words with contextual sentences, etymology and spaced repetition. Free GRE vocabulary builder by GRADSKOOL.">
+  <meta name="twitter:image" content="https://gradskool.in/assets/og-gre.jpg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"GRE GRE Vocabulary Tool","url":"https://gradskool.in/gre-vocab-forge","description":"Master the 500 most important GRE words with contextual sentences, etymology and spaced repetition. Free GRE vocabulary builder by GRADSKOOL.","applicationCategory":"EducationalApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"provider":{"@type":"Organization","name":"GRADSKOOL","url":"https://gradskool.in"}}</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #ffffff;
+    --cream: #f5f5f5;
+    --gold: #ff5e5f;
+    --gold-light: #ff8182;
+    --rust: #ff5e5f;
+    --sage: #111111;
+    --slate: #111111;
+    --mist: #888888;
+    --card-bg: #ffffff;
+    --shadow: rgba(0,0,0,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Crimson Pro', serif;
+    background: #ffffff;
+    color: #0d0d0d;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Decorative top border */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: #ff5e5f;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    text-align: center;
+    padding: 3rem 2rem 1.5rem;
+    position: relative;
+  }
+
+  .header-ornament {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: #ff5e5f;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 900;
+    color: #0d0d0d;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span {
+    color: #ff5e5f;
+    font-style: italic;
+  }
+
+  .header-sub {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    color: #888888;
+    font-style: italic;
+    margin-top: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 1.5rem auto 0;
+  }
+
+  .header-divider::before,
+  .header-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ff5e5f);
+  }
+  .header-divider::after { background: linear-gradient(90deg, #ff5e5f, transparent); }
+
+  .header-divider span {
+    font-size: 1.1rem;
+    color: #ff5e5f;
+  }
+
+  /* ─── MODE SELECTOR ─── */
+  .mode-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .mode-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.65rem 1.4rem;
+    border: 1.5px solid currentColor;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-btn.flash { color: #111; border-color: #111; }
+  .mode-btn.type  { color: #ff5e5f; border-color: #ff5e5f; }
+  .mode-btn.quiz  { color: #ff5e5f; border-color: #ff5e5f; }
+  .mode-btn.study { color: #111; border-color: #111; }
+
+  .mode-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+    z-index: -1;
+  }
+  .mode-btn.flash::before { background: #111; }
+  .mode-btn.type::before  { background: #ff5e5f; }
+  .mode-btn.quiz::before  { background: #ff5e5f; }
+  .mode-btn.study::before { background: #111; }
+
+  .mode-btn:hover::before,
+  .mode-btn.active::before { transform: scaleX(1); }
+  .mode-btn:hover,
+  .mode-btn.active { color: #ffffff !important; }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 0.75rem 2rem;
+    background: #f9f9f9;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+    min-width: 70px;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-num.correct { color: #111; }
+  .stat-num.wrong   { color: #ff5e5f; }
+  .stat-num.streak  { color: #ff5e5f; }
+  .stat-num.total   { color: #111; }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #888888;
+    margin-top: 0.15rem;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ─── FLASHCARD ─── */
+  .flashcard-wrap {
+    perspective: 1200px;
+    margin: 0 auto 2rem;
+    max-width: 640px;
+    cursor: pointer;
+  }
+
+  .flashcard {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .flashcard.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: #ffffff;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    text-align: center;
+    border-radius: 2px;
+    min-height: 300px;
+  }
+
+  .card-back { transform: rotateY(180deg); }
+
+  .card-pos-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ff5e5f;
+    background: rgba(255,94,95,0.08);
+    border: 1px solid rgba(255,94,95,0.25);
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-word {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 7vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0d0d0d;
+    line-height: 1.1;
+  }
+
+  .card-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #888888;
+    margin-top: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .card-definition {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: #0d0d0d;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .card-example {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: #888888;
+    line-height: 1.5;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    width: 100%;
+  }
+
+  .card-example::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #ff5e5f;
+    opacity: 0.5;
+    line-height: 0;
+    vertical-align: -0.5rem;
+    margin-right: 0.25rem;
+  }
+
+  /* ─── FLASHCARD CONTROLS ─── */
+  .flash-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .flash-nav-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.5rem;
+    border: 1.5px solid #111111;
+    background: transparent;
+    color: #111111;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .flash-nav-btn:hover {
+    background: #111111;
+    color: #ffffff;
+  }
+
+  .flash-progress-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #888888;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .know-btn {
+    padding: 0.7rem 1.8rem;
+    border: 1.5px solid #111;
+    background: transparent;
+    color: #111;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .know-btn:hover { background: #111; color: #fff; }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    border-radius: 1px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #ff5e5f;
+    border-radius: 1px;
+    transition: width 0.4s ease;
+  }
+
+  /* ─── QUIZ MODE ─── */
+  .quiz-question {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .quiz-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #ff5e5f;
+    margin-bottom: 0.5rem;
+  }
+
+  .quiz-prompt {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #888888;
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-word {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    color: #0d0d0d;
+    letter-spacing: -0.03em;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 500px) {
+    .quiz-options { grid-template-columns: 1fr; }
+  }
+
+  .option-btn {
+    padding: 1.1rem 1rem;
+    background: #ffffff;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .option-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #ff5e5f;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  .option-text {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.05rem;
+    color: #0d0d0d;
+    line-height: 1.4;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #ff5e5f;
+    background: rgba(201,168,76,0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  .option-btn.correct {
+    border-color: #111 !important;
+    background: rgba(0,0,0,0.04) !important;
+  }
+
+  .option-btn.correct .option-letter,
+  .option-btn.correct .option-text { color: #111; }
+
+  .option-btn.wrong {
+    border-color: #ff5e5f !important;
+    background: rgba(255,94,95,0.06) !important;
+  }
+
+  .option-btn.wrong .option-letter,
+  .option-btn.wrong .option-text { color: #ff5e5f; }
+
+  .option-btn:disabled { cursor: default; transform: none; }
+
+  /* Quiz feedback */
+  .quiz-feedback {
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 2px;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; animation: fadeSlideUp 0.3s ease; }
+
+  .quiz-feedback.correct-fb {
+    background: rgba(0,0,0,0.04);
+    border-left: 3px solid #111111;
+  }
+
+  .quiz-feedback.wrong-fb {
+    background: rgba(255,94,95,0.06);
+    border-left: 3px solid #ff5e5f;
+  }
+
+  .feedback-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .feedback-status.c { color: #111111; }
+  .feedback-status.w { color: #ff5e5f; }
+
+  .feedback-answer {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: #111111;
+    line-height: 1.5;
+  }
+
+  .next-btn {
+    display: block;
+    margin: 1.5rem auto 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.85rem 2.5rem;
+    background: #0d0d0d;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .next-btn::after {
+    content: '→';
+    margin-left: 0.5rem;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+
+  .next-btn:hover { background: #111111; }
+  .next-btn:hover::after { transform: translateX(4px); }
+
+  /* ─── STUDY MODE ─── */
+  .study-grid {
+    display: grid;
+    gap: 0;
+  }
+
+  .study-row {
+    display: grid;
+    grid-template-columns: 160px 80px 1fr 1fr;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    transition: background 0.15s;
+  }
+
+  .study-row:hover { background: rgba(0,0,0,0.02); }
+
+  .study-row.header-row {
+    background: #f5f5f5;
+    border-bottom: 2px solid rgba(255,94,95,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .study-cell {
+    padding: 0.85rem 1rem;
+    border-right: 1px solid rgba(255,94,95,0.08);
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: #0d0d0d;
+    line-height: 1.4;
+  }
+
+  .study-cell:last-child { border-right: none; }
+
+  .study-row.header-row .study-cell {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #888888;
+  }
+
+  .study-word {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #0d0d0d;
+  }
+
+  .study-pos {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: #ff5e5f;
+    background: rgba(255,94,95,0.08);
+    padding: 0.2rem 0.4rem;
+    display: inline-block;
+    align-self: start;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+  }
+
+  .study-search {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 0.7rem 1rem;
+    border: 1.5px solid rgba(255,94,95,0.2);
+    background: #ffffff;
+    color: #0d0d0d;
+    outline: none;
+    border-radius: 2px;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus { border-color: #ff5e5f; }
+  .search-input::placeholder { color: #888888; font-style: italic; }
+
+  .search-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #888888;
+    white-space: nowrap;
+  }
+
+  /* ─── SCORE SCREEN ─── */
+  .score-screen {
+    text-align: center;
+    padding: 3rem 1rem;
+    display: none;
+  }
+
+  .score-screen.show { display: block; animation: fadeSlideUp 0.5s ease; }
+
+  .score-ornament {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .score-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .score-sub {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #888888;
+    margin-bottom: 2rem;
+  }
+
+  .score-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #ff5e5f;
+    margin: 1rem 0;
+  }
+
+  .score-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: #888888;
+    margin-bottom: 2rem;
+  }
+
+  .restart-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.9rem 2.5rem;
+    background: #ff5e5f;
+    color: #0d0d0d;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .restart-btn:hover { background: #ff8182; }
+
+  /* ─── SETTINGS ─── */
+  .settings-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .setting-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .setting-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #888888;
+  }
+
+  .setting-select {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(255,94,95,0.2);
+    background: #ffffff;
+    color: #0d0d0d;
+    cursor: pointer;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%  { transform: translateX(-6px); }
+    40%  { transform: translateX(6px); }
+    60%  { transform: translateX(-4px); }
+    80%  { transform: translateX(4px); }
+  }
+
+  .shake { animation: shake 0.35s ease; }
+
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  .pop { animation: pop 0.3s ease; }
+
+  /* ─── KEYBOARD HINT ─── */
+  .kbd-hint {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .kbd-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: #888888;
+  }
+
+  kbd {
+    padding: 0.15rem 0.4rem;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-bottom-width: 2px;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    background: #f5f5f5;
+    color: #111111;
+  }
+
+
+  /* ─── TYPE MODE ─── */
+  .type-input {
+    width: 100%;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.8rem 1rem;
+    border: 2px solid rgba(0,0,0,0.12);
+    background: #fff;
+    color: #0d0d0d;
+    outline: none;
+    border-radius: 2px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .type-input:focus { border-color: #ff5e5f; }
+  .type-input.correct-input { border-color: #111 !important; background: rgba(0,0,0,0.03); color: #111; }
+  .type-input.wrong-input   { border-color: #ff5e5f !important; background: rgba(255,94,95,0.05); color: #ff5e5f; }
+
+  .type-feedback {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    text-align: center;
+    border-radius: 2px;
+    animation: fadeSlideUp 0.2s ease;
+  }
+
+  .type-feedback.correct-fb { color: #111; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08); }
+  .type-feedback.wrong-fb   { color: #ff5e5f; background: rgba(255,94,95,0.05); border: 1px solid rgba(255,94,95,0.2); }
+
+  .type-hint-letters {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    min-height: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hint-letter {
+    width: 1.6rem;
+    height: 1.6rem;
+    border-bottom: 2px solid rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: #ff5e5f;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .hint-letter.filled { border-color: #0d0d0d; color: #0d0d0d; }
+  .hint-letter.correct-letter { border-color: #111; color: #111; background: rgba(0,0,0,0.04); }
+  .hint-letter.wrong-letter   { border-color: #ff5e5f; color: #ff5e5f; background: rgba(255,94,95,0.06); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: #888888;
+    border-top: 1px solid rgba(0,0,0,0.07);
+  }
+
+  footer a { color: #ff5e5f; text-decoration: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .study-row { grid-template-columns: 120px 60px 1fr; }
+    .study-row .study-cell:nth-child(4) { display: none; }
+    .stats-bar { gap: 1.5rem; }
+  }
+
+  /* ── GRADSKOOL TOOL INTRO ── */
+  .gs-tool-intro { max-width: 1160px; margin: 0 auto; padding: 3.5rem 2rem 0; }
+  .gs-tool-intro-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; padding-bottom: 3rem; border-bottom: 1px solid #e8e8e6; }
+  .gs-tool-tag { display: inline-flex; align-items: center; gap: 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: #ff5e5f; border: 1px solid #ffd0d0; background: #fff0f0; padding: 0.28rem 0.75rem; border-radius: 2px; margin-bottom: 1.25rem; }
+  .gs-tool-tag::before { content: ''; width: 5px; height: 5px; background: #ff5e5f; border-radius: 50%; }
+  .gs-tool-intro h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.12; color: #0f0f0f; margin-bottom: 1rem; font-weight: 700; }
+  .gs-tool-intro h1 em { font-style: italic; color: #ff5e5f; font-weight: 400; }
+  .gs-tool-intro-desc { font-family: Georgia, 'Times New Roman', serif; font-size: 1rem; color: #555; line-height: 1.75; margin-bottom: 1.5rem; }
+  .gs-tool-stats { display: flex; gap: 2rem; padding-top: 1.5rem; border-top: 1px solid #e8e8e6; flex-wrap: wrap; }
+  .gs-tool-stat { display: flex; flex-direction: column; gap: 0.2rem; }
+  .gs-tool-stat-val { font-family: Georgia, 'Times New Roman', serif; font-size: 1.5rem; font-weight: 700; color: #0f0f0f; line-height: 1; }
+  .gs-tool-stat-val span { color: #ff5e5f; }
+  .gs-tool-stat-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #999; }
+  .gs-tool-topics { }
+  .gs-tool-topics-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #ff5e5f; margin-bottom: 1rem; }
+  .gs-tool-topics-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .gs-topic-pill { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; color: #555; background: #fafaf9; border: 1px solid #e8e8e6; padding: 0.3rem 0.7rem; border-radius: 2px; line-height: 1.4; }
+  .gs-tool-divider { max-width: 1160px; margin: 0 auto; border: none; border-top: 1px solid #e8e8e6; }
+  @media (max-width: 768px) { .gs-tool-intro-inner { grid-template-columns: 1fr; gap: 2rem; } .gs-tool-stats { gap: 1.5rem; } }
+
+  /* ── LEAD GATE ── */
+  .lead-gate-overlay { position: fixed; inset: 0; background: rgba(15,15,15,0.92); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.5rem; backdrop-filter: blur(6px); }
+  .lead-gate-overlay.hidden { display: none; }
+  .lead-gate-box { background: var(--white, #fff); border-radius: 4px; max-width: 480px; width: 100%; padding: 2.5rem; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,0.4); }
+  .lead-gate-box::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #ff5e5f; border-radius: 4px 0 0 4px; }
+  .lead-gate-label { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #ff5e5f; margin-bottom: 0.6rem; }
+  .lead-gate-heading { font-family: Georgia, 'Times New Roman', serif; font-size: 1.6rem; font-weight: 700; color: #0f0f0f; line-height: 1.15; margin-bottom: 0.5rem; }
+  .lead-gate-heading em { font-style: italic; color: #ff5e5f; font-weight: 400; }
+  .lead-gate-sub { font-family: Georgia, serif; font-size: 0.88rem; color: #666; line-height: 1.65; margin-bottom: 1.75rem; }
+  .lead-gate-form { display: flex; flex-direction: column; gap: 0.85rem; }
+  .lead-gate-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #e0e0e0; border-radius: 3px; font-family: Georgia, serif; font-size: 0.9rem; color: #0f0f0f; outline: none; transition: border-color 0.2s; background: #fafaf9; }
+  .lead-gate-input:focus { border-color: #ff5e5f; background: #fff; }
+  .lead-gate-input::placeholder { color: #bbb; }
+  .lead-gate-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid #e0e0e0; border-radius: 3px; font-family: Georgia, serif; font-size: 0.9rem; color: #0f0f0f; outline: none; transition: border-color 0.2s; background: #fafaf9; appearance: none; cursor: pointer; }
+  .lead-gate-select:focus { border-color: #ff5e5f; }
+  .lead-gate-btn { background: #ff5e5f; color: #fff; padding: 0.85rem; border-radius: 3px; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size: 0.9rem; font-weight: 600; border: none; cursor: pointer; transition: background 0.2s; width: 100%; margin-top: 0.25rem; }
+  .lead-gate-btn:hover { background: #cc3a3b; }
+  .lead-gate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .lead-gate-privacy { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size: 0.72rem; color: #aaa; text-align: center; margin-top: 0.75rem; line-height: 1.5; }
+  .lead-gate-error { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size: 0.78rem; color: #cc3a3b; margin-top: -0.4rem; display: none; }
+  .lead-gate-error.show { display: block; }
+  
+    /* =====================================================
+       MOBILE RESPONSIVE FIX — applied globally
+       Fixes: grid overflow, padding, text clipping
+    ===================================================== */
+
+    /* Prevent horizontal scroll on all pages */
+    html, body {
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* All sections: minimum side padding on mobile */
+    @media (max-width: 480px) {
+      .section { padding: 3rem 1.25rem !important; }
+      nav { padding: 0 1.25rem !important; }
+      .breadcrumb { padding: 1rem 1.25rem 0 !important; }
+
+      /* Every multi-column grid → single column */
+      .curriculum-wrap,
+      .framework-grid,
+      .eligibility-grid,
+      .how-grid,
+      .also-grid,
+      .results-grid,
+      .testimonials-grid,
+      .addons-grid,
+      .format-grid,
+      .pdfs-grid,
+      .tools-grid,
+      .courses-grid,
+      .blog-grid,
+      .xat-sections-wrap,
+      .cat-sections-wrap,
+      .base-features,
+      .stats-inner,
+      .exam-overview-grid {
+        grid-template-columns: 1fr !important;
+        overflow: visible !important;
+      }
+
+      /* Pricing grid → single column, full width */
+      .pricing-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+      }
+
+      /* Hero → single column */
+      .hero {
+        grid-template-columns: 1fr !important;
+        padding: 2.5rem 1.25rem 3rem !important;
+        gap: 2rem !important;
+      }
+
+      /* Colleges table → show only name + key col */
+      .colleges-table-header,
+      .college-row {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .colleges-table-header span:nth-child(n+3),
+      .college-row span:nth-child(n+3) {
+        display: none !important;
+      }
+
+      /* Stats → 2 columns on small screens */
+      .stats-inner {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* Footer → single column */
+      .footer-top {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
+
+      /* Base product */
+      .base-product {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Scoring row */
+      .scoring-row {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .scoring-row span:nth-child(3) { display: none !important; }
+
+      /* Recognition/press cards — force horizontal scroll or single col */
+      .recognition-grid,
+      .press-grid,
+      .media-grid,
+      .feature-grid {
+        grid-template-columns: 1fr !important;
+        overflow: visible !important;
+      }
+
+      /* Cards that use overflow:hidden and clip content */
+      .curriculum-wrap,
+      .framework-grid,
+      .cat-sections-wrap,
+      .xat-sections-wrap {
+        border-radius: 4px;
+        overflow: hidden !important;
+      }
+
+      /* Ensure card content doesn't overflow */
+      .curriculum-module,
+      .framework-card,
+      .eligibility-card,
+      .how-step,
+      .pricing-card,
+      .testimonial-card,
+      .also-card {
+        min-width: 0 !important;
+        overflow: visible !important;
+        word-break: break-word !important;
+      }
+
+      /* Section padding adjustments */
+      .stats { padding: 2.5rem 1.25rem !important; }
+      .cta-banner { padding: 3.5rem 1.25rem !important; }
+      .unis-strip { padding: 1rem 1.25rem !important; }
+      .free-mock-strip { padding: 0.85rem 1.25rem !important; flex-wrap: wrap; }
+
+      /* Exam overview — 2 cols minimum */
+      .exam-overview-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* Checkout cards */
+      .checkout-cards {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Blog grid */
+      .blog-grid {
+        grid-template-columns: 1fr !important;
+        border: 1px solid #e8e8e6 !important;
+      }
+
+      /* Tools grid */
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    /* Tablet: 481-768px — 2 col max for most grids */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .section { padding: 4rem 1.5rem !important; }
+      nav { padding: 0 1.5rem !important; }
+
+      .curriculum-wrap,
+      .framework-grid,
+      .also-grid,
+      .testimonials-grid,
+      .addons-grid,
+      .format-grid,
+      .results-grid {
+        grid-template-columns: 1fr 1fr !important;
+        overflow: visible !important;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 100% !important;
+      }
+
+      .hero {
+        grid-template-columns: 1fr !important;
+        padding: 3rem 1.5rem !important;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      .blog-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+
+  </style>
+  
+  
+  
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "GRE Vocabulary Tool — 759 High-Frequency Words | GRADSKOOL",
+  "url": "https://gradskool.in/gre-vocab-forge",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [
+      ".tool-title",
+      "h1",
+      "h2"
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How many words does the GRE GRE Vocabulary Tool contain?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The GRE GRE Vocabulary Tool contains 759 essential words — the highest-frequency GRE vocabulary drawn from ETS official materials and historical GRE question banks. Each word includes etymology, contextual sentence, and usage notes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the GRE Vocabulary Tool free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — completely free. All 759 words are accessible without any login or payment."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What makes GRE Vocabulary Tool different from other GRE word lists?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most GRE word lists give isolated definitions. GRE Vocabulary Tool provides etymology (word roots), contextual sentences that mirror actual GRE usage, and groups words by theme and root — making them far easier to remember and apply in Text Completion and Sentence Equivalence questions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does it take to complete the GRE Vocabulary Tool?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At 20-25 words per day, you complete the full 759-word list in about 30-35 days. The tool supports spaced repetition — you can mark words as known and focus repeated practice on unfamiliar ones."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the GRE Vocabulary Tool useful for CAT and IPMAT as well?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. While built for GRE, the vocabulary — particularly Latinate and Greek-root words — appears frequently in CAT VARC RC passages and IPMAT Verbal Ability. Many words in the Forge directly overlap with what GRADSKOOL's RC Lexicon tool covers."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <div style="position:sticky;top:0;z-index:300;background:#fff;border-bottom:2px solid #0f0f0f;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+    <a href="/" style="font-size:15px;font-weight:800;color:#0f0f0f;text-decoration:none;letter-spacing:-0.3px;">GRAD<span style="color:#ff5e5f;">SKOOL</span></a>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <a href="/tools" style="font-size:12px;color:#777;text-decoration:none;">← All Tools</a>
+      <a href="/checkout" style="font-size:12px;font-weight:600;background:#ff5e5f;color:#fff;padding:6px 16px;border-radius:3px;text-decoration:none;">Enrol Now →</a>
+    </div>
+  </div>
+
+  <!-- LEAD GATE -->
+  <div class="lead-gate-overlay" id="leadGate">
+    <div class="lead-gate-box">
+      <div class="lead-gate-label">Free Access</div>
+      <div class="lead-gate-heading">One step to unlock<br><em>GRE Vocabulary Tool.</em></div>
+      <p class="lead-gate-sub">No payment. Just your details so we can keep you updated on new tools, resources and cohort openings.</p>
+      <div class="lead-gate-form">
+        <input class="lead-gate-input" type="text" id="lg-name" placeholder="Your full name" autocomplete="name" />
+        <span class="lead-gate-error" id="lg-name-err">Please enter your name.</span>
+        <input class="lead-gate-input" type="tel" id="lg-phone" placeholder="Phone number (WhatsApp)" autocomplete="tel" maxlength="15" />
+        <span class="lead-gate-error" id="lg-phone-err">Please enter a valid 10-digit number.</span>
+        <input class="lead-gate-input" type="email" id="lg-email" placeholder="Email address" autocomplete="email" />
+        <span class="lead-gate-error" id="lg-email-err">Please enter a valid email address.</span>
+        <select class="lead-gate-select" id="lg-exam">
+          <option value="" disabled selected>Exam you are preparing for</option>
+          <option value="CAT">CAT</option>
+          <option value="XAT">XAT</option>
+          <option value="SNAP">SNAP</option>
+          <option value="NMAT">NMAT</option>
+          <option value="CMAT">CMAT</option>
+          <option value="MH CET MBA">MH CET MBA</option>
+          <option value="GMAT">GMAT</option>
+          <option value="GRE">GRE</option>
+          <option value="IPMAT">IPMAT</option>
+          <option value="CUET UG">CUET UG</option>
+          <option value="CLAT / AILET">CLAT / AILET</option>
+          <option value="Multiple Exams">Multiple Exams</option>
+        </select>
+        <span class="lead-gate-error" id="lg-exam-err">Please select your exam.</span>
+        <button class="lead-gate-btn" id="lg-submit" onclick="submitLeadGate()">Unlock Free Tool →</button>
+      </div>
+      <p class="lead-gate-privacy">🔒 We don't spam. Your details are safe and used only by GRADSKOOL.</p>
+    </div>
+  </div>
+  <!-- GRADSKOOL NAV -->
+  <nav style="position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);border-bottom:1px solid #e8e8e6;padding:0 2rem;">
+    <div style="max-width:1160px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <a href="index" style="font-family:'Playfair Display',Georgia,serif;font-size:1.25rem;font-weight:700;color:#0f0f0f;text-decoration:none;letter-spacing:0.03em;flex-shrink:0;">GRAD<span style="color:#ff5e5f;">SKOOL</span></a>
+      <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.78rem;color:#999;flex-shrink:0;white-space:nowrap;">GRE Vocabulary Tool</span>
+      <div style="display:flex;align-items:center;gap:1.25rem;flex-shrink:0;">
+        <a href="index#courses" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.82rem;color:#555;text-decoration:none;white-space:nowrap;">← Courses</a>
+        <a href="gre" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.82rem;color:#555;text-decoration:none;white-space:nowrap;">Course Page</a>
+        <a href="https://wa.me/916360597966" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.82rem;font-weight:500;color:#fff;background:#ff5e5f;padding:0.4rem 1rem;border-radius:3px;text-decoration:none;white-space:nowrap;">Enrol →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TOOL INTRO -->
+  <div class="gs-tool-intro">
+    <div class="gs-tool-intro-inner">
+      <div>
+        <div class="gs-tool-tag">GRE · Vocabulary</div>
+        <h1>GRE Vocabulary Tool — <em>759 Essential Words.</em></h1>
+        <p class="gs-tool-intro-desc">759 high-frequency GRE words, three ways to master them. Flashcard mode for first exposure. Quiz mode to test recall under pressure. Type-it mode to lock words into memory through active production. Browse all 759 words anytime. Progress tracked across sessions — pick up exactly where you left off.</p>
+        <div class="gs-tool-stats">
+          <div class="gs-tool-stat"><span class="gs-tool-stat-val">759</span><span class="gs-tool-stat-label">Words</span></div>
+          <div class="gs-tool-stat"><span class="gs-tool-stat-val">3</span><span class="gs-tool-stat-label">Learning Modes</span></div>
+          <div class="gs-tool-stat"><span class="gs-tool-stat-val">Free</span><span class="gs-tool-stat-label">Always</span></div>
+        </div>
+      </div>
+      <div class="gs-tool-topics">
+        <div class="gs-tool-topics-label">Topics Covered</div>
+        <div class="gs-tool-topics-grid">
+          <span class="gs-topic-pill">Flashcard Mode</span>
+          <span class="gs-topic-pill">Quiz Mode</span>
+          <span class="gs-topic-pill">Type-It Mode</span>
+          <span class="gs-topic-pill">Browse All</span>
+          <span class="gs-topic-pill">Progress Tracking</span>
+          <span class="gs-topic-pill">Session Memory</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="gs-tool-divider">
+
+
+
+
+<div id="app">
+
+  <div class="mode-nav">
+    <button class="mode-btn flash active" onclick="setMode('flash')">⊡ Flashcards</button>
+    <button class="mode-btn quiz"  onclick="setMode('quiz')">◈ Quiz Mode</button>
+    <button class="mode-btn type"  onclick="setMode('type')">✎ Type It</button>
+    <button class="mode-btn study" onclick="setMode('study')">≡ Browse All</button>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat">
+      <div class="stat-num correct" id="statCorrect">0</div>
+      <div class="stat-label">Correct</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num wrong" id="statWrong">0</div>
+      <div class="stat-label">Wrong</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num streak" id="statStreak">0</div>
+      <div class="stat-label">Streak</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num total" id="statSeen">0</div>
+      <div class="stat-label">Seen</div>
+    </div>
+  </div>
+
+  <div class="settings-row" id="settingsRow">
+    <div class="setting-group">
+      <span class="setting-label">Set</span>
+      <select class="setting-select" id="deckSelect" onchange="onDeckChange()">
+        <option value="0">Set 1 (1–190)</option>
+        <option value="1">Set 2 (191–380)</option>
+        <option value="2">Set 3 (381–570)</option>
+        <option value="3">Set 4 (571–759)</option>
+        <option value="all">All 759 Words</option>
+      </select>
+    </div>
+    <div class="setting-group">
+      <span class="setting-label">Shuffle</span>
+      <select class="setting-select" id="shuffleSelect" onchange="onShuffleChange()">
+        <option value="off">In order</option>
+        <option value="on">Shuffle</option>
+      </select>
+    </div>
+  </div>
+
+  <main id="mainContent">
+
+    <!-- ─── FLASHCARD PANEL ─── -->
+    <div id="flashPanel">
+      <div class="progress-track">
+        <div class="progress-fill" id="flashProgress" style="width:0%"></div>
+      </div>
+
+      <div class="flashcard-wrap" onclick="flipCard()" title="Click to reveal">
+        <div class="flashcard" id="theCard">
+          <div class="card-face card-front">
+            <div class="card-pos-badge" id="cardPosFront">—</div>
+            <div class="card-word" id="cardWord">—</div>
+            <div class="card-hint">tap to reveal ↓</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-definition" id="cardDef">—</div>
+            <div class="card-example" id="cardEx">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flash-controls">
+        <button class="flash-nav-btn" onclick="prevCard()">← Prev</button>
+        <span class="flash-progress-text" id="flashCounter">1 / —</span>
+        <button class="flash-nav-btn" onclick="nextCard()">Next →</button>
+      </div>
+      <div class="flash-controls" style="margin-top:0.75rem">
+        <button class="know-btn" onclick="markKnown()">✓ Know it</button>
+        <button class="know-btn" style="border-color:#ff5e5f;color:#ff5e5f" onclick="markUnknown()">✗ Still learning</button>
+      </div>
+
+      <div class="kbd-hint">
+        <div class="kbd-item"><kbd>Space</kbd> flip</div>
+        <div class="kbd-item"><kbd>→</kbd> next</div>
+        <div class="kbd-item"><kbd>←</kbd> prev</div>
+        <div class="kbd-item"><kbd>K</kbd> know it</div>
+      </div>
+    </div>
+
+    <!-- ─── QUIZ PANEL ─── -->
+    <div id="quizPanel" style="display:none">
+      <div class="progress-track">
+        <div class="progress-fill" id="quizProgress" style="width:0%"></div>
+      </div>
+
+      <div id="quizPlayArea">
+        <div class="quiz-question">
+          <div class="quiz-label">What does this word mean?</div>
+          <div class="quiz-prompt" id="quizPrompt" style="display:none"></div>
+          <div class="quiz-word" id="quizWord">—</div>
+        </div>
+
+        <div class="quiz-options" id="quizOptions"></div>
+
+        <div class="quiz-feedback" id="quizFeedback">
+          <div class="feedback-status" id="fbStatus"></div>
+          <div class="feedback-answer" id="fbAnswer"></div>
+        </div>
+
+        <button class="next-btn" id="nextQuizBtn" style="display:none" onclick="nextQuiz()">Next Question</button>
+      </div>
+
+      <div class="score-screen" id="scoreScreen">
+        <div class="score-ornament">🏆</div>
+        <div class="score-title">Round Complete</div>
+        <div class="score-sub">Your vocabulary is forged stronger.</div>
+        <div class="score-big" id="scoreNum">—</div>
+        <div class="score-pct" id="scorePct">— correct</div>
+        <button class="restart-btn" onclick="restartQuiz()">Play Again ↺</button>
+      </div>
+    </div>
+
+    <!-- ─── STUDY PANEL ─── -->
+    <div id="studyPanel" style="display:none">
+      <div class="study-search">
+        <input class="search-input" id="searchInput" placeholder="Search words, definitions…" oninput="filterStudy()" autocomplete="off">
+        <span class="search-count" id="searchCount">— words</span>
+      </div>
+      <div class="study-grid" id="studyGrid"></div>
+    </div>
+
+
+    <!-- ─── TYPE IT PANEL ─── -->
+    <div id="typePanel" style="display:none">
+      <div class="progress-track">
+        <div class="progress-fill" id="typeProgress" style="width:0%"></div>
+      </div>
+
+      <div id="typePlayArea">
+        <div class="quiz-question" style="margin-bottom:1.5rem">
+          <div class="quiz-label">Spell the word from its definition</div>
+          <div class="quiz-prompt" id="typePrompt" style="display:block;font-size:1.2rem;color:#0d0d0d;font-style:normal;margin-top:1rem;line-height:1.5;max-width:520px;margin-left:auto;margin-right:auto"></div>
+          <div style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;color:#888;text-transform:uppercase" id="typePosHint"></div>
+        </div>
+
+        <div style="max-width:400px;margin:0 auto">
+          <div style="position:relative">
+            <input id="typeInput" class="type-input" placeholder="Type the word…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="onTypeInput()" onkeydown="onTypeKey(event)">
+            <div class="type-hint-letters" id="typeHintLetters"></div>
+          </div>
+          <div class="type-feedback" id="typeFeedback" style="display:none"></div>
+          <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
+            <button class="flash-nav-btn" id="typeHintBtn" onclick="showTypeHint()" style="font-size:0.65rem">Hint (first letter)</button>
+            <button class="next-btn" id="typeNextBtn" style="display:none;margin:0" onclick="nextType()">Next →</button>
+          </div>
+        </div>
+
+        <div class="kbd-hint" style="margin-top:2rem">
+          <div class="kbd-item"><kbd>Enter</kbd> submit</div>
+          <div class="kbd-item"><kbd>Tab</kbd> hint</div>
+        </div>
+      </div>
+
+      <div class="score-screen" id="typeScoreScreen">
+        <div class="score-ornament">✍️</div>
+        <div class="score-title">Typing Complete</div>
+        <div class="score-sub">Your spelling is getting stronger.</div>
+        <div class="score-big" id="typeScoreNum">—</div>
+        <div class="score-pct" id="typeScorePct">— correct</div>
+        <button class="restart-btn" onclick="restartType()">Try Again ↺</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>GRE GRE Vocabulary Tool · 759 words · <button onclick="resetAll()" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;text-decoration:underline;">Reset progress</button></p>
+  </footer>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  WORD DATA
+// ─────────────────────────────────────────────
+const RAW = [
+["Abate","verb","To reduce in amount, degree, or intensity","The storm abated after several hours."],
+["Aberrant","adj","Deviating from the norm","His aberrant behavior alarmed his colleagues."],
+["Abeyance","noun","Temporary suspension","The project was held in abeyance pending funding."],
+["Abjure","verb","To solemnly renounce","He abjured his former political beliefs."],
+["Abscond","verb","To leave hurriedly and secretly","The thief absconded with the jewels."],
+["Abstemious","adj","Moderate in eating and drinking","His abstemious habits kept him healthy."],
+["Abstruse","adj","Difficult to understand; obscure","The abstruse text required careful study."],
+["Accretion","noun","Growth by gradual accumulation","The pearl formed by accretion over years."],
+["Acerbic","adj","Sharp and forthright; harsh","Her acerbic wit often offended people."],
+["Acrimony","noun","Bitter or sharp hostility","The divorce was marked by acrimony."],
+["Acumen","noun","Keen insight; shrewdness","Her business acumen made her a millionaire."],
+["Admonish","verb","To caution or advise against","The teacher admonished the disruptive student."],
+["Adroit","adj","Clever; skillful","The adroit diplomat avoided the conflict."],
+["Adulterate","verb","To corrupt or make impure","The company adulterated the food products."],
+["Alacrity","noun","Eager readiness or enthusiasm","She accepted the offer with alacrity."],
+["Alleviate","verb","To make suffering less severe","Medicine alleviated her chronic pain."],
+["Aloof","adj","Not friendly; distant","He remained aloof from office politics."],
+["Altruism","noun","Selfless concern for others","Her altruism led her to volunteer daily."],
+["Ambiguous","adj","Having more than one meaning","The ambiguous contract caused disputes."],
+["Ameliorate","verb","To make better","The new policy aimed to ameliorate poverty."],
+["Anachronism","noun","Something out of its time period","Using a quill pen today would be an anachronism."],
+["Anathema","noun","Something greatly detested","Injustice was anathema to her."],
+["Anomalous","adj","Deviating from what is standard","The anomalous data skewed the results."],
+["Appease","verb","To pacify; to satisfy","He appeased his critics with concessions."],
+["Approbation","noun","Approval or praise","The plan won the committee's approbation."],
+["Arcane","adj","Known only to a few; mysterious","The arcane ritual was rarely performed."],
+["Arduous","adj","Difficult; requiring hard effort","The arduous hike exhausted the climbers."],
+["Ascetic","adj/noun","Practicing strict self-denial","The ascetic monk owned almost nothing."],
+["Assuage","verb","To ease; to pacify","Music assuaged his sorrow."],
+["Astute","adj","Clever; good at judgment","The astute investor saw the opportunity."],
+["Attenuate","verb","To weaken or reduce","The walls attenuated the noise outside."],
+["Audacious","adj","Bold; recklessly daring","Her audacious proposal shocked the board."],
+["Austere","adj","Severe; without luxury","The austere dormitory had bare walls."],
+["Avarice","noun","Extreme greed for wealth","His avarice led to his downfall."],
+["Banal","adj","Lacking originality; dull","The banal speech put the audience to sleep."],
+["Beguile","verb","To charm or trick","He beguiled the audience with his story."],
+["Belligerent","adj","Aggressive; warlike","The belligerent nation threatened its neighbors."],
+["Benevolent","adj","Kind and generous","The benevolent donor funded the library."],
+["Belie","verb","To give a false impression of","Her calm face belied her inner anxiety."],
+["Bucolic","adj","Relating to rural life; pastoral","They dreamed of a bucolic countryside escape."],
+["Cacophony","noun","Harsh, jarring sound","The cacophony of the construction site was unbearable."],
+["Candor","noun","Openness; honesty","She appreciated his candor about the problem."],
+["Capricious","adj","Given to sudden changes of mood","Her capricious decisions confused her staff."],
+["Castigate","verb","To criticize severely","The editor castigated the sloppy journalist."],
+["Catalyst","noun","Something that speeds up a process","Her speech was the catalyst for change."],
+["Caustic","adj","Sarcastic; burning","His caustic humor often crossed the line."],
+["Chicanery","noun","Deception; trickery","The scheme involved financial chicanery."],
+["Circumspect","adj","Cautious; taking all factors into account","A circumspect leader avoids hasty decisions."],
+["Clandestine","adj","Kept secret; done in secrecy","The clandestine meeting was never reported."],
+["Coalesce","verb","To come together to form one","The factions coalesced into a single party."],
+["Cogent","adj","Clear; logical; convincing","She made a cogent argument for reform."],
+["Complacent","adj","Smugly self-satisfied","He became complacent after early success."],
+["Confound","verb","To surprise and confuse","The results confounded the researchers."],
+["Contentious","adj","Causing argument; quarrelsome","The contentious bill divided the legislature."],
+["Copious","adj","Abundant; plentiful","She took copious notes during the lecture."],
+["Corroborate","verb","To confirm or support with evidence","New evidence corroborated his testimony."],
+["Craven","adj","Contemptibly lacking courage","The craven soldier deserted his unit."],
+["Credulous","adj","Too ready to believe things","The credulous child believed every story."],
+["Cynical","adj","Believing people are selfish","His cynical view left no room for trust."],
+["Daunt","verb","To intimidate; to discourage","The enormous task daunted the new employee."],
+["Debilitate","verb","To weaken physically or mentally","The illness debilitated her for months."],
+["Decorum","noun","Correct and dignified behavior","The ceremony required strict decorum."],
+["Deference","noun","Respectful submission to another","He showed deference to his elders."],
+["Deleterious","adj","Harmful to health or well-being","Smoking has deleterious effects on health."],
+["Demagogue","noun","A leader who exploits prejudices","The demagogue stirred up fear and hatred."],
+["Depravity","noun","Moral corruption; wickedness","The film depicted the depravity of war."],
+["Desiccate","verb","To dry out completely","The desert sun desiccated the vegetation."],
+["Desultory","adj","Lacking plan or purpose","His desultory efforts produced poor results."],
+["Diatribe","noun","A forceful verbal attack","She launched a diatribe against the policy."],
+["Dichotomy","noun","A division into two opposite things","There's a dichotomy between theory and practice."],
+["Didactic","adj","Intended to teach or instruct","The play had a didactic message."],
+["Diffident","adj","Modest; lacking self-confidence","The diffident student rarely spoke in class."],
+["Discerning","adj","Having good judgment; perceptive","A discerning reader catches subtle details."],
+["Disparage","verb","To speak disrespectfully about","He disparaged his rival's achievements."],
+["Disparity","noun","A noticeable inequality","There is a disparity between rich and poor."],
+["Disseminate","verb","To spread widely","Social media disseminates information quickly."],
+["Dogmatic","adj","Asserting opinions as if they are facts","His dogmatic stance blocked compromise."],
+["Dormant","adj","Inactive; asleep","The dormant volcano could erupt again."],
+["Ebullient","adj","Cheerful and enthusiastic","The ebullient crowd cheered for the team."],
+["Eclectic","adj","Deriving from a wide range of sources","Her eclectic taste ranged from jazz to opera."],
+["Efficacious","adj","Successful in producing results","The new drug was highly efficacious."],
+["Egregious","adj","Shockingly bad","His egregious error cost the firm millions."],
+["Eloquent","adj","Fluent and persuasive in speech","The eloquent lawyer swayed the jury."],
+["Enervate","verb","To weaken; to drain energy","The humid heat enervated the workers."],
+["Enigmatic","adj","Mysterious; puzzling","Her enigmatic smile invited speculation."],
+["Ephemeral","adj","Lasting a very short time","Fashion trends are ephemeral by nature."],
+["Equanimity","noun","Mental calmness in adversity","She faced the diagnosis with equanimity."],
+["Equivocate","verb","To use ambiguous language to mislead","Politicians often equivocate on difficult issues."],
+["Erudite","adj","Having great knowledge; scholarly","The erudite professor wrote dozens of books."],
+["Esoteric","adj","Intended for a small specialized group","The lecture was too esoteric for beginners."],
+["Euphemism","noun","A mild expression for an unpleasant one","'Passed away' is a euphemism for death."],
+["Evanescent","adj","Quickly fading from sight","The evanescent rainbow disappeared in minutes."],
+["Exacerbate","verb","To make worse","Stress exacerbates many health conditions."],
+["Exemplary","adj","Serving as a model; commendable","She set an exemplary standard for the team."],
+["Exonerate","verb","To officially clear of blame","The court exonerated him after ten years."],
+["Extant","adj","Still in existence","Few extant manuscripts date to that era."],
+["Facetious","adj","Treating serious topics too lightly","His facetious remark angered the mourners."],
+["Fallacious","adj","Based on a mistaken belief","His fallacious logic misled the jury."],
+["Fervent","adj","Having passionate intensity","She was a fervent supporter of the cause."],
+["Flagrant","adj","Conspicuously wrong or evil","It was a flagrant violation of the rules."],
+["Foment","verb","To instigate; to stir up trouble","The agitator fomented unrest in the town."],
+["Frugal","adj","Sparing with money or food","Her frugal habits allowed early retirement."],
+["Furtive","adj","Sneaky; secretive","He cast a furtive glance around the room."],
+["Garrulous","adj","Excessively talkative","The garrulous neighbor talked for hours."],
+["Glib","adj","Fluent but insincere","His glib answers satisfied no one."],
+["Gregarious","adj","Fond of company; sociable","She was gregarious and knew everyone."],
+["Guile","noun","Sly cunning; deceit","He used guile to outwit his opponents."],
+["Hackneyed","adj","Overused; lacking originality","The film relied on hackneyed plot devices."],
+["Hegemony","noun","Dominance over others","The empire sought hegemony over the region."],
+["Hubris","noun","Excessive pride or self-confidence","His hubris led to his inevitable downfall."],
+["Hyperbole","noun","Exaggerated statements for effect","The ad was full of hyperbole."],
+["Iconoclast","noun","A person who attacks cherished beliefs","The iconoclast challenged every tradition."],
+["Ignominy","noun","Public shame or disgrace","He resigned in ignominy after the scandal."],
+["Immutable","adj","Unchanging over time","The laws of physics are immutable."],
+["Impede","verb","To obstruct; delay progress","Heavy snow impeded our journey."],
+["Impervious","adj","Not allowing penetration; unaffected","He was impervious to criticism."],
+["Impetuous","adj","Acting rashly without thought","The impetuous decision cost him dearly."],
+["Implacable","adj","Unable to be appeased","The implacable enemy refused all offers."],
+["Inane","adj","Lacking sense or meaning","His inane comment added nothing to the debate."],
+["Inchoate","adj","Not fully developed; rudimentary","Her ideas were still inchoate at that stage."],
+["Indolent","adj","Wanting to avoid activity; lazy","The indolent student rarely attended class."],
+["Ineffable","adj","Too great to be expressed in words","The beauty of the landscape was ineffable."],
+["Inexorable","adj","Impossible to stop or prevent","The inexorable march of time stops for no one."],
+["Ingenuous","adj","Innocent and unsuspecting","Her ingenuous trust was often exploited."],
+["Inimical","adj","Tending to obstruct; harmful","Poverty is inimical to good health."],
+["Insipid","adj","Lacking flavor; dull","The insipid soup had no seasoning."],
+["Insular","adj","Ignorant of other cultures; isolated","The insular community resisted all change."],
+["Intractable","adj","Hard to manage or control","The intractable conflict defied resolution."],
+["Intrepid","adj","Fearless; bold","The intrepid explorer mapped unknown territory."],
+["Irascible","adj","Having or showing a tendency to be easily angered","The irascible professor frightened students."],
+["Laconic","adj","Using very few words","His laconic reply was just 'no'."],
+["Lassitude","noun","Physical or mental weariness","After the exam, he felt deep lassitude."],
+["Laud","verb","To praise highly","Critics lauded her debut performance."],
+["Lethargic","adj","Affected by lethargy; sluggish","The lethargic patient slept most of the day."],
+["Levity","noun","Humor in a serious situation","He used levity to defuse the tension."],
+["Loquacious","adj","Tending to talk a great deal","Her loquacious nature filled every silence."],
+["Lucid","adj","Clearly expressed; easy to understand","She gave a lucid explanation of the problem."],
+["Lugubrious","adj","Mournful; sad","His lugubrious tone matched the occasion."],
+["Malleable","adj","Easily influenced; adaptable","The young mind is malleable and curious."],
+["Mendacious","adj","Not telling the truth; lying","The mendacious witness misled the court."],
+["Mercurial","adj","Subject to sudden mood changes","His mercurial personality made him unpredictable."],
+["Meticulous","adj","Showing great attention to detail","Her meticulous research earned top marks."],
+["Mitigate","verb","To make less severe","Apologies can mitigate the damage of insults."],
+["Mollify","verb","To appease or pacify","He mollified the angry client with a refund."],
+["Morose","adj","Sullen and ill-tempered","He became morose after the job rejection."],
+["Mundane","adj","Lacking interest; ordinary","She wanted to escape her mundane routine."],
+["Munificent","adj","Very generous","The munificent donor gave millions to charity."],
+["Nascent","adj","Just coming into existence","The nascent company had enormous potential."],
+["Nefarious","adj","Wicked or criminal","The nefarious plot was uncovered by police."],
+["Neophyte","noun","A person new to a subject","As a neophyte, she made many basic mistakes."],
+["Obdurate","adj","Stubbornly refusing to change","The obdurate official ignored all complaints."],
+["Obfuscate","verb","To make unclear; to confuse","The jargon served only to obfuscate the truth."],
+["Obsequious","adj","Fawning and servile","The obsequious aide agreed with everything."],
+["Obstinate","adj","Stubbornly refusing to change views","His obstinate refusal blocked all progress."],
+["Onerous","adj","Involving great effort; burdensome","The onerous task took weeks to complete."],
+["Opaque","adj","Not transparent; hard to understand","His opaque reasoning confused the audience."],
+["Opprobrium","noun","Harsh criticism; public disgrace","The corrupt official faced widespread opprobrium."],
+["Oscillate","verb","To swing back and forth","His opinions oscillated with public opinion."],
+["Ostracize","verb","To exclude from a community","The whistleblower was ostracized by colleagues."],
+["Paean","noun","A song of praise or triumph","The speech was a paean to democracy."],
+["Palliate","verb","To relieve without curing; to disguise","Pain medication palliates but doesn't cure."],
+["Parochial","adj","Having a narrow view; local","His parochial outlook limited his ambitions."],
+["Parsimony","noun","Extreme unwillingness to spend","His parsimony made him unpopular at dinners."],
+["Paucity","noun","Scarcity; smallness of number","There was a paucity of qualified candidates."],
+["Pedantic","adj","Excessively concerned with rules","His pedantic corrections annoyed everyone."],
+["Penchant","noun","A strong liking for something","She had a penchant for exotic food."],
+["Perfidious","adj","Deceitful and untrustworthy","His perfidious betrayal shocked everyone."],
+["Perfunctory","adj","Done with little effort or care","He gave a perfunctory apology and left."],
+["Pernicious","adj","Having a harmful effect","The pernicious rumor destroyed his reputation."],
+["Perspicacious","adj","Having ready insight","The perspicacious analyst predicted the crash."],
+["Petulant","adj","Childishly sulky or bad-tempered","The petulant star refused to attend rehearsal."],
+["Placate","verb","To make less angry; to appease","She placated the crowd with calm words."],
+["Platitude","noun","A remark that is overused","His speech was full of empty platitudes."],
+["Pragmatic","adj","Dealing with practical matters","A pragmatic solution was needed urgently."],
+["Precarious","adj","Not securely held; uncertain","The climber clung to a precarious ledge."],
+["Predilection","noun","A preference or special liking","She had a predilection for dark chocolate."],
+["Prescient","adj","Having knowledge of events before they happen","Her prescient advice saved the company."],
+["Prevaricate","verb","To speak evasively; to lie","He prevaricated when asked about the funds."],
+["Probity","noun","Honesty; strong moral principles","The judge was known for her probity."],
+["Prodigal","adj","Wastefully extravagant","The prodigal heir spent his fortune quickly."],
+["Prolix","adj","Tediously long and wordy","The prolix essay tried readers' patience."],
+["Propitious","adj","Giving or indicating good fortune","The propitious weather suited the occasion."],
+["Prosaic","adj","Dull; lacking imagination","His prose was functional but prosaic."],
+["Pugnacious","adj","Eager to argue or fight","His pugnacious manner made enemies quickly."],
+["Querulous","adj","Complaining in a petulant manner","The querulous patient complained constantly."],
+["Quixotic","adj","Unrealistically idealistic","His quixotic plan to solve world hunger failed."],
+["Rancor","noun","Bitterness and resentment","The rancor between rivals lasted for years."],
+["Recalcitrant","adj","Having an uncooperative attitude","The recalcitrant student refused all assistance."],
+["Recondite","adj","Not known by many people; obscure","The scholar studied recondite medieval texts."],
+["Refute","verb","To prove to be wrong","He refuted the accusation with solid evidence."],
+["Reticent","adj","Not revealing one's thoughts","She was reticent about her personal life."],
+["Sanguine","adj","Optimistic; blood-red color","He remained sanguine about the outcome."],
+["Sardonic","adj","Grimly mocking; cynical","Her sardonic humor offended some listeners."],
+["Scrupulous","adj","Careful about doing what is right","He was scrupulous in his financial dealings."],
+["Sedulous","adj","Showing dedication and diligence","Her sedulous preparation ensured success."],
+["Soporific","adj","Tending to induce sleep","The soporific lecture sent students to sleep."],
+["Specious","adj","Misleadingly plausible","His specious argument sounded convincing."],
+["Stolid","adj","Calm; not easily moved","The stolid bodyguard showed no emotion."],
+["Strident","adj","Loud and harsh; making forceful demands","Her strident criticism alienated supporters."],
+["Subversive","adj","Seeking to undermine authority","The subversive pamphlet circulated secretly."],
+["Succinct","adj","Briefly and clearly expressed","Her succinct summary covered all the points."],
+["Sycophant","noun","A person who flatters to gain favor","The sycophant agreed with everything the boss said."],
+["Tacit","adj","Understood without being stated","They had a tacit agreement not to mention it."],
+["Taciturn","adj","Reserved; saying little","The taciturn man rarely spoke at meetings."],
+["Tenacious","adj","Not readily letting go; persistent","Her tenacious effort finally paid off."],
+["Tendentious","adj","Promoting a particular cause","The tendentious documentary ignored opposing views."],
+["Torpor","noun","A state of physical or mental inactivity","The summer heat induced a pleasant torpor."],
+["Transient","adj","Lasting only a short time","Her fame was transient — forgotten in a year."],
+["Truculent","adj","Eager to argue or fight; defiant","The truculent defendant intimidated the jury."],
+["Turpitude","noun","Wickedness or depravity","The court found him guilty of moral turpitude."],
+["Ubiquitous","adj","Present or found everywhere","Smartphones are ubiquitous in modern life."],
+["Umbrage","noun","Offense or annoyance","She took umbrage at the careless remark."],
+["Unctuous","adj","Excessively flattering; oily","His unctuous praise made everyone uncomfortable."],
+["Vacillate","verb","To waver between options","He vacillated too long and missed the chance."],
+["Vapid","adj","Offering nothing stimulating; dull","The vapid television show drew low ratings."],
+["Vehement","adj","Showing strong feeling; forceful","He made a vehement denial of all charges."],
+["Venerate","verb","To regard with great respect","The culture venerates its elderly members."],
+["Verbose","adj","Using more words than needed","His verbose report could have been halved."],
+["Vituperate","verb","To blame or insult in strong terms","He vituperated his former partner publicly."],
+["Volatile","adj","Liable to change rapidly; explosive","The volatile stock market worried investors."],
+["Voracious","adj","Wanting large amounts; ravenous","She was a voracious reader of history."],
+["Zealous","adj","Having great energy for a cause","He was zealous in defending civil rights."],
+["Abase","verb","To lower in rank or esteem","He refused to abase himself before the tyrant."],
+["Absolution","noun","Formal release from guilt or punishment","He sought absolution for his past mistakes."],
+["Accost","verb","To approach and address boldly","A stranger accosted him in the alley."],
+["Accolade","noun","An award or privilege","She received many accolades for her research."],
+["Acrid","adj","Bitterly sharp; unpleasant to taste","The acrid smell of smoke filled the room."],
+["Adjure","verb","To beg or command solemnly","He adjured them to speak the truth."],
+["Adulation","noun","Excessive admiration","The rock star received wild adulation."],
+["Allay","verb","To diminish fear or concern","Kind words allayed her anxiety."],
+["Ambivalent","adj","Having mixed feelings","She felt ambivalent about accepting the offer."],
+["Amenable","adj","Open and responsive to suggestion","He was amenable to changing the schedule."],
+["Androgynous","adj","Having both male and female qualities","The androgynous model was highly sought after."],
+["Animus","noun","Hostility; animating spirit","He felt deep animus toward his rivals."],
+["Antithetical","adj","Directly opposed; contrasting","His actions were antithetical to his words."],
+["Aphorism","noun","A short wise saying","'Less is more' is a famous aphorism."],
+["Aplomb","noun","Self-confidence; poise","She handled the crisis with remarkable aplomb."],
+["Apprise","verb","To inform or notify","Please apprise me of any new developments."],
+["Arbitrary","adj","Based on random choice; unfair","His arbitrary decision angered the staff."],
+["Archaic","adj","Very old-fashioned; primitive","Archaic laws are often still on the books."],
+["Ardor","noun","Enthusiasm; passion","His ardor for justice drove his career."],
+["Arrogate","verb","To take without right","He arrogated to himself too much authority."],
+["Artifice","noun","Clever trick; cunning","He used artifice to win the negotiation."],
+["Ascendancy","noun","Occupation of a dominant position","The party regained political ascendancy."],
+["Asperity","noun","Harshness of tone or manner","She spoke with unexpected asperity."],
+["Aver","verb","To state confidently; to assert","He averred that he had never seen the document."],
+["Aversion","noun","A strong dislike","She had an aversion to loud noises."],
+["Avow","verb","To openly acknowledge","He avowed his support for the new policy."],
+["Axiomatic","adj","Self-evidently true","It is axiomatic that honesty is the best policy."],
+["Balk","verb","To hesitate or refuse suddenly","The horse balked at the obstacle."],
+["Beatific","adj","Radiating bliss","She wore a beatific smile as she danced."],
+["Belated","adj","Coming after the expected time","He sent a belated birthday card."],
+["Bemused","adj","Puzzled; confused","He looked bemused by the sudden question."],
+["Benediction","noun","A spoken blessing","The ceremony ended with a benediction."],
+["Benign","adj","Gentle; not harmful","The tumor turned out to be benign."],
+["Berate","verb","To scold angrily","He berated the clerk for the error."],
+["Blithe","adj","Showing casual unconcern","She made a blithe comment about the danger."],
+["Bombast","noun","High-sounding language with little meaning","His speech was full of empty bombast."],
+["Boorish","adj","Rough and bad-mannered","The boorish guest ignored all social norms."],
+["Brazen","adj","Bold without shame","Her brazen lie shocked the interviewer."],
+["Broach","verb","To raise for discussion","He finally broached the subject of salary."],
+["Brusque","adj","Abrupt in manner; blunt","Her brusque reply offended the questioner."],
+["Cavil","verb","To make petty objections","She caviled over minor grammatical points."],
+["Censorious","adj","Severely critical","The censorious critic found fault with everything."],
+["Charlatan","noun","A fraud claiming special skills","The charlatan sold fake medicine to patients."],
+["Chastise","verb","To rebuke or punish severely","The coach chastised the team for poor effort."],
+["Churlish","adj","Rude; surly","It would be churlish to refuse such a kind offer."],
+["Clemency","noun","Mildness in exercising authority","The governor granted clemency to the prisoner."],
+["Cloying","adj","Excessively sweet or sentimental","The film's cloying ending disappointed critics."],
+["Cogitate","verb","To think deeply","She cogitated for hours before deciding."],
+["Coherent","adj","Logical and consistent","Please write a coherent argument."],
+["Colloquial","adj","Used in informal speech","The colloquial phrase confused foreign readers."],
+["Commensurate","adj","Corresponding in size or degree","Salary should be commensurate with experience."],
+["Complaisant","adj","Willing to please; obedient","The complaisant employee never argued."],
+["Compunction","noun","A feeling of guilt","He felt no compunction about lying."],
+["Condone","verb","To accept or allow behavior","The school would not condone bullying."],
+["Conflagration","noun","A large destructive fire","The conflagration destroyed three city blocks."],
+["Congenial","adj","Pleasant; agreeable","The congenial atmosphere put guests at ease."],
+["Consternation","noun","A feeling of anxiety","The news caused great consternation."],
+["Contrite","adj","Feeling deep remorse","She was contrite after hurting her friend."],
+["Convoluted","adj","Extremely complex; tortuous","His convoluted explanation made things worse."],
+["Corrosive","adj","Destructive; tending to damage","His corrosive criticism ate away at morale."],
+["Curt","adj","Rudely brief in speech","His curt response suggested he was angry."],
+["Cynicism","noun","Distrust of human sincerity","Her cynicism hardened after years of betrayal."],
+["Dearth","noun","A scarcity or lack of something","There was a dearth of skilled workers."],
+["Debunk","verb","To expose as false","Scientists debunked the pseudoscientific claim."],
+["Decry","verb","To publicly criticize","Activists decried the new immigration policy."],
+["Deferential","adj","Showing respect and submission","The new employee was deferential to seniors."],
+["Dejected","adj","Sad and disheartened","She was dejected after the rejection."],
+["Denigrate","verb","To criticize unfairly; to belittle","He denigrated his opponents constantly."],
+["Deplore","verb","To feel strong disapproval of","We deplore all forms of discrimination."],
+["Deprecate","verb","To express disapproval of","She deprecated the use of corporate jargon."],
+["Deride","verb","To laugh at contemptuously","Critics derided the unconventional artwork."],
+["Despondent","adj","In low spirits; hopeless","He became despondent after the diagnosis."],
+["Diaphanous","adj","Light and delicate; translucent","The diaphanous fabric floated in the breeze."],
+["Diffuse","adj/verb","Spread over a wide area; to spread out","Sunlight diffused softly through the curtains."],
+["Digress","verb","To leave the main subject","He often digressed from the lecture topic."],
+["Diligent","adj","Having careful and steady effort","Diligent preparation leads to success."],
+["Discursive","adj","Moving from topic to topic","His discursive essay lacked a clear argument."],
+["Disgruntled","adj","Angry and dissatisfied","Disgruntled employees submitted formal complaints."],
+["Disinterested","adj","Not influenced by personal advantage","A disinterested mediator was appointed."],
+["Dismissive","adj","Treating as unworthy of consideration","He was dismissive of her creative ideas."],
+["Dogma","noun","A principle laid down as authoritative","Challenging religious dogma was dangerous."],
+["Doleful","adj","Expressing grief; mournful","The dog's doleful eyes begged for a walk."],
+["Duplicitous","adj","Deceitful; dishonest","His duplicitous nature was eventually exposed."],
+["Ebullience","noun","The quality of being cheerful","Her ebullience lifted everyone's spirits."],
+["Elucidate","verb","To make clear; to explain","The professor elucidated the difficult theorem."],
+["Embroil","verb","To involve in argument or conflict","He was embroiled in a bitter legal battle."],
+["Empirical","adj","Based on observation or experiment","The theory was supported by empirical data."],
+["Encomium","noun","A formal expression of praise","The retirement speech was an encomium."],
+["Endemic","adj","Regularly found in a particular area","Malaria is endemic to tropical regions."],
+["Ennui","noun","Listlessness and boredom","Ennui set in after weeks of inactivity."],
+["Enumerate","verb","To mention one by one","She enumerated her reasons for leaving."],
+["Epiphany","noun","A sudden realization","He had an epiphany while reading the book."],
+["Equitable","adj","Fair; just","An equitable distribution benefited everyone."],
+["Errant","adj","Behaving wrongly; traveling","The errant knight wandered without purpose."],
+["Evasive","adj","Tending to avoid commitment","His evasive answers frustrated the detective."],
+["Evince","verb","To reveal the presence of","His behavior evinced a deep distrust of others."],
+["Exasperate","verb","To irritate intensely","His repeated interruptions exasperated everyone."],
+["Expeditious","adj","Done with speed and efficiency","Please handle this in an expeditious manner."],
+["Explicit","adj","Stated clearly; not implicit","The contract includes explicit payment terms."],
+["Expunge","verb","To erase or remove completely","He requested that his record be expunged."],
+["Extol","verb","To praise enthusiastically","He extolled the virtues of regular exercise."],
+["Extricate","verb","To free from a difficult situation","She struggled to extricate herself from debt."],
+["Fecund","adj","Producing many ideas; fertile","The fecund author published three books a year."],
+["Feign","verb","To pretend to be affected by","He feigned illness to skip the meeting."],
+["Felicity","noun","Intense happiness; apt expression","The poem was praised for its verbal felicity."],
+["Ferment","noun/verb","Agitation; to cause unrest","Political ferment gripped the country."],
+["Fiasco","noun","A ludicrous or humiliating failure","The product launch was a complete fiasco."],
+["Fitful","adj","Active for a while, then stopping","She managed only a fitful sleep."],
+["Flippant","adj","Not showing appropriate seriousness","His flippant tone offended the grieving family."],
+["Forestall","verb","To prevent by taking advance action","They acted quickly to forestall a crisis."],
+["Fortuitous","adj","Happening by accident; lucky","His fortuitous meeting changed his career."],
+["Fracas","noun","A noisy disturbance","A fracas broke out in the crowded stadium."],
+["Frivolous","adj","Not having serious purpose","The lawsuit was dismissed as frivolous."],
+["Gainsay","verb","To deny or contradict","No one could gainsay his brilliant logic."],
+["Galvanize","verb","To shock or excite into action","The speech galvanized the volunteers."],
+["Garner","verb","To gather or collect","She garnered praise from every critic."],
+["Gauche","adj","Socially awkward","His gauche comment embarrassed the host."],
+["Genial","adj","Friendly and cheerful","The genial professor made class enjoyable."],
+["Grandiose","adj","Excessively ambitious; impressively large","His grandiose scheme was clearly unrealistic."],
+["Gratuitous","adj","Done without good reason","The film contained gratuitous violence."],
+["Grouse","verb","To complain trivially","He spent the whole day grousing about the food."],
+["Guileless","adj","Devoid of guile; honest","Her guileless expression revealed no deception."],
+["Gullible","adj","Easily deceived or cheated","The gullible investor lost everything."],
+["Halcyon","adj","Denoting a happy peaceful time","She longed for the halcyon days of youth."],
+["Hamper","verb","To hinder the activity of","Bad weather hampered the rescue operation."],
+["Hapless","adj","Unlucky; unfortunate","The hapless traveler missed every connection."],
+["Harbinger","noun","A person or thing that signals future events","The robin is a harbinger of spring."],
+["Harrowing","adj","Intensely distressing","He gave a harrowing account of the disaster."],
+["Haughty","adj","Arrogantly superior","Her haughty manner alienated her classmates."],
+["Hedonist","noun","A person who seeks pleasure","The hedonist pursued comfort above all else."],
+["Heinous","adj","Utterly wicked or criminal","The heinous crime shocked the community."],
+["Heretical","adj","Contrary to established belief","His heretical views cost him his position."],
+["Heuristic","adj","Enabling self-discovery; trial and error","The heuristic approach encouraged exploration."],
+["Idyllic","adj","Pleasantly simple and peaceful","The idyllic countryside attracted city dwellers."],
+["Illicit","adj","Forbidden by law or rules","He was arrested for illicit trading."],
+["Imminent","adj","About to happen","A storm was imminent by afternoon."],
+["Impassive","adj","Not feeling or showing emotion","His impassive face revealed nothing."],
+["Imperious","adj","Assuming authority without justification","His imperious tone silenced the room."],
+["Impertinent","adj","Not showing proper respect","The impertinent student interrupted repeatedly."],
+["Incessant","adj","Without interruption; constant","The incessant noise made concentration impossible."],
+["Incongruous","adj","Not in harmony; out of place","The modern skyscraper looked incongruous in the old town."],
+["Indignant","adj","Feeling anger at unfair treatment","She was indignant at the false accusation."],
+["Indulgent","adj","Having a readiness to be lenient","Indulgent parents rarely say no to children."],
+["Infamy","noun","The state of being notorious","The date lives in infamy."],
+["Ingenious","adj","Clever and original","Her ingenious solution surprised everyone."],
+["Inimitable","adj","So good it cannot be copied","His inimitable style set him apart."],
+["Inquisitive","adj","Curious; eager for knowledge","The inquisitive child asked endless questions."],
+["Insatiable","adj","Impossible to satisfy","He had an insatiable appetite for learning."],
+["Insolent","adj","Showing rude and arrogant disrespect","The insolent reply angered the teacher."],
+["Insouciant","adj","Showing casual lack of concern","Her insouciant attitude troubled her parents."],
+["Intemperate","adj","Having or showing a lack of self-control","His intemperate outburst embarrassed everyone."],
+["Interminable","adj","Endless; seeming to have no end","The interminable meeting tested everyone's patience."],
+["Intransigent","adj","Unwilling to change views","The intransigent negotiator refused all deals."],
+["Inure","verb","To accustom to something unpleasant","Soldiers become inured to the horrors of war."],
+["Invidious","adj","Likely to cause offense; unfair","Making invidious comparisons is hurtful."],
+["Irreverent","adj","Showing a lack of respect","Her irreverent humor offended some audiences."],
+["Jargon","noun","Special words used by a group","Medical jargon can confuse patients."],
+["Jettison","verb","To throw overboard; to abandon","The pilot jettisoned fuel before landing."],
+["Judicious","adj","Having sound judgment","A judicious choice of words avoids conflict."],
+["Labyrinthine","adj","Complex and tortuous","The labyrinthine tax code confused experts."],
+["Lachrymose","adj","Tearful; prone to weeping","The lachrymose film left everyone in tears."],
+["Lambaste","verb","To criticize harshly","Critics lambasted the poorly made film."],
+["Lampoon","verb/noun","To mock; a satirical attack","The comedian lampooned the politician nightly."],
+["Languor","noun","A state of tiredness or lack of energy","Summer afternoons induced a pleasant languor."],
+["Largesse","noun","Generosity in giving gifts","Her largesse funded the entire project."],
+["Lavish","adj","Sumptuously rich; to bestow generously","He lavished attention on his only child."],
+["Lax","adj","Not sufficiently strict; loose","Lax security allowed the breach to occur."],
+["Licentious","adj","Promiscuous; lacking moral restraint","The licentious party scandalized the town."],
+["Limpid","adj","Clear and transparent; easily understood","The limpid stream reflected the sky."],
+["Listless","adj","Lacking energy or enthusiasm","She wandered about in a listless manner."],
+["Litigious","adj","Prone to engaging in lawsuits","The litigious company sued suppliers frequently."],
+["Longevity","noun","Long life; long service","The diet may contribute to longevity."],
+["Luminous","adj","Bright; glowing; enlightening","The luminous essay illuminated the topic."],
+["Lyrical","adj","Expressing emotion in an imaginative way","His lyrical prose read like poetry."],
+["Magnanimous","adj","Generous in forgiving others","The magnanimous victor pardoned the losers."],
+["Malfeasance","noun","Wrongdoing, especially by a public official","The official was charged with malfeasance."],
+["Manifest","adj/verb","Clearly apparent; to make evident","The symptoms of the disease manifested slowly."],
+["Manipulate","verb","To control in a devious way","He manipulated others to serve his interests."],
+["Maverick","noun","An independent-minded person","The maverick senator voted against his party."],
+["Meander","verb","To follow a winding course; to ramble","The river meanders through the valley."],
+["Melancholy","noun/adj","Pensive sadness; deeply sad","A sense of melancholy pervaded the film."],
+["Mendacity","noun","Untruthfulness","His mendacity was eventually exposed."],
+["Metamorphosis","noun","A change of form or character","The metamorphosis of the caterpillar is remarkable."],
+["Mire","noun/verb","Swampy ground; to involve in trouble","The project became mired in bureaucracy."],
+["Miscreant","noun","A person who behaves badly","The miscreant was caught vandalizing the school."],
+["Misnomer","noun","A wrong or inaccurate name","Calling it a fish is a misnomer; it's a mammal."],
+["Modicum","noun","A small quantity of something","He showed only a modicum of interest."],
+["Moribund","adj","At the point of death; no longer active","The moribund industry needed urgent reform."],
+["Motley","adj","Diverse and varied in appearance","A motley crew gathered at the wharf."],
+["Myopic","adj","Short-sighted; lacking foresight","The myopic policy ignored long-term effects."],
+["Negate","verb","To nullify; to deny","The new evidence negated the original theory."],
+["Negligent","adj","Failing to take proper care","The negligent driver caused the accident."],
+["Nemesis","noun","One's downfall; an enemy","Procrastination was his greatest nemesis."],
+["Nihilism","noun","Rejection of all moral principles","His nihilism made meaningful debate impossible."],
+["Nonchalant","adj","Casually calm and relaxed","She was nonchalant about the dangerous task."],
+["Nullify","verb","To make legally invalid; to cancel","The court moved to nullify the contract."],
+["Oblivion","noun","The state of being forgotten","Many old films have fallen into oblivion."],
+["Obstreperous","adj","Noisy and difficult to control","The obstreperous crowd drowned out the speaker."],
+["Odious","adj","Extremely unpleasant; hateful","The odious character was hated by all."],
+["Oligarchy","noun","Government by a small group","The country had descended into oligarchy."],
+["Ominous","adj","Suggesting something bad is coming","The ominous clouds signaled a storm."],
+["Oppressive","adj","Harsh; causing distress","The oppressive heat made work unbearable."],
+["Ostentation","noun","A pretentious display of wealth","His mansion was a monument to ostentation."],
+["Overwrought","adj","In a state of nervous agitation","She was overwrought after the stressful week."],
+["Pander","verb","To gratify someone's desires without principle","The tabloid pandered to people's fears."],
+["Paradox","noun","A statement that contradicts itself but may be true","It's a paradox: less can sometimes be more."],
+["Paramount","adj","More important than anything else","Safety is of paramount importance."],
+["Pariah","noun","An outcast","After the scandal, he became a social pariah."],
+["Parody","noun","An imitation for comic effect","The sketch was a parody of political speeches."],
+["Pathos","noun","A quality evoking pity or sadness","The novel was full of genuine pathos."],
+["Patronize","verb","To treat in a condescending way","Please don't patronize me with simple explanations."],
+["Pensive","adj","Engaged in deep thought","She sat in a pensive mood by the window."],
+["Perennial","adj","Lasting or existing for a long time","Traffic is a perennial problem in the city."],
+["Permeate","verb","To spread through; to pervade","A smell of smoke permeated the building."],
+["Perpetuate","verb","To make continue indefinitely","The law perpetuated existing inequalities."],
+["Perturb","verb","To make anxious or unsettled","The unexpected news perturbed everyone."],
+["Phlegmatic","adj","Having a calm, unemotional nature","His phlegmatic response surprised everyone."],
+["Plethora","noun","A large or excessive amount","There is a plethora of options to choose from."],
+["Poignant","adj","Evoking sadness; touching","The poignant finale left the audience in tears."],
+["Polarize","verb","To divide into opposing factions","The issue polarized the entire nation."],
+["Pomposity","noun","Exaggerated importance or dignity","His pomposity made everyone uncomfortable."],
+["Ponderous","adj","Dull and laborious; very heavy","The ponderous textbook required great effort."],
+["Preclude","verb","To prevent from happening","The injury precluded him from competing."],
+["Precocious","adj","Having developed early","The precocious child read novels at age six."],
+["Pretentious","adj","Claiming greater importance than justified","His pretentious attitude repelled everyone."],
+["Prevalent","adj","Widespread at a particular time","Depression is prevalent among young adults."],
+["Profligate","adj","Recklessly extravagant; dissolute","His profligate spending left him bankrupt."],
+["Proliferate","verb","To grow or reproduce rapidly","Social media platforms proliferate constantly."],
+["Prolific","adj","Producing many works or results","Mozart was remarkably prolific in his short life."],
+["Propensity","noun","An inclination or tendency","He had a propensity for risky investments."],
+["Propriety","noun","Conformity to accepted standards of behavior","She always acted with perfect propriety."],
+["Prudent","adj","Wise in handling practical matters","A prudent investor diversifies their portfolio."],
+["Puerile","adj","Childishly silly","The puerile humor wore thin quickly."],
+["Punctilious","adj","Very careful about doing things correctly","He was punctilious about his research methods."],
+["Quandary","noun","A state of uncertainty","She was in a quandary about what to say."],
+["Quintessential","adj","Representing the most typical example","Paris is the quintessential European city."],
+["Ramification","noun","A consequence of an action","The ramifications of the decision were enormous."],
+["Rancorous","adj","Having bitter feelings","The rancorous debate ended without resolution."],
+["Rapacious","adj","Aggressively greedy","The rapacious corporation exploited its workers."],
+["Raucous","adj","Unpleasantly loud and harsh","The raucous party disturbed the neighbors."],
+["Recant","verb","To withdraw a previous statement","Under pressure, he recanted his confession."],
+["Reclusive","adj","Avoiding the company of others","The reclusive author never gave interviews."],
+["Rectitude","noun","Morally correct behavior","He was known for his personal rectitude."],
+["Relegate","verb","To assign to an inferior position","He was relegated to a minor department."],
+["Relinquish","verb","To voluntarily give up","He relinquished control of the company."],
+["Remorse","noun","Deep regret for wrongdoing","She felt deep remorse for the hurtful words."],
+["Reprehensible","adj","Deserving condemnation","His reprehensible conduct shocked the board."],
+["Repudiate","verb","To refuse to accept; to deny","He repudiated all the allegations against him."],
+["Resilient","adj","Able to recover quickly from difficulties","The resilient community rebuilt after the flood."],
+["Revere","verb","To feel deep respect for","The community revered the elderly scholar."],
+["Rigorous","adj","Extremely thorough and careful","The rigorous experiment yielded clear results."],
+["Ruthless","adj","Showing no pity","The ruthless CEO eliminated entire departments."],
+["Sacrosanct","adj","Too important to be criticized or changed","The budget was treated as sacrosanct."],
+["Sagacious","adj","Having good judgment","The sagacious advisor predicted the outcome."],
+["Satire","noun","Using humor to criticize","Swift used satire to attack political corruption."],
+["Scrutinize","verb","To examine or inspect closely","The committee scrutinized every expenditure."],
+["Secular","adj","Not religious; not spiritual","France is constitutionally a secular state."],
+["Serendipity","noun","The occurrence of pleasant surprises","Finding that book was pure serendipity."],
+["Servile","adj","Having or showing excessive willingness to serve","The servile assistant agreed to everything."],
+["Skepticism","noun","A doubting or questioning attitude","Scientific skepticism drives progress."],
+["Slander","noun/verb","False spoken statements; to say false things","The article was found to constitute slander."],
+["Solemnity","noun","The state of being serious and dignified","The ceremony had an air of great solemnity."],
+["Sophistry","noun","Clever but misleading reasoning","His argument was exposed as mere sophistry."],
+["Sparse","adj","Thinly dispersed; meager","The text was sparse and hard to interpret."],
+["Steadfast","adj","Resolutely firm and loyal","She remained steadfast in her commitment."],
+["Stigma","noun","A mark of disgrace","There is a stigma attached to mental illness."],
+["Stoic","adj/noun","Enduring hardship without complaint","The stoic patient never complained once."],
+["Stymie","verb","To prevent progress; to obstruct","Budget cuts stymied the research project."],
+["Sublime","adj","Of great excellence or beauty","The mountain scenery was truly sublime."],
+["Substantiate","verb","To provide evidence to support a claim","He could not substantiate his wild claims."],
+["Subtle","adj","So slight as to be difficult to detect","There was a subtle shift in her mood."],
+["Subvert","verb","To undermine; to disrupt","The hackers sought to subvert the election."],
+["Supercilious","adj","Behaving as if superior to others","His supercilious attitude put everyone off."],
+["Superficial","adj","Existing only on the surface; shallow","Her assessment was superficial at best."],
+["Superfluous","adj","Unnecessary; more than enough","The redundant clause was entirely superfluous."],
+["Surmise","verb/noun","To suppose something without proof","She surmised that he had already left."],
+["Sycophancy","noun","Excessive flattery for self-gain","The sycophancy in the meeting was obvious."],
+["Synthesis","noun","Combining elements to form a whole","The essay required a synthesis of sources."],
+["Tangible","adj","Perceptible by touch; real","The project produced tangible results."],
+["Tautology","noun","Saying the same thing twice","'Free gift' is a tautology."],
+["Tedious","adj","Too long and tiresome","The tedious process frustrated the applicants."],
+["Temperance","noun","Moderation in action","Temperance in all things leads to a balanced life."],
+["Timid","adj","Lacking courage","The timid child hid behind her mother."],
+["Tirade","noun","A long angry speech","His tirade against the referee continued for hours."],
+["Transcend","verb","To go beyond; to surpass","Great art transcends cultural boundaries."],
+["Traverse","verb","To travel across","They traversed the entire continent on foot."],
+["Treacherous","adj","Guilty of betrayal; dangerous","The treacherous road was closed in winter."],
+["Trepidation","noun","A feeling of anxiety","She entered the exam with trepidation."],
+["Tumultuous","adj","Loud, excited, and emotional","The crowd gave a tumultuous welcome."],
+["Tyranny","noun","Cruel oppressive government","The revolution overthrew the tyranny."],
+["Undulate","verb","To move in a wave-like pattern","The hills undulated gently into the distance."],
+["Uphold","verb","To confirm or support","The court upheld the original decision."],
+["Usurp","verb","To take a position of power illegally","The general usurped the elected president."],
+["Utilitarian","adj","Designed to be useful; practical","The design was utilitarian rather than beautiful."],
+["Vacuous","adj","Having no serious purpose; empty","His vacuous stare suggested he wasn't listening."],
+["Valediction","noun","A farewell statement","Her valediction moved the graduating class."],
+["Vengeance","noun","Punishment in retaliation","He sought vengeance for the betrayal."],
+["Vex","verb","To annoy; to cause distress","The constant interruptions vexed her greatly."],
+["Vigilant","adj","Keeping careful watch for danger","Stay vigilant against online fraud."],
+["Vindicate","verb","To clear of blame; to justify","The results vindicated his earlier prediction."],
+["Vindictive","adj","Seeking revenge","Her vindictive response shocked her colleagues."],
+["Virulent","adj","Highly infectious; bitterly hostile","The virulent criticism wounded his confidence."],
+["Visceral","adj","Relating to deep inward feelings","The performance was visceral and raw."],
+["Vitiate","verb","To impair the quality of","The scandal vitiated his reputation entirely."],
+["Vitriolic","adj","Filled with bitter criticism","His vitriolic review destroyed the artist's debut."],
+["Vivacious","adj","Attractively lively","Her vivacious personality lit up the room."],
+["Vociferous","adj","Expressing views loudly","She was vociferous in her opposition."],
+["Wane","verb","To decrease in vigor or extent","His enthusiasm waned after the setback."],
+["Wanton","adj","Deliberate and unprovoked","The wanton destruction shocked observers."],
+["Whimsical","adj","Playfully quaint or fanciful","Her whimsical illustrations charmed children."],
+["Wily","adj","Skilled at gaining advantage","The wily negotiator outmaneuvered everyone."],
+["Winnow","verb","To separate and eliminate inferior parts","She winnowed the applications carefully."],
+["Withstand","verb","To resist; to endure","The bridge was designed to withstand earthquakes."],
+["Wrath","noun","Extreme anger","The flood was described as divine wrath."],
+["Zealotry","noun","Fanatical devotion to a cause","His zealotry made him difficult to reason with."]
+,
+["Abnegate","verb","To renounce or reject something","He abnegated all responsibility for the failure."],
+["Accredit","verb","To give authority or credibility to","The organization was accredited by the government."],
+["Actuate","verb","To motivate or cause to act","Fear of failure actuated her relentless work."],
+["Adage","noun","A short widely known proverb","The old adage proved true in the end."],
+["Adamant","adj","Refusing to be persuaded","She was adamant about her position."],
+["Adduce","verb","To cite as evidence","He adduced several examples to support his claim."],
+["Adherent","noun","A supporter of a cause","She was an adherent of the new philosophy."],
+["Admonition","noun","A warning or reprimand","The judge's admonition was clear."],
+["Adventitious","adj","Coming from an outside source; accidental","His success was adventitious, not earned."],
+["Afflatus","noun","A divine inspiration or impulse","The poet described his work as coming from afflatus."],
+["Affront","noun","A deliberate insult or offence","His rudeness was a deliberate affront."],
+["Aggravate","verb","To make worse; to annoy","Stress aggravates most health conditions."],
+["Agitate","verb","To disturb; to campaign vigorously","The activists agitated for electoral reform."],
+["Alienate","verb","To cause someone to feel isolated","His behavior alienated former friends."],
+["Allegory","noun","A story representing abstract ideas","The novel was an allegory for political oppression."],
+["Allude","verb","To refer to indirectly","She alluded to the problem without naming it."],
+["Amalgamate","verb","To combine or merge into one","The two companies amalgamated into one."],
+["Ambiguity","noun","Uncertainty or inexactness of meaning","The law's ambiguity created enforcement problems."],
+["Amicable","adj","Having a friendly, peaceable spirit","The two sides reached an amicable agreement."],
+["Anarchy","noun","Absence of government; total disorder","The coup plunged the country into anarchy."],
+["Annihilate","verb","To destroy utterly; obliterate","The virus threatened to annihilate the species."],
+["Annotate","verb","To add explanatory notes to a text","Students annotate their textbooks while studying."],
+["Antipathy","noun","A deep-seated feeling of dislike","She felt a deep antipathy toward injustice."],
+["Apocryphal","adj","Of doubtful authenticity; invented","The story is probably apocryphal."],
+["Apposite","adj","Very appropriate; apt","Her apposite remark summarized the debate perfectly."],
+["Archetype","noun","A very typical or original example","The hero is the central archetype of myths."],
+["Aridity","noun","Extreme dryness; lack of interest","The aridity of the desert was overwhelming."],
+["Artisan","noun","A skilled craft worker","The artisan carved intricate wooden patterns."],
+["Ascribe","verb","To attribute something to a cause","The doctor ascribed the illness to stress."],
+["Aspersion","noun","An attack on the reputation of someone","He cast aspersions on her competence."],
+["Assent","noun","Agreement; approval","The committee gave its assent to the plan."],
+["Attain","verb","To succeed in achieving something","She attained every goal she set herself."],
+["Atypical","adj","Not representative of a type or group","His calm reaction was atypical under pressure."],
+["Audacity","noun","A willingness to take bold risks","The audacity of the plan surprised everyone."],
+["Augment","verb","To make greater; to supplement","Exercise augments mental clarity significantly."],
+["Auspicious","adj","Conducive to success; favourable","The clear skies were an auspicious omen."],
+["Authoritarian","adj","Favouring strict obedience to authority","The authoritarian government banned protests."],
+["Awry","adj","Away from the expected course","The plan went awry from the very start."],
+["Baffle","verb","To totally bewilder or perplex","The puzzle baffled even expert solvers."],
+["Beseech","verb","To ask urgently and fervently","She beseeched him to reconsider his decision."],
+["Bestow","verb","To confer or give as a gift","The university bestowed an honorary degree on her."],
+["Blatant","adj","Done openly without shame","The blatant lie was obvious to everyone."],
+["Boisterous","adj","Noisy, energetic, and cheerful","The boisterous crowd filled the stadium."],
+["Brevity","noun","Concise and exact use of words","Brevity is the soul of wit."],
+["Byzantine","adj","Excessively complicated or devious","The Byzantine tax code confused everyone."],
+["Callow","adj","Inexperienced and immature","The callow recruit made several basic errors."],
+["Carping","adj","Tending to find fault; critical","His carping criticism discouraged the whole team."],
+["Catharsis","noun","An emotional release or purification","The film provided genuine catharsis."],
+["Causality","noun","The relationship between cause and effect","The study examined causality, not just correlation."],
+["Cede","verb","To give up power or territory","The company ceded control to the board."],
+["Chagrin","noun","Irritation or embarrassment at failure","Much to her chagrin, she lost the debate."],
+["Chronic","adj","Persisting for a long time","She suffered from chronic back pain."],
+["Circumvent","verb","To find a way around an obstacle","He circumvented the security measures cleverly."],
+["Clout","noun","Influence or power in a situation","She had great clout in the industry."],
+["Cognizant","adj","Having knowledge or awareness of","She was cognizant of the risks involved."],
+["Coherence","noun","The quality of being logical and consistent","The essay lacked coherence and flow."],
+["Collaborate","verb","To work jointly with others","Scientists collaborated across continents on the project."],
+["Compel","verb","To force or oblige someone to act","The evidence compelled a full confession."],
+["Compliant","adj","Willing to obey; meeting standards","The building was fully compliant with codes."],
+["Concede","verb","To admit; to yield under pressure","He conceded defeat after the final count."],
+["Conciliatory","adj","Intended to placate or pacify","A conciliatory gesture eased the tensions."],
+["Conclusive","adj","Decisive; putting an end to doubt","The DNA test was conclusive."],
+["Conducive","adj","Making a certain outcome likely","A quiet room is conducive to studying."],
+["Confiscate","verb","To seize or take with authority","Border officials confiscated the contraband."],
+["Conjecture","noun","An opinion or conclusion based on guesswork","That was mere conjecture, not established fact."],
+["Consolidate","verb","To combine into a single stronger unit","The firm consolidated its operations abroad."],
+["Constraint","noun","A limitation or restriction on action","Budget constraints limited the project's scope."],
+["Covert","adj","Not openly acknowledged; secret","The covert operation remained secret for years."],
+["Credible","adj","Able to be believed; convincing","Her credible testimony swayed the jury."],
+["Crucial","adj","Decisive or of critical importance","The crucial vote was held at midnight."],
+["Cryptic","adj","Having a puzzling hidden meaning","He left a cryptic note before leaving."],
+["Curtail","verb","To reduce or limit in extent","The budget cuts curtailed the entire program."],
+["Debacle","noun","A sudden, humiliating complete disaster","The product launch was a complete debacle."],
+["Decisive","adj","Settling an issue; displaying resolution","A decisive leader acts without hesitation."],
+["Defiant","adj","Boldly showing resistance or disobedience","The defiant student refused to apologize."],
+["Defunct","adj","No longer existing or functioning","The defunct airline went bankrupt last year."],
+["Delude","verb","To mislead or cause to believe falsely","He deluded himself into thinking he would win."],
+["Depose","verb","To remove from power or office","The general deposed the president in a coup."],
+["Deplete","verb","To reduce greatly in number or quantity","Overfishing depleted the ocean fish stock."],
+["Derisive","adj","Expressing contempt or ridicule","His derisive laughter stung the presenter deeply."],
+["Designate","verb","To appoint; to mark out and specify","She was designated as the new team leader."],
+["Deter","verb","To discourage someone from acting","Heavy fines deter illegal parking effectively."],
+["Devious","adj","Showing a skillful use of underhand tactics","His devious scheme nearly worked perfectly."],
+["Devise","verb","To plan or invent a scheme","They devised a new strategy to cut costs."],
+["Diffidence","noun","Modesty or shyness resulting from lack of confidence","Her diffidence prevented her from speaking up."],
+["Diminish","verb","To make or become less or smaller","The scandal significantly diminished his reputation."],
+["Dispel","verb","To drive away; to cause to vanish","His speech dispelled all remaining doubts."],
+["Distinctive","adj","Characteristic of one person or thing","Her distinctive voice was recognizable anywhere."],
+["Diverge","verb","To separate and go in different directions","Their views diverged sharply on the key issue."],
+["Dominant","adj","Having power and influence over others","The dominant party controlled the legislature."],
+["Dwindle","verb","To diminish gradually in size or strength","The funds dwindled faster than expected."],
+["Earnest","adj","Resulting from or showing sincere conviction","She was earnest in her desire to help."],
+["Elaborate","adj","Involving many carefully arranged parts","The elaborate plan involved many intricate steps."],
+["Elicit","verb","To evoke or draw out a response","The question elicited an unexpectedly angry response."],
+["Eloquence","noun","Fluent, forceful, and persuasive speech","His eloquence moved the entire assembly."],
+["Embellish","verb","To adorn; to make more interesting by adding detail","She embellished the story with invented details."],
+["Eminent","adj","Respected and famous in a particular field","The eminent scientist won the Nobel Prize."],
+["Empiricism","noun","Knowledge derived from experience and evidence","Empiricism drives the scientific method."],
+["Endorse","verb","To approve and publicly support","The senator endorsed the new education bill."],
+["Enhance","verb","To intensify or further improve quality","The new software enhanced overall performance."],
+["Eradicate","verb","To completely remove or destroy","The campaign aimed to eradicate poverty."],
+["Estrange","verb","To cause someone to feel no longer close","Years of conflict estranged the brothers."],
+["Exaggerate","verb","To represent as greater than is true","He exaggerated his accomplishments on his résumé."],
+["Exemplify","verb","To be a typical example of something","Her career exemplifies the power of persistence."],
+["Expedite","verb","To make a process happen sooner","The new system expedited all customer requests."],
+["Fabricate","verb","To invent falsely; to construct","He fabricated an alibi to avoid prosecution."],
+["Facilitate","verb","To make an action or process easier","The teacher's role is to facilitate learning."],
+["Fallacy","noun","A mistaken belief based on unsound reasoning","The claim was based on a logical fallacy."],
+["Fanaticism","noun","Excessive and often misguided zeal","His fanaticism scared even his closest supporters."],
+["Feasible","adj","Possible and practical to do","The new plan was feasible within the budget."],
+["Fidelity","noun","Faithfulness; accuracy in detail","She showed absolute fidelity to the original text."],
+["Flourish","verb","To grow or develop in a healthy way","The business flourished under new management."],
+["Foreboding","noun","A feeling that something bad will happen","She felt a sense of foreboding before the trip."],
+["Formidable","adj","Inspiring fear or respect through strength","She was a formidable and skilled debater."],
+["Forthright","adj","Direct and outspoken; frank","He was forthright about the project's many flaws."],
+["Fraudulent","adj","Obtained or acting by deception","The fraudulent invoice was uncovered by auditors."],
+["Futile","adj","Producing no result; pointless","Resistance was futile against the overwhelming force."],
+["Generate","verb","To produce or bring into being","The project generated enormous public interest."],
+["Genuine","adj","Truly what something is claimed to be","His concern for the team was entirely genuine."],
+["Groundless","adj","Not based on any good reason or evidence","His fears turned out to be completely groundless."],
+["Hamstring","verb","To severely restrict progress or effectiveness","Budget cuts hamstrung the research division."],
+["Haphazard","adj","Lacking any obvious principle of organisation","The haphazard approach produced consistently poor results."],
+["Harmonize","verb","To make or be harmonious or consistent","The policy must harmonize with existing laws."],
+["Hypothetical","adj","Imagined or suggested as a possible example","This is a purely hypothetical scenario."],
+["Idealize","verb","To regard as perfect or better than reality","He idealized his mentor to an unrealistic degree."],
+["Illuminate","verb","To light up; to help clarify or explain","The example illuminated the abstract concept."],
+["Imply","verb","To suggest without directly stating","His tone strongly implied disappointment."],
+["Imposing","adj","Grand and impressive in appearance","The imposing cathedral dominated the entire skyline."],
+["Inadvertent","adj","Not resulting from deliberate planning","His inadvertent remark caused lasting offense."],
+["Induce","verb","To bring about or give rise to","The medication induced a profoundly calming effect."],
+["Indispensable","adj","Absolutely necessary and essential","Her skills were indispensable to the project."],
+["Inflexible","adj","Unwilling to change; rigid","His inflexible position blocked all possible compromise."],
+["Inherent","adj","Existing as a natural permanent part","There are inherent risks in any investment."],
+["Innate","adj","Inborn; possessed from birth","Her innate talent emerged at an early age."],
+["Instigate","verb","To bring about or initiate an action","He instigated the rebellion against the regime."],
+["Integrate","verb","To combine parts into a whole","The plan was to fully integrate the two systems."],
+["Inviolable","adj","Never to be broken or dishonoured","Her fundamental right to privacy was inviolable."],
+["Irrefutable","adj","Impossible to deny or disprove","The scientific evidence was utterly irrefutable."],
+["Legitimate","adj","Conforming to the law; justifiable","He had a legitimate claim to the estate."],
+["Liable","adj","Responsible by law; likely to do something","He was found liable for the accident damages."],
+["Liberate","verb","To set free from oppression or confinement","The prisoners were liberated after the war."],
+["Linger","verb","To stay somewhere longer than necessary","The smell of paint lingered for several days."],
+["Literal","adj","Taking words in their most basic sense","Her literal interpretation completely missed the point."],
+["Maintain","verb","To cause to continue; to preserve","She maintained her composure under extreme pressure."],
+["Mandatory","adj","Required by law or rules; compulsory","Attendance at the safety meeting was mandatory."],
+["Meager","adj","Lacking in quantity or quality","The meager salary barely covered her rent."],
+["Mediate","verb","To intervene to help resolve a dispute","He mediated the bitter dispute between the parties."],
+["Methodical","adj","Done in a systematic and orderly way","Her methodical approach produced consistently great results."],
+["Monstrous","adj","Shockingly wrong or unfair; very large","The monstrous regime oppressed its own citizens."],
+["Motivate","verb","To provide someone with a reason to act","His rousing words motivated the team to push harder."],
+["Negligible","adj","So small as to be not worth considering","The error was negligible and easily corrected."],
+["Notorious","adj","Famous for something bad or negative","The notorious criminal was finally caught."],
+["Objective","noun","A goal or aim to be achieved","The prime objective was to double revenue."],
+["Obstruct","verb","To block or prevent movement or progress","The fallen tree obstructed the entire road."],
+["Omnipotent","adj","Having unlimited or universal power","No earthly ruler is truly omnipotent."],
+["Opportunist","noun","One who takes advantage of circumstances","Critics called him a shameless opportunist."],
+["Outspoken","adj","Frank and direct in speech","She was outspoken in her criticism of the policy."],
+["Paradoxical","adj","Seemingly absurd but possibly well-founded","It's paradoxical that more choice leads to less happiness."],
+["Passive","adj","Accepting or allowing without active response","A passive response only enabled the ongoing abuse."],
+["Perpetual","adj","Never ending or changing; constant","The perpetual noise drove him to distraction."],
+["Persuasive","adj","Good at persuading; tending to convince","Her persuasive essay changed many minds."],
+["Pivotal","adj","Of crucial importance in relation to success","The negotiation was a truly pivotal moment."],
+["Precede","verb","To come before something in time or order","The appetizer precedes the main course."],
+["Predominant","adj","Present as the strongest or main element","The predominant theme throughout was loss."],
+["Premise","noun","A previous statement on which an argument is based","The argument rested on a thoroughly flawed premise."],
+["Profound","adj","Very great or intense; having insight","The experience had a genuinely profound impact."],
+["Progressive","adj","Favouring reform; occurring gradually","Her progressive ideas reshaped the entire curriculum."],
+["Prominent","adj","Important; famous; projecting outward","She became a prominent figure in national politics."],
+["Proportionate","adj","Corresponding in size or degree to something","Punishment should always be proportionate to the crime."],
+["Prudence","noun","The quality of being prudent; caution","Prudence demands we carefully check the facts first."],
+["Radical","adj","Advocating fundamental or thorough change","His radical ideas challenged every convention."],
+["Rational","adj","Based on or in accordance with reason","A rational decision avoids unnecessary emotional bias."],
+["Reckless","adj","Without thinking or caring about danger","Reckless driving endangers many innocent lives."],
+["Refine","verb","To improve something by making small changes","She refined her argument through many careful drafts."],
+["Reinforce","verb","To strengthen or support something","New evidence reinforced the original conclusion."],
+["Relentless","adj","Unceasingly intense; never giving up","His relentless effort eventually brought success."],
+["Renounce","verb","To formally declare abandonment of a claim","She renounced her citizenship after moving abroad."],
+["Repercussion","noun","An unintended consequence of an action","The decision had far-reaching repercussions."],
+["Repressive","adj","Inhibiting personal freedom; oppressive","The repressive law banned all public assembly."],
+["Residual","adj","Remaining after most has been removed","Some residual pain lingered long after surgery."],
+["Resolute","adj","Admirably purposeful and determined","She was resolute in her personal commitment."],
+["Restrain","verb","To keep under control; to prevent from acting","Guards were needed to restrain the rowdy crowd."],
+["Rigidity","noun","Inflexibility; the inability to be changed","Institutional rigidity significantly slowed the reforms."],
+["Robust","adj","Strong and healthy; vigorous","The economy maintained robust and consistent growth."],
+["Salvage","verb","To rescue from loss or adverse circumstances","He salvaged the entire project at the last minute."],
+["Scrutiny","noun","Critical observation or examination","The proposal came under intense public scrutiny."],
+["Selective","adj","Careful about what is chosen or allowed","Be selective about the sources you cite."],
+["Sensible","adj","Done or chosen with good judgment","She made a sensible decision under extreme pressure."],
+["Simplistic","adj","Treating complex issues as more simple","His simplistic view ignored many important nuances."],
+["Singular","adj","Unique; remarkably fine or excellent","This was a truly singular achievement in history."],
+["Sovereign","adj","Possessing supreme or ultimate power","The sovereign nation firmly rejected foreign interference."],
+["Stringent","adj","Strict, precise, and exacting","The stringent requirements filtered out all weak applicants."],
+["Strive","verb","To make great efforts to achieve something","He strived to improve himself every single day."],
+["Substantive","adj","Having a firm basis in reality; important","She raised several substantive objections to the plan."],
+["Succumb","verb","To fail to resist pressure or temptation","He succumbed to the pressure and finally confessed."],
+["Suppress","verb","To forcibly put an end to something","The government brutally suppressed all protests."],
+["Surpass","verb","To exceed; to be greater or better than","Her final results surpassed all expectations."],
+["Susceptible","adj","Likely to be influenced or harmed by","He was highly susceptible to respiratory infections."],
+["Sustain","verb","To keep going continuously over time","She sustained her impressive performance throughout."],
+["Systematic","adj","Done according to a fixed plan or system","A systematic approach significantly reduces errors."],
+["Timeless","adj","Not affected or diminished by the passage of time","Shakespeare's central themes are truly timeless."],
+["Tolerance","noun","The ability or willingness to accept difference","Tolerance is essential in any diverse society."],
+["Tractable","adj","Easy to control, manage, or influence","A tractable problem eventually yields to effort."],
+["Trivial","adj","Of little value or importance; insignificant","He became distracted by completely trivial concerns."],
+["Unambiguous","adj","Not open to more than one interpretation","Her instructions were clear and entirely unambiguous."],
+["Understate","verb","To describe as smaller or less than it is","He seriously understated the severity of the situation."],
+["Unfounded","adj","Having no basis or foundation in fact","The damaging rumors were entirely unfounded."],
+["Universal","adj","Relating to or done by all; worldwide","Access to quality education should be universal."],
+["Unprecedented","adj","Never done or known before","The historic discovery was truly unprecedented."],
+["Vague","adj","Not clearly expressed or understood","His vague response only raised more questions."],
+["Valid","adj","Well-founded and applicable; legally acceptable","Her concern is a completely valid one."],
+["Vanquish","verb","To defeat thoroughly in competition or battle","She vanquished all her opponents with ease."],
+["Viable","adj","Capable of working successfully; feasible","The plan was ultimately not financially viable."],
+["Vindication","noun","The action of clearing someone from blame","His release was a complete vindication of justice."],
+["Virtue","noun","Behaviour showing high moral standards","Patience is a virtue that is often undervalued."],
+["Vitality","noun","The state of being strong and active","The new program injected fresh vitality into the firm."],
+["Voluble","adj","Speaking rapidly, easily, and at length","The voluble host dominated every conversation."],
+["Vulnerable","adj","Susceptible to physical or emotional attack","Children are especially vulnerable to online dangers."],
+["Waver","verb","To be undecided between two opinions","He wavered between the two options for weeks."],
+["Wisdom","noun","The quality of having experience and good judgment","Her wisdom guided the entire team through the crisis."],
+["Witty","adj","Showing clever humour","His witty response drew laughter from the entire crowd."],
+["Yoke","noun","A burden; a frame for coupling animals","They were yoked together by their shared ambition."]
+];
+
+const WORDS = RAW.map(r => ({ word: r[0], pos: r[1], def: r[2], ex: r[3] }));
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let mode = 'flash';
+let deck = [];
+let flashIdx = 0;
+let isFlipped = false;
+let stats = { correct: 0, wrong: 0, streak: 0, seen: 0 };
+let known = new Set();
+
+// Quiz state
+let quizDeck = [];
+let quizIdx = 0;
+let quizAnswered = false;
+let quizCorrect = 0;
+let quizTotal = 20;
+
+// Deck ranges
+const DECKS = {
+  '0':   [0, 190],
+  '1':   [190, 380],
+  '2':   [380, 570],
+  '3':   [570, 759],
+  'all': [0, WORDS.length]
+};
+
+// ─────────────────────────────────────────────
+//  UTILS
+// ─────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function loadStats() {
+  try {
+    const s = JSON.parse(localStorage.getItem('gre_stats') || '{}');
+    if (s.correct !== undefined) stats = s;
+    const k = JSON.parse(localStorage.getItem('gre_known') || '[]');
+    known = new Set(k);
+  } catch(e) {}
+}
+
+function saveStats() {
+  try {
+    localStorage.setItem('gre_stats', JSON.stringify(stats));
+    localStorage.setItem('gre_known', JSON.stringify([...known]));
+  } catch(e) {}
+}
+
+function updateStatsBar() {
+  document.getElementById('statCorrect').textContent = stats.correct;
+  document.getElementById('statWrong').textContent   = stats.wrong;
+  document.getElementById('statStreak').textContent  = stats.streak;
+  document.getElementById('statSeen').textContent    = stats.seen;
+}
+
+function getDeckWords() {
+  const sel = document.getElementById('deckSelect').value;
+  const [s, e] = DECKS[sel];
+  return WORDS.slice(s, e);
+}
+
+// ─────────────────────────────────────────────
+//  FLASHCARD MODE
+// ─────────────────────────────────────────────
+function initFlash() {
+  const words = getDeckWords();
+  const doShuffle = document.getElementById('shuffleSelect').value === 'on';
+  deck = doShuffle ? shuffle(words) : [...words];
+  flashIdx = 0;
+  isFlipped = false;
+  renderCard();
+}
+
+function renderCard() {
+  const card = deck[flashIdx];
+  const el = document.getElementById('theCard');
+  el.classList.remove('flipped');
+  isFlipped = false;
+
+  document.getElementById('cardPosFront').textContent = card.pos;
+  document.getElementById('cardWord').textContent = card.word;
+  document.getElementById('cardDef').textContent = card.def;
+  document.getElementById('cardEx').textContent = card.ex;
+
+  const pct = ((flashIdx + 1) / deck.length * 100).toFixed(1);
+  document.getElementById('flashProgress').style.width = pct + '%';
+  document.getElementById('flashCounter').textContent = `${flashIdx + 1} / ${deck.length}`;
+
+  // Track seen
+  if (!known.has(card.word)) {
+    stats.seen = Math.max(stats.seen, flashIdx + 1);
+    saveStats();
+    updateStatsBar();
+  }
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('theCard').classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+  if (flashIdx < deck.length - 1) {
+    flashIdx++;
+    renderCard();
+    document.getElementById('theCard').classList.add('pop');
+    setTimeout(() => document.getElementById('theCard').classList.remove('pop'), 300);
+  }
+}
+
+function prevCard() {
+  if (flashIdx > 0) {
+    flashIdx--;
+    renderCard();
+  }
+}
+
+function markKnown() {
+  const card = deck[flashIdx];
+  known.add(card.word);
+  stats.correct++;
+  stats.streak++;
+  saveStats();
+  updateStatsBar();
+  nextCard();
+}
+
+function markUnknown() {
+  const card = deck[flashIdx];
+  known.delete(card.word);
+  stats.wrong++;
+  stats.streak = 0;
+  saveStats();
+  updateStatsBar();
+  nextCard();
+}
+
+// ─────────────────────────────────────────────
+//  QUIZ MODE
+// ─────────────────────────────────────────────
+function initQuiz() {
+  const words = getDeckWords();
+  quizDeck = shuffle(words).slice(0, Math.min(quizTotal, words.length));
+  quizIdx = 0;
+  quizCorrect = 0;
+
+  document.getElementById('quizPlayArea').style.display = 'block';
+  document.getElementById('scoreScreen').classList.remove('show');
+  renderQuiz();
+}
+
+function renderQuiz() {
+  if (quizIdx >= quizDeck.length) {
+    showScore();
+    return;
+  }
+
+  quizAnswered = false;
+  const current = quizDeck[quizIdx];
+
+  document.getElementById('quizWord').textContent = current.word;
+  document.getElementById('quizPrompt').style.display = 'none';
+  document.getElementById('nextQuizBtn').style.display = 'none';
+  document.getElementById('quizFeedback').classList.remove('show', 'correct-fb', 'wrong-fb');
+
+  // Generate options: 1 correct + 3 wrong
+  const allWords = getDeckWords();
+  const wrongPool = allWords.filter(w => w.word !== current.word);
+  const wrongs = shuffle(wrongPool).slice(0, 3);
+  const options = shuffle([current, ...wrongs]);
+
+  const pct = (quizIdx / quizDeck.length * 100).toFixed(1);
+  document.getElementById('quizProgress').style.width = pct + '%';
+
+  const container = document.getElementById('quizOptions');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-text">${opt.def}</span>`;
+    btn.onclick = () => answerQuiz(opt.word === current.word, btn, current);
+    container.appendChild(btn);
+  });
+}
+
+function answerQuiz(correct, clickedBtn, current) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const fb = document.getElementById('quizFeedback');
+  const allBtns = document.querySelectorAll('.option-btn');
+
+  allBtns.forEach(btn => {
+    btn.disabled = true;
+    if (btn.querySelector('.option-text').textContent === current.def) {
+      btn.classList.add('correct');
+    }
+  });
+
+  if (correct) {
+    quizCorrect++;
+    stats.correct++;
+    stats.streak++;
+    clickedBtn.classList.add('correct');
+    fb.className = 'quiz-feedback show correct-fb';
+    document.getElementById('fbStatus').className = 'feedback-status c';
+    document.getElementById('fbStatus').textContent = '✓ Correct';
+    document.getElementById('fbAnswer').textContent = `"${current.ex}"`;
+  } else {
+    stats.wrong++;
+    stats.streak = 0;
+    clickedBtn.classList.add('wrong');
+    fb.className = 'quiz-feedback show wrong-fb';
+    document.getElementById('fbStatus').className = 'feedback-status w';
+    document.getElementById('fbStatus').textContent = '✗ Incorrect';
+    document.getElementById('fbAnswer').textContent = `Correct: ${current.def}`;
+  }
+
+  saveStats();
+  updateStatsBar();
+  document.getElementById('nextQuizBtn').style.display = 'block';
+}
+
+function nextQuiz() {
+  quizIdx++;
+  renderQuiz();
+}
+
+function showScore() {
+  document.getElementById('quizPlayArea').style.display = 'none';
+  const screen = document.getElementById('scoreScreen');
+  screen.classList.add('show');
+  const pct = Math.round(quizCorrect / quizDeck.length * 100);
+  document.getElementById('scoreNum').textContent = `${quizCorrect}/${quizDeck.length}`;
+  document.getElementById('scorePct').textContent = `${pct}% correct`;
+  document.getElementById('quizProgress').style.width = '100%';
+}
+
+function restartQuiz() {
+  initQuiz();
+}
+
+// ─────────────────────────────────────────────
+//  STUDY MODE
+// ─────────────────────────────────────────────
+function initStudy() {
+  renderStudyGrid(getDeckWords());
+}
+
+function renderStudyGrid(words) {
+  const grid = document.getElementById('studyGrid');
+  grid.innerHTML = `
+    <div class="study-row header-row">
+      <div class="study-cell">Word</div>
+      <div class="study-cell">POS</div>
+      <div class="study-cell">Definition</div>
+      <div class="study-cell">Example</div>
+    </div>
+  `;
+  words.forEach(w => {
+    const row = document.createElement('div');
+    row.className = 'study-row';
+    row.innerHTML = `
+      <div class="study-cell"><span class="study-word">${w.word}</span></div>
+      <div class="study-cell"><span class="study-pos">${w.pos}</span></div>
+      <div class="study-cell">${w.def}</div>
+      <div class="study-cell" style="font-style:italic;color:#888888">${w.ex}</div>
+    `;
+    grid.appendChild(row);
+  });
+  document.getElementById('searchCount').textContent = `${words.length} words`;
+}
+
+function filterStudy() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const words = getDeckWords();
+  if (!q) { renderStudyGrid(words); return; }
+  const filtered = words.filter(w =>
+    w.word.toLowerCase().includes(q) ||
+    w.def.toLowerCase().includes(q) ||
+    w.ex.toLowerCase().includes(q)
+  );
+  renderStudyGrid(filtered);
+}
+
+// ─────────────────────────────────────────────
+//  MODE SWITCHING
+// ─────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.mode-btn.${m}`).classList.add('active');
+
+  document.getElementById('flashPanel').style.display = m === 'flash' ? 'block' : 'none';
+  document.getElementById('quizPanel').style.display  = m === 'quiz'  ? 'block' : 'none';
+  document.getElementById('typePanel').style.display  = m === 'type'  ? 'block' : 'none';
+  document.getElementById('studyPanel').style.display = m === 'study' ? 'block' : 'none';
+
+  if (m === 'flash') initFlash();
+  if (m === 'quiz')  initQuiz();
+  if (m === 'type')  initType();
+  if (m === 'study') initStudy();
+}
+
+function onDeckChange() {
+  if (mode === 'flash') initFlash();
+  if (mode === 'quiz')  initQuiz();
+  if (mode === 'study') initStudy();
+}
+
+function onShuffleChange() {
+  if (mode === 'flash') initFlash();
+}
+
+// ─────────────────────────────────────────────
+//  KEYBOARD
+// ─────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+  if (mode === 'flash') {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+    if (e.key === 'ArrowRight') nextCard();
+    if (e.key === 'ArrowLeft')  prevCard();
+    if (e.key === 'k' || e.key === 'K') markKnown();
+    if (e.key === 'x' || e.key === 'X') markUnknown();
+  }
+
+  if (mode === 'quiz') {
+    if ((e.key === 'Enter' || e.key === ' ') && quizAnswered) { e.preventDefault(); nextQuiz(); }
+    if (!quizAnswered) {
+      const map = { '1': 0, '2': 1, '3': 2, '4': 3, 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+      if (map[e.key.toLowerCase()] !== undefined) {
+        const btns = document.querySelectorAll('.option-btn');
+        if (btns[map[e.key.toLowerCase()]]) btns[map[e.key.toLowerCase()]].click();
+      }
+    }
+  }
+  // type mode keyboard is handled by the input's onkeydown
+});
+
+// ─────────────────────────────────────────────
+//  RESET
+// ─────────────────────────────────────────────
+function resetAll() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  stats = { correct: 0, wrong: 0, streak: 0, seen: 0 };
+  known = new Set();
+  saveStats();
+  updateStatsBar();
+  if (mode === 'flash') initFlash();
+}
+
+
+// ─────────────────────────────────────────────
+//  TYPE IT MODE
+// ─────────────────────────────────────────────
+let typeDeck = [];
+let typeIdx = 0;
+let typeCorrect = 0;
+let typeTotal = 20;
+let typeAnswered = false;
+let typeHintsUsed = 0;
+let typeCurrentHintCount = 0;
+
+function initType() {
+  const words = getDeckWords();
+  typeDeck = shuffle(words).slice(0, Math.min(typeTotal, words.length));
+  typeIdx = 0;
+  typeCorrect = 0;
+
+  document.getElementById('typePlayArea').style.display = 'block';
+  document.getElementById('typeScoreScreen').classList.remove('show');
+  renderType();
+}
+
+function renderType() {
+  if (typeIdx >= typeDeck.length) {
+    showTypeScore();
+    return;
+  }
+
+  typeAnswered = false;
+  typeCurrentHintCount = 0;
+  const current = typeDeck[typeIdx];
+
+  document.getElementById('typePrompt').textContent = current.def;
+  document.getElementById('typePosHint').textContent = current.pos;
+  document.getElementById('typeInput').value = '';
+  document.getElementById('typeInput').className = 'type-input';
+  document.getElementById('typeInput').disabled = false;
+  document.getElementById('typeFeedback').style.display = 'none';
+  document.getElementById('typeNextBtn').style.display = 'none';
+  document.getElementById('typeHintBtn').style.display = 'inline-block';
+  document.getElementById('typeHintBtn').textContent = 'Hint (first letter)';
+
+  const pct = (typeIdx / typeDeck.length * 100).toFixed(1);
+  document.getElementById('typeProgress').style.width = pct + '%';
+
+  // Render blank letter tiles
+  renderLetterTiles(current.word, '');
+
+  setTimeout(() => document.getElementById('typeInput').focus(), 50);
+}
+
+function renderLetterTiles(word, typed) {
+  const container = document.getElementById('typeHintLetters');
+  container.innerHTML = '';
+  word.split('').forEach((ch, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'hint-letter';
+    if (typed[i] !== undefined) {
+      tile.textContent = typed[i].toUpperCase();
+      tile.classList.add('filled');
+    } else if (i < typeCurrentHintCount) {
+      tile.textContent = ch.toUpperCase();
+      tile.style.color = '#ff5e5f';
+      tile.style.borderColor = 'rgba(255,94,95,0.4)';
+    }
+    container.appendChild(tile);
+  });
+}
+
+function onTypeInput() {
+  const current = typeDeck[typeIdx];
+  if (!current || typeAnswered) return;
+  const val = document.getElementById('typeInput').value;
+  renderLetterTiles(current.word, val);
+}
+
+function onTypeKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (typeAnswered) {
+      nextType();
+    } else {
+      submitType();
+    }
+  }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    showTypeHint();
+  }
+}
+
+function submitType() {
+  if (typeAnswered) return;
+  const current = typeDeck[typeIdx];
+  const val = document.getElementById('typeInput').value.trim();
+  if (!val) return;
+
+  typeAnswered = true;
+  const correct = val.toLowerCase() === current.word.toLowerCase();
+
+  const input = document.getElementById('typeInput');
+  const fb = document.getElementById('typeFeedback');
+
+  input.disabled = true;
+
+  if (correct) {
+    typeCorrect++;
+    stats.correct++;
+    stats.streak++;
+    input.className = 'type-input correct-input';
+    input.value = current.word;
+    fb.className = 'type-feedback correct-fb';
+    fb.textContent = `✓ Correct! "${current.ex}"`;
+    // Show correct tiles
+    renderLetterTilesResult(current.word, true);
+  } else {
+    stats.wrong++;
+    stats.streak = 0;
+    input.className = 'type-input wrong-input';
+    fb.className = 'type-feedback wrong-fb';
+    fb.textContent = `✗ The word was: ${current.word}`;
+    renderLetterTilesResult(current.word, false);
+  }
+
+  fb.style.display = 'block';
+  document.getElementById('typeNextBtn').style.display = 'inline-block';
+  document.getElementById('typeHintBtn').style.display = 'none';
+
+  saveStats();
+  updateStatsBar();
+}
+
+function renderLetterTilesResult(word, allCorrect) {
+  const container = document.getElementById('typeHintLetters');
+  container.innerHTML = '';
+  word.split('').forEach(ch => {
+    const tile = document.createElement('div');
+    tile.className = 'hint-letter ' + (allCorrect ? 'correct-letter' : 'wrong-letter');
+    tile.textContent = ch.toUpperCase();
+    container.appendChild(tile);
+  });
+}
+
+function showTypeHint() {
+  const current = typeDeck[typeIdx];
+  if (!current || typeAnswered) return;
+  typeCurrentHintCount = Math.min(typeCurrentHintCount + 1, Math.ceil(current.word.length / 2));
+  const val = document.getElementById('typeInput').value;
+  renderLetterTiles(current.word, val);
+  document.getElementById('typeHintBtn').textContent = `Hint (${typeCurrentHintCount}/${current.word.length})`;
+}
+
+function nextType() {
+  typeIdx++;
+  renderType();
+}
+
+function showTypeScore() {
+  document.getElementById('typePlayArea').style.display = 'none';
+  const screen = document.getElementById('typeScoreScreen');
+  screen.classList.add('show');
+  const pct = Math.round(typeCorrect / typeDeck.length * 100);
+  document.getElementById('typeScoreNum').textContent = `${typeCorrect}/${typeDeck.length}`;
+  document.getElementById('typeScorePct').textContent = `${pct}% spelled correctly`;
+  document.getElementById('typeProgress').style.width = '100%';
+}
+
+function restartType() {
+  initType();
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+loadStats();
+updateStatsBar();
+setMode('flash');
+</script>
+  <script>
+    // ── GRADSKOOL LEAD GATE ──
+    (function() {
+      try {
+        if (localStorage.getItem('gs_lead_submitted') === '1') {
+          var gate = document.getElementById('leadGate');
+          if (gate) gate.style.display = 'none';
+          return;
+        }
+      } catch(e) {}
+      document.body.style.overflow = 'hidden';
+    })();
+
+    function submitLeadGate() {
+      var name  = document.getElementById('lg-name').value.trim();
+      var phone = document.getElementById('lg-phone').value.trim();
+      var email = document.getElementById('lg-email').value.trim();
+      var exam  = document.getElementById('lg-exam').value;
+
+      var showErr = function(id, show) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = show ? 'block' : 'none';
+      };
+
+      var phoneClean = phone.replace(/[\s\-\+]/g, '');
+      var phoneOk = /^[0-9]{10,13}$/.test(phoneClean);
+      var emailOk = /^[^@]+@[^@]+\.[^@]+$/.test(email);
+
+      showErr('lg-name-err',  !name);
+      showErr('lg-phone-err', !phoneOk);
+      showErr('lg-email-err', !emailOk);
+      showErr('lg-exam-err',  !exam);
+
+      if (!name || !phoneOk || !emailOk || !exam) return;
+
+      var btn = document.getElementById('lg-submit');
+      btn.disabled = true;
+      btn.textContent = 'Unlocking...';
+
+      var formData = {
+        name: name, phone: phone, email: email, exam: exam,
+        tool: document.title, source: 'gradskool.in',
+        ts: new Date().toISOString()
+      };
+
+            // Submit via fetch POST — reliable delivery to Google Sheets
+      var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwejy59OKOrfsFQMtvBGnJtrXbNjHl-8x8wRqtjzDO8tfgjpCXtA_e0cStkOeVaqmxg_w/exec';
+      var payload = new URLSearchParams({
+        name: name, phone: phone, email: email,
+        exam: exam, tool: document.title, source: window.location.hostname,
+        ts: new Date().toISOString()
+      });
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: payload.toString()
+      }).catch(function() {}); // no-cors means we can't read response — that's fine
+      // Unlock immediately — don't wait for network
+      unlockTool();
+    }
+
+    function unlockTool() {
+      try { localStorage.setItem('gs_lead_submitted', '1'); } catch(e) {}
+      var gate = document.getElementById('leadGate');
+      if (gate) gate.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  </script>
+</body>
+</html>

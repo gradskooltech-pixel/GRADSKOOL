@@ -1,0 +1,15 @@
+# GRADSKOOL — Railway Procfile
+#
+# Three processes to deploy on Railway:
+#   web    → Django (gunicorn) — handles API requests
+#   worker → Celery worker     — runs async tasks (drip emails, transcription, AI notes)
+#   beat   → Celery Beat       — schedules periodic tasks (drip send loop every 15 min)
+#
+# Deploy on Railway:
+#   1. Create one service per process
+#   2. Set the start command for each service
+#   3. All three share the same repo + env vars
+
+web:    gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+worker: celery -A config.celery worker --loglevel=info -Q default,high_priority --concurrency 2
+beat:   celery -A config.celery beat --loglevel=info

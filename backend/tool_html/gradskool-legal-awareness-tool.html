@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Preload & DNS prefetch for performance -->
+  <link rel="dns-prefetch" href="https://checkout.razorpay.com">
+  <link rel="dns-prefetch" href="https://wa.me">
+  <link rel="dns-prefetch" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://www.linkedin.com">
+  <link rel="preload" href="/assets/logo.png" as="image" type="image/png">
+
+  <title>CLAT Legal Reasoning Tool — Free Practice | GRADSKOOL</title>
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="description" content="Free CLAT Legal Reasoning tool — principle-application passages, Constitutional Law, and Legal GK in flashcard format. Covers CLAT, AILET, and LSAT India.">
+  <meta name="keywords" content="CLAT legal awareness, AILET legal reasoning, free CLAT practice, legal comprehension CLAT, law entrance practice">
+  <link rel="canonical" href="https://gradskool.in/gradskool-legal-awareness-tool">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GRADSKOOL">
+  <meta property="og:title" content="CLAT Legal Reasoning Tool — Free Practice | GRADSKOOL">
+  <meta property="og:description" content="Free legal reasoning and legal awareness practice for CLAT, AILET and LSAT India. Covers legal principles, case studies and comprehension passages.">
+  <meta property="og:url" content="https://gradskool.in/gradskool-legal-awareness-tool">
+  <meta property="og:image" content="https://gradskool.in/assets/og-law-ug.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@gradskool_india">
+  <meta name="twitter:title" content="CLAT Legal Reasoning Tool — Free Practice | GRADSKOOL">
+  <meta name="twitter:description" content="Free legal reasoning and legal awareness practice for CLAT, AILET and LSAT India. Covers legal principles, case studies and comprehension passages.">
+  <meta name="twitter:image" content="https://gradskool.in/assets/og-law-ug.jpg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Free Legal Awareness Practice Tool","url":"https://gradskool.in/gradskool-legal-awareness-tool","description":"Free legal reasoning and legal awareness practice for CLAT, AILET and LSAT India. Covers legal principles, case studies and comprehension passages.","applicationCategory":"EducationalApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"provider":{"@type":"Organization","name":"GRADSKOOL","url":"https://gradskool.in"}}</script>
+<style>
+:root {
+  --red: #ff5e5f; --red-dark: #cc3a3b; --black: #0f0f0f;
+  --gray-1: #444; --gray-2: #777; --gray-3: #ccc; --gray-5: #f7f7f5;
+  --white: #fff; --border: #e2e2e2;
+  --playfair: Georgia, 'Times New Roman', serif;
+  --lora: Georgia, 'Times New Roman', serif;
+  --sans: 'Nunito Sans', -apple-system, sans-serif;
+  --head: 'Nunito', -apple-system, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+/* ── BACK NAV ── */
+.back-nav { position: sticky; top: 0; z-index: 300; background: var(--white); border-bottom: 2px solid var(--black); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; }
+.back-nav-logo { font-size: 15px; font-weight: 800; color: var(--black); text-decoration: none; letter-spacing: -0.3px; font-family: var(--head); }
+.back-nav-logo span { color: var(--red); }
+.back-nav-right { display: flex; align-items: center; gap: 1rem; }
+.back-nav-right a { font-size: 12px; color: var(--gray-2); text-decoration: none; font-family: var(--sans); }
+.back-nav-enrol { font-weight: 600; background: var(--red); color: var(--white) !important; padding: 6px 16px; border-radius: 3px; transition: background 0.2s; }
+.back-nav-enrol:hover { background: var(--red-dark) !important; }
+
+/* ── LEAD GATE ── */
+.lead-gate-overlay { position: fixed; inset: 0; background: rgba(15,15,15,0.93); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.5rem; backdrop-filter: blur(6px); }
+.lead-gate-overlay.hidden { display: none; }
+.lead-gate-box { background: var(--white); border-radius: 4px; max-width: 480px; width: 100%; padding: 2.5rem; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,0.4); }
+.lead-gate-box::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--red); border-radius: 4px 0 0 4px; }
+.lead-gate-label { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 0.6rem; }
+.lead-gate-heading { font-family: var(--playfair); font-size: 1.6rem; font-weight: 700; color: var(--black); line-height: 1.15; margin-bottom: 0.5rem; }
+.lead-gate-heading em { font-style: italic; color: var(--red); font-weight: 400; }
+.lead-gate-sub { font-family: var(--lora); font-size: 0.88rem; color: var(--gray-1); line-height: 1.65; margin-bottom: 1.75rem; }
+.lead-gate-form { display: flex; flex-direction: column; gap: 0.85rem; }
+.lead-gate-input, .lead-gate-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 3px; font-family: var(--lora); font-size: 0.9rem; color: var(--black); outline: none; transition: border-color 0.2s; background: #fafaf9; }
+.lead-gate-input:focus, .lead-gate-select:focus { border-color: var(--red); background: var(--white); }
+.lead-gate-input::placeholder { color: var(--gray-3); }
+.lead-gate-select { appearance: none; cursor: pointer; }
+.lead-gate-btn { background: var(--red); color: var(--white); padding: 0.85rem; border-radius: 3px; font-family: var(--sans); font-size: 0.9rem; font-weight: 700; border: none; cursor: pointer; transition: background 0.2s; width: 100%; margin-top: 0.25rem; }
+.lead-gate-btn:hover { background: var(--red-dark); }
+.lead-gate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.lead-gate-error { font-family: var(--sans); font-size: 0.78rem; color: var(--red-dark); margin-top: -0.4rem; display: none; }
+.lead-gate-error.show { display: block; }
+.lead-gate-privacy { font-family: var(--sans); font-size: 0.72rem; color: var(--gray-2); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
+
+/* ── HEADER ── */
+.tool-header { background: var(--black); padding: 2.5rem 2rem 2rem; text-align: center; border-bottom: 3px solid var(--red); }
+.tool-header-tag { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem; }
+.tool-header h1 { font-family: var(--playfair); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--white); line-height: 1.15; margin-bottom: 0.5rem; }
+.tool-header-sub { font-family: var(--lora); font-size: 0.92rem; color: #888; line-height: 1.65; }
+.tool-header-badges { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+.exam-badge { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid #333; color: #aaa; padding: 4px 12px; border-radius: 2px; }
+
+/* ── CONTROLS ── */
+.controls { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 0; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.filter-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.filter-btn { font-family: var(--sans); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; border: 1.5px solid var(--border); background: var(--white); color: var(--gray-1); padding: 6px 14px; border-radius: 3px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.filter-btn:hover { border-color: var(--black); }
+.filter-btn.active { background: var(--black); border-color: var(--black); color: var(--white); }
+.filter-btn.active-red { background: var(--red); border-color: var(--red); color: var(--white); }
+.controls-right { margin-left: auto; display: flex; gap: 0.5rem; align-items: center; }
+.progress-text { font-family: var(--sans); font-size: 0.78rem; color: var(--gray-2); }
+.progress-bar-wrap { width: 120px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--red); border-radius: 2px; transition: width 0.3s ease; }
+
+/* ── CARD AREA ── */
+.card-area { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+
+/* ── FLASHCARD ── */
+.flashcard-wrap { perspective: 1200px; min-height: 380px; height: auto; cursor: pointer; user-select: none; }
+.flashcard { width: 100%; min-height: 380px; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.card-face { position: relative; width: 100%; }
+.card-front { display: block; }
+.card-back { display: none; }
+
+/* Front face */
+.card-topic-tag { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 0.5rem; }
+.card-exam-tag { font-family: var(--sans); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.06em; border: 1px solid var(--border); color: var(--gray-2); padding: 2px 8px; border-radius: 2px; display: inline-block; margin-bottom: 1rem; }
+.card-type-label { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-2); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.card-type-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Passage-based cards */
+.card-principle { font-family: var(--lora); font-size: 0.92rem; color: var(--black); line-height: 1.7; margin-bottom: 1.25rem; padding: 1rem 1.25rem; background: var(--gray-5); border-left: 3px solid var(--red); font-style: italic; }
+.card-principle strong { font-style: normal; color: var(--black); }
+
+.card-question { font-family: var(--lora); font-size: 1rem; color: var(--black); line-height: 1.7; margin-bottom: 1.5rem; }
+.card-options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.card-option { font-family: var(--sans); font-size: 0.85rem; color: var(--black); padding: 0.6rem 1rem; border: 1.5px solid var(--border); border-radius: 3px; cursor: pointer; transition: all 0.15s; display: flex; gap: 0.75rem; align-items: flex-start; }
+.card-option:hover { border-color: var(--black); background: var(--gray-5); }
+.card-option.selected-correct { border-color: #2d8a4e; background: #e8f4e8; color: #1a5c32; }
+.card-option.selected-wrong { border-color: var(--red-dark); background: #fff0f0; color: var(--red-dark); }
+.card-option.reveal-correct { border-color: #2d8a4e; background: #e8f4e8; color: #1a5c32; }
+.opt-letter { font-family: var(--head); font-size: 0.72rem; font-weight: 800; min-width: 20px; }
+
+/* GK / Flashcard style (front = question only) */
+.card-gk-question { font-family: var(--playfair); font-size: 1.15rem; color: var(--black); line-height: 1.6; flex: 1; display: flex; align-items: center; }
+.card-flip-hint { font-family: var(--sans); font-size: 0.72rem; color: var(--gray-2); text-align: center; margin-top: auto; padding-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+
+/* Back face */
+.card-answer-label { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem; }
+.card-answer { font-family: var(--playfair); font-size: 1.15rem; color: var(--white); line-height: 1.5; font-weight: 600; margin-bottom: 1.25rem; }
+.card-explanation { font-family: var(--lora); font-size: 0.9rem; color: #999; line-height: 1.75; margin-bottom: 1.25rem; }
+.card-explanation strong { color: var(--white); }
+.card-back-meta { margin-top: auto; padding-top: 1rem; border-top: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: space-between; }
+.card-back-source { font-family: var(--sans); font-size: 0.68rem; color: #555; }
+
+/* ── NAVIGATION ── */
+.card-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
+.nav-btn { font-family: var(--sans); font-size: 0.82rem; font-weight: 700; border: 1.5px solid var(--border); background: var(--white); color: var(--black); padding: 0.6rem 1.5rem; border-radius: 3px; cursor: pointer; transition: all 0.15s; }
+.nav-btn:hover:not(:disabled) { border-color: var(--black); background: var(--black); color: var(--white); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.card-counter { font-family: var(--sans); font-size: 0.82rem; color: var(--gray-2); }
+.nav-btn-flip { background: var(--red); border-color: var(--red); color: var(--white); }
+.nav-btn-flip:hover { background: var(--red-dark) !important; border-color: var(--red-dark) !important; color: var(--white) !important; }
+
+/* ── SCORE PANEL ── */
+.score-panel { background: var(--gray-5); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.25rem 1.5rem; display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.score-item { text-align: center; }
+.score-num { font-family: var(--playfair); font-size: 1.6rem; font-weight: 700; color: var(--black); line-height: 1; }
+.score-num.green { color: #2d8a4e; }
+.score-num.red { color: var(--red); }
+.score-label { font-family: var(--sans); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-2); margin-top: 0.2rem; }
+
+/* ── COMPLETION ── */
+.completion-card { text-align: center; padding: 3rem 2rem; border: 1.5px solid var(--border); border-radius: 4px; }
+.completion-icon { font-size: 3rem; margin-bottom: 1rem; }
+.completion-title { font-family: var(--playfair); font-size: 1.6rem; font-weight: 700; color: var(--black); margin-bottom: 0.75rem; }
+.completion-sub { font-family: var(--lora); font-size: 0.95rem; color: var(--gray-1); line-height: 1.65; margin-bottom: 2rem; }
+.restart-btn { background: var(--red); color: var(--white); font-family: var(--sans); font-size: 0.88rem; font-weight: 700; border: none; padding: 0.85rem 2.5rem; border-radius: 3px; cursor: pointer; transition: background 0.2s; }
+.restart-btn:hover { background: var(--red-dark); }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .back-nav { padding: 0 1rem; }
+  .tool-header { padding: 2rem 1.25rem 1.5rem; }
+  .controls { padding: 1rem 1rem 0; }
+  .card-area { padding: 1rem; }
+  .card-face { padding: 1.5rem; }
+  .flashcard-wrap { min-height: 420px; }
+  .flashcard { min-height: 420px; }
+  .score-panel { gap: 1rem; }
+  .filter-btn { font-size: 0.68rem; padding: 5px 10px; }
+}
+
+  /* ── LEGAL TOOL MOBILE FIXES ── */
+  /* Remove fixed heights that crop content */
+  .flashcard-wrap { 
+    min-height: 380px !important; 
+    height: auto !important;
+  }
+  .flashcard { 
+    min-height: 380px !important;
+    height: auto !important;
+  }
+  .flashcard-front, .flashcard-back {
+    height: auto !important;
+    min-height: 380px !important;
+    padding: 1.5rem !important;
+    overflow: visible !important;
+  }
+
+  @media (max-width: 600px) {
+    .card-area { padding: 0.75rem !important; }
+    .controls { padding: 0.75rem !important; }
+    .back-nav { padding: 0 1rem !important; }
+    .tool-header { padding: 1.5rem 1rem !important; }
+    .flashcard-wrap { min-height: 300px !important; }
+    .flashcard { min-height: 300px !important; }
+    .flashcard-front, .flashcard-back { 
+      padding: 1rem !important;
+      min-height: 300px !important;
+    }
+    .card-principle, .card-question { font-size: 0.85rem !important; line-height: 1.6 !important; }
+    .card-answer { font-size: 0.85rem !important; }
+    .opt { padding: 0.6rem 0.75rem !important; font-size: 0.82rem !important; }
+    .opts { gap: 0.5rem !important; }
+    .filter-row { flex-wrap: wrap !important; gap: 0.5rem !important; }
+    .pill { font-size: 0.75rem !important; padding: 5px 10px !important; }
+    .arow { flex-direction: column !important; gap: 0.75rem !important; }
+    .arow button { width: 100% !important; }
+  }
+
+  /* ── LEGAL REASONING FIX — Flip button visibility ── */
+  .flashcard-wrap {
+    height: auto !important;
+    min-height: 200px !important;
+    overflow: visible !important;
+  }
+  .flashcard {
+    height: auto !important;
+    min-height: 200px !important;
+    position: relative !important;
+    transform-style: flat !important;
+  }
+  .card-face {
+    height: auto !important;
+    min-height: 200px !important;
+    position: relative !important;
+    overflow: visible !important;
+    backface-visibility: visible !important;
+  }
+  .card-back {
+    display: none;
+  }
+  .flashcard.flipped .card-front { display: block; }
+  .flashcard.flipped .card-back {
+    display: block !important;
+  }
+  .card-nav {
+    position: relative !important;
+    z-index: 10 !important;
+    margin-top: 1.5rem !important;
+    background: var(--white) !important;
+    padding: 0.5rem 0 !important;
+  }
+  @media (max-width: 600px) {
+    .card-nav {
+      flex-wrap: wrap !important;
+      gap: 0.5rem !important;
+    }
+    .card-nav button {
+      flex: 1 !important;
+      min-width: 80px !important;
+    }
+  }
+
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "CLAT Legal Reasoning Tool — Free Practice | GRADSKOOL",
+  "url": "https://gradskool.in/gradskool-legal-awareness-tool",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [
+      ".tool-header h1",
+      "h2",
+      ".tool-header-sub"
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does the GRADSKOOL CLAT Legal Reasoning Tool cover?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The CLAT CLAT Legal Reasoning Tool covers Legal Reasoning (principle-application passages), Constitutional Law (fundamental rights, directive principles, constitutional bodies), and Legal GK (landmark judgments, legal terms, acts and amendments). It contains 60 flashcard-style questions across all three categories."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the CLAT CLAT Legal Reasoning Tool free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — completely free. No login required. All 60 questions across Legal Reasoning, Constitutional Law, and Legal GK are accessible immediately."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need a law background to use this tool?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No — CLAT Legal Reasoning tests your ability to apply given legal principles to factual situations. No prior legal knowledge is required. The tool is designed for Class 12 students appearing in CLAT for the first time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is CLAT Legal Reasoning different from Logical Reasoning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CLAT Legal Reasoning gives you a legal principle and asks you to apply it to a factual situation — it tests reading comprehension and logical application, not legal knowledge. Logical Reasoning (in other exams) tests abstract pattern recognition. They require different preparation strategies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which exams is this tool useful for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CLAT, AILET, LSAT India, and SLAT. The legal reasoning and constitutional law content is directly applicable to all national law entrance exams in India."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- LEAD GATE -->
+<div class="lead-gate-overlay" id="leadGate">
+  <div class="lead-gate-box">
+    <div class="lead-gate-label">Free Access</div>
+    <div class="lead-gate-heading">One step to unlock<br><em>Legal Awareness.</em></div>
+    <p class="lead-gate-sub">No payment. Just your details so we can keep you updated on CLAT resources, new tools and cohort openings.</p>
+    <div class="lead-gate-form">
+      <input class="lead-gate-input" type="text" id="lg-name" placeholder="Your full name" autocomplete="name">
+      <span class="lead-gate-error" id="lg-name-err">Please enter your name.</span>
+      <input class="lead-gate-input" type="tel" id="lg-phone" placeholder="Phone number (WhatsApp)" autocomplete="tel" maxlength="15">
+      <span class="lead-gate-error" id="lg-phone-err">Please enter a valid 10-digit number.</span>
+      <input class="lead-gate-input" type="email" id="lg-email" placeholder="Email address" autocomplete="email">
+      <span class="lead-gate-error" id="lg-email-err">Please enter a valid email.</span>
+      <select class="lead-gate-select" id="lg-exam">
+        <option value="" disabled selected>Exam you are preparing for</option>
+        <option value="CLAT">CLAT</option>
+        <option value="AILET">AILET</option>
+        <option value="LSAT India">LSAT India</option>
+        <option value="Other Law UG">Other Law UG</option>
+      </select>
+      <span class="lead-gate-error" id="lg-exam-err">Please select your exam.</span>
+      <button class="lead-gate-btn" id="lg-submit" onclick="submitLeadGate()">Unlock Free Tool →</button>
+      <p class="lead-gate-privacy">No spam. No cost. Unsubscribe anytime.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BACK NAV -->
+<div class="back-nav">
+  <a href="/" class="back-nav-logo">GRAD<span>SKOOL</span></a>
+  <div class="back-nav-right">
+    <a href="/tools">← All Tools</a>
+    <a href="/law-ug#pricing" class="back-nav-enrol">Enrol Now →</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="tool-header">
+  <div class="tool-header-tag">Free Tool</div>
+  <h1>CLAT Legal Reasoning Tool<br>Flashcard Tool</h1>
+  <p class="tool-header-sub">Legal Reasoning · Constitutional Law · Legal GK — in flashcard format</p>
+  <div class="tool-header-badges">
+    <span class="exam-badge">CLAT</span>
+    <span class="exam-badge">AILET</span>
+    <span class="exam-badge">LSAT India</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="filter-group" id="topicFilters">
+      <button class="filter-btn active" onclick="setTopic('all', this)">All Topics</button>
+      <button class="filter-btn" onclick="setTopic('legal-reasoning', this)">Legal Reasoning</button>
+      <button class="filter-btn" onclick="setTopic('constitutional', this)">Constitutional Law</button>
+      <button class="filter-btn" onclick="setTopic('legal-gk', this)">Legal GK</button>
+    </div>
+    <div class="controls-right">
+      <span class="progress-text" id="progressText">1 / 60</span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:1.67%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-area">
+    <!-- SCORE PANEL -->
+    <div class="score-panel">
+      <div class="score-item"><div class="score-num" id="scoreTotal">0</div><div class="score-label">Seen</div></div>
+      <div class="score-item"><div class="score-num green" id="scoreCorrect">0</div><div class="score-label">Correct</div></div>
+      <div class="score-item"><div class="score-num red" id="scoreWrong">0</div><div class="score-label">Wrong</div></div>
+      <div class="score-item"><div class="score-num" id="scoreAccuracy">—</div><div class="score-label">Accuracy</div></div>
+    </div>
+
+    <!-- FLASHCARD -->
+    <div class="flashcard-wrap" id="flashcardWrap" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="card-face card-front" id="cardFront"></div>
+        <div class="card-face card-back" id="cardBack"></div>
+      </div>
+    </div>
+
+    <!-- NAV -->
+    <div class="card-nav">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>← Prev</button>
+      <span class="card-counter" id="cardCounter">Card 1 of 60</span>
+      <button class="nav-btn nav-btn-flip" onclick="flipCard()">Flip →</button>
+      <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+    </div>
+
+    <!-- COMPLETION -->
+    <div class="completion-card" id="completionCard" style="display:none;">
+      <div class="completion-icon">⚖️</div>
+      <div class="completion-title">Set Complete</div>
+      <div class="completion-sub" id="completionSub"></div>
+      <button class="restart-btn" onclick="restart()">Start Again →</button>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── CARD DATA ──────────────────────────────────────────────────────────────
+
+const CARDS = [
+
+  // ══════════════════════════════════════════
+  // LEGAL REASONING (20 cards)
+  // ══════════════════════════════════════════
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A person is not guilty of an offence if they did not intend to commit it, unless the law specifically provides for strict liability.',
+    question: 'Rahul accidentally spills acid from a container he was carrying, injuring a passerby. He was unaware the container had a leak. Is Rahul guilty of causing grievous hurt?',
+    options: ['Yes, because the injury was caused by him', 'No, because he lacked intent to cause harm', 'Yes, because he was negligent in carrying the container', 'No, because the law does not apply to accidents'],
+    answer: 1,
+    explanation: 'The principle requires intent for guilt. Rahul was unaware of the leak and did not intend to injure anyone. Unless the offence is one of strict liability (not stated here), he is not guilty.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A contract entered into under coercion — by threat of violence or unlawful detention — is voidable at the option of the party whose consent was coerced.',
+    question: 'Meena signs a property transfer deed after her brother threatens to harm her children unless she does so. She later seeks to cancel the deed. Will she succeed?',
+    options: ['No, the deed is signed and binding', 'Yes, because the contract was entered under coercion and is voidable', 'No, because threats do not void a contract unless physical force was used', 'Yes, but only if she can prove actual harm to her children'],
+    answer: 1,
+    explanation: 'Coercion includes threats of harm. Meena\'s consent was obtained by threat of violence to her children — this is coercion. The contract is voidable at her option and she can cancel it.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A person who trespasses on another\'s land is liable in tort, even if no actual damage is caused. The act of trespass itself is actionable.',
+    question: 'Ajay walks through Priya\'s farmland as a shortcut, without her permission, but causes no damage to her crops. Can Priya sue Ajay?',
+    options: ['No, because no damage was caused', 'Yes, because trespass is actionable per se', 'No, because the trespass was minor', 'Yes, but only if she can show damage'],
+    answer: 1,
+    explanation: 'Trespass to land is actionable per se — meaning no proof of damage is required. The unauthorized entry itself constitutes the tort. Priya can sue even though no crops were damaged.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'AILET',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> Every person has the right to use reasonable force in private defence of themselves or their property against an unlawful aggressor.',
+    question: 'Suresh finds someone stealing his motorcycle. He confronts the thief and, when the thief raises a knife, Suresh strikes the thief with a stick, causing injury. Is Suresh liable?',
+    options: ['Yes, because he caused injury to another person', 'No, because he acted in private defence against an armed thief', 'Yes, because he should have called the police instead', 'No, because the thief was committing a crime'],
+    answer: 1,
+    explanation: 'When the thief raised a knife, Suresh faced an unlawful threat to his person. Using a stick against an armed aggressor is reasonable force in private defence. He is not liable.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A master is vicariously liable for the tortious acts of his servant committed in the course of employment.',
+    question: 'Raju, a driver employed by ABC Transport, takes a detour during his delivery route to visit his friend and knocks over a pedestrian during that detour. Is ABC Transport liable?',
+    options: ['Yes, Raju was their employee', 'No, the accident happened during a personal detour outside the scope of employment', 'Yes, because Raju was on duty at the time', 'No, because Raju was negligent'],
+    answer: 1,
+    explanation: 'Vicarious liability requires the act to be in the "course of employment." A personal detour to visit a friend is outside the scope of employment. ABC Transport is not liable for what happened during that detour.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'LSAT India',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> An agreement to do an impossible act is void ab initio — void from the beginning.',
+    question: 'Amit agrees to sell Priya a painting that was destroyed in a fire two weeks before the agreement, unknown to both parties. What is the status of this agreement?',
+    options: ['Valid — it is a binding contract', 'Voidable at Priya\'s option', 'Void ab initio — the agreement is unenforceable', 'Valid, but Amit must compensate Priya'],
+    answer: 2,
+    explanation: 'The subject matter of the contract (the painting) had already ceased to exist before the agreement was made. An agreement to do an impossible act — here, to sell something that does not exist — is void from the beginning.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> Defamation requires a false statement of fact, made to a third party, which causes damage to the reputation of the person about whom it is made.',
+    question: 'Nisha tells her colleague that "Rajesh steals from the office cash box," knowing this to be false. Rajesh loses his promotion as a result. Has Nisha defamed Rajesh?',
+    options: ['No, it was a private conversation', 'Yes, all elements of defamation are present', 'No, unless Rajesh can prove financial loss', 'Yes, but only if the statement was in writing'],
+    answer: 1,
+    explanation: 'Nisha made a false statement of fact (Rajesh steals) to a third party (her colleague) which damaged Rajesh\'s reputation (he lost his promotion). All elements are satisfied — this is defamation.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'AILET',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A minor\'s agreement is void ab initio. No valid contract can be formed with a person below the age of 18.',
+    question: 'Karan, aged 16, purchases a motorcycle on credit from a dealer, promising to pay later. The dealer sues Karan for the money when he refuses to pay. Will the dealer succeed?',
+    options: ['Yes, Karan bought the motorcycle and must pay', 'No, Karan is a minor and the contract is void from the beginning', 'Yes, because the motorcycle was already delivered', 'No, unless the dealer returns the motorcycle first'],
+    answer: 1,
+    explanation: 'Karan is a minor. Any agreement with a minor is void ab initio — it has no legal force from the start. The dealer cannot enforce the contract. Karan has no obligation to pay.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> Nuisance is an unreasonable interference with a person\'s use and enjoyment of land. A defendant is liable if the interference is substantial and unreasonable.',
+    question: 'A factory next to Sunita\'s house operates heavy machinery from 11 PM to 5 AM every night, disrupting her sleep. She complains to the court. Is this actionable nuisance?',
+    options: ['No, the factory has a right to operate', 'Yes, the noise at night constitutes unreasonable interference with her use and enjoyment of land', 'No, unless she suffers a medical condition due to sleep loss', 'Yes, but only if other neighbours also complain'],
+    answer: 1,
+    explanation: 'Operating heavy machinery through the night causing sleep disruption is substantial and unreasonable interference with Sunita\'s enjoyment of her property. This is actionable private nuisance.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'LSAT India',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> An offer lapses if not accepted within the time prescribed, or if no time is prescribed, within a reasonable time.',
+    question: 'On 1st January, Arjun offers to sell his car to Meera for ₹5 lakhs. Meera says she will think about it. On 15th March, Meera sends a letter accepting the offer. Is there a valid contract?',
+    options: ['Yes, the offer was never revoked', 'No, the offer lapsed because an unreasonable time has passed without acceptance', 'Yes, offers remain open until rejected', 'No, but Arjun must give Meera a chance to reconsider'],
+    answer: 1,
+    explanation: 'No time was prescribed for acceptance. Two and a half months is an unreasonable time for accepting an offer to sell a car. The offer had already lapsed before Meera\'s acceptance on 15th March. No valid contract exists.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A person who negligently creates a dangerous situation is liable for all damages that are a foreseeable consequence of that negligence.',
+    question: 'A shopkeeper leaves a banana peel on the pavement outside his shop. A pedestrian slips on it, falls, and is hit by a passing bicycle. Is the shopkeeper liable for all the injuries?',
+    options: ['No, the bicycle accident was unforeseeable', 'Yes, because the slip was foreseeable and the chain of events followed from his negligence', 'No, because the pedestrian was not looking where they were walking', 'Yes, but only for the injuries from the slip, not the bicycle'],
+    answer: 1,
+    explanation: 'The shopkeeper\'s negligence (leaving the peel) foreseeably caused someone to fall. The subsequent bicycle accident is a foreseeable consequence of being knocked to the ground. The shopkeeper is liable for all resulting injuries.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'AILET',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> Acceptance must be absolute and unconditional. A conditional acceptance is a counter-offer and amounts to rejection of the original offer.',
+    question: 'Vikram offers to sell his laptop to Sheetal for ₹40,000. Sheetal replies, "I accept, but only if you include the original charger." Is there a valid acceptance?',
+    options: ['Yes, the condition is minor and reasonable', 'No, Sheetal\'s conditional response is a counter-offer, not acceptance', 'Yes, because Sheetal agreed to the price', 'No, but Vikram must provide the charger'],
+    answer: 1,
+    explanation: 'Acceptance must be absolute and unconditional. Sheetal\'s response added a new condition (the charger). This constitutes a counter-offer, not acceptance. The original offer is rejected and Vikram may accept or reject the counter-offer.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> The doctrine of strict liability holds that a person who brings onto their land a dangerous thing for non-natural use is liable for all damage caused if it escapes, regardless of negligence.',
+    question: 'A chemical company stores large quantities of industrial solvent in a tank on its premises. The tank develops a crack and solvent seeps into a neighbouring farm, killing crops. Is the company liable without proof of negligence?',
+    options: ['No, accidents happen and negligence must be proven', 'Yes, under strict liability — the solvent is a dangerous thing stored for non-natural use', 'No, because the tank developed a crack due to manufacturing defect', 'Yes, but only if the company knew about the crack'],
+    answer: 1,
+    explanation: 'Under the Rule in Rylands v Fletcher (strict liability), keeping dangerous chemicals in large quantities is a non-natural use of land. When the solvent escaped and caused damage, the company is strictly liable regardless of negligence or fault.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'LSAT India',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A person commits fraud when they make a false representation of a material fact, knowing it to be false, with intent to deceive and induce another to enter a contract.',
+    question: 'Sanjay sells his car to Priya, telling her the odometer reads 20,000 km, knowing it has actually run 1,20,000 km and was tampered with. Priya buys the car. Has Sanjay committed fraud?',
+    options: ['No, buyers should inspect before purchasing', 'Yes, all elements of fraud are established', 'No, unless Priya can prove she relied on the odometer reading', 'Yes, but it is only a civil wrong, not fraud'],
+    answer: 1,
+    explanation: 'Sanjay made a false statement of material fact (odometer reading), knew it was false (he tampered with it), intended to deceive, and Priya relied on it and entered the contract. All elements of fraud are present.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> Whoever commits theft — dishonestly taking moveable property out of the possession of another without consent — is liable for punishment.',
+    question: 'Rohan picks up a pen lying on a desk in an office, believing it to be his own pen which he had left there earlier, though it actually belongs to someone else. Is Rohan guilty of theft?',
+    options: ['Yes, he took another\'s property', 'No, he lacked dishonest intention — he believed it was his own pen', 'Yes, because the pen was not his regardless of his belief', 'No, because a pen is of small value'],
+    answer: 1,
+    explanation: 'Theft requires dishonest intention. Rohan genuinely believed the pen was his — he had no intention to dishonestly take another\'s property. Without the dishonest intent, the act does not constitute theft.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'AILET',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A public figure voluntarily entering public life has a reduced expectation of privacy in matters relating to their public role.',
+    question: 'A newspaper publishes an article detailing a politician\'s voting record and public statements on a policy issue. The politician sues for invasion of privacy. Will she succeed?',
+    options: ['Yes, everyone has a right to privacy', 'No, a politician\'s public acts and statements are not private matters', 'Yes, unless the newspaper had official permission', 'No, but only if the article was factually accurate'],
+    answer: 1,
+    explanation: 'A politician is a public figure who has voluntarily entered public life. Their voting record and public statements directly relate to their public role. Such information is not protected private information and the privacy claim will fail.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A promise to pay for a past act is not consideration and does not create a binding contract, unless the act was done at the promisor\'s request.',
+    question: 'Without being asked, Rekha saves Mohan\'s drowning dog. Mohan, grateful, promises to pay Rekha ₹5,000. When he refuses to pay later, Rekha sues. Will she succeed?',
+    options: ['Yes, Mohan made a clear promise', 'No, the act (saving the dog) was a past voluntary act not done at Mohan\'s request — there is no consideration for the promise', 'Yes, because the promise was specific and quantified', 'No, because the promise was oral'],
+    answer: 1,
+    explanation: 'Past consideration is no consideration. Rekha saved the dog voluntarily, without Mohan\'s request. When Mohan later promised to pay, the saving of the dog was already completed — it cannot be consideration for the new promise. No binding contract exists.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'LSAT India',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> Volenti non fit injuria — a person who voluntarily consents to a risk cannot later claim compensation for injury resulting from that risk.',
+    question: 'Dia signs up for a bungee jumping activity at an adventure park, signs a consent form acknowledging the risks, and is injured when the cord malfunctions. Can she claim compensation from the park?',
+    options: ['No, she consented to all risks by signing the form', 'Yes, because a cord malfunction is negligence on the park\'s part, not a risk she consented to', 'No, adventure sports carry inherent risks', 'Yes, but only if the injury was severe'],
+    answer: 1,
+    explanation: 'Volenti applies only to risks voluntarily assumed. Dia consented to the inherent risks of bungee jumping — not to the park\'s negligence in maintaining equipment. A cord malfunction due to negligence goes beyond what she consented to. She can claim compensation.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'CLAT',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A dying declaration — a statement made by a person who believes they are about to die, relating to the cause of their death — is admissible as evidence.',
+    question: 'Fatally injured in an attack, Anita tells the police "Ramesh stabbed me" before dying. At trial, the prosecution relies on this statement. Is it admissible?',
+    options: ['No, it is hearsay evidence', 'Yes, it qualifies as a dying declaration and is admissible', 'No, because Anita cannot be cross-examined', 'Yes, but only if a doctor was present'],
+    answer: 1,
+    explanation: 'A dying declaration is a recognized exception to the hearsay rule. Anita believed she was dying and her statement relates directly to the cause of her death. It is admissible evidence under this well-established principle.'
+  },
+  {
+    topic: 'legal-reasoning', exam: 'AILET',
+    type: 'principle-application',
+    principle: '<strong>Principle:</strong> A person has the right to private defence of property and may use force to prevent theft, robbery, mischief, or criminal trespass — but the force used must not exceed what is reasonably necessary.',
+    question: 'Surya catches a thief stealing mangoes from his garden. He locks the thief in a room for 3 days without food or water. Is Surya\'s action justified as private defence of property?',
+    options: ['Yes, he had a right to detain the thief', 'No, the force used far exceeded what was reasonably necessary to prevent the theft', 'Yes, because the thief was committing a crime', 'No, but Surya can claim mitigating circumstances'],
+    answer: 1,
+    explanation: 'The right of private defence is limited to what is reasonably necessary. Detaining someone for 3 days without food or water goes far beyond what is needed to prevent theft of mangoes. Surya\'s action is not justified and he may be liable for wrongful confinement.'
+  },
+
+  // ══════════════════════════════════════════
+  // CONSTITUTIONAL LAW (20 cards)
+  // ══════════════════════════════════════════
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'Which Article of the Indian Constitution abolishes untouchability and its practice in any form?',
+    answer: 'Article 17',
+    explanation: 'Article 17 abolishes "untouchability" and forbids its practice in any form. The enforcement of any disability arising out of "untouchability" is an offence punishable in accordance with law.'
+  },
+  {
+    topic: 'constitutional', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the constitutional status of the Right to Privacy in India?',
+    answer: 'Fundamental Right under Article 21',
+    explanation: 'In Justice K.S. Puttaswamy v. Union of India (2017), a 9-judge bench of the Supreme Court unanimously held that the Right to Privacy is a fundamental right protected under Article 21 (Right to Life and Personal Liberty).'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'Under which Article does the Supreme Court have the power to issue writs for enforcement of Fundamental Rights?',
+    answer: 'Article 32',
+    explanation: 'Article 32 gives the Supreme Court the power to issue writs — Habeas Corpus, Mandamus, Prohibition, Quo Warranto, and Certiorari — for enforcement of Fundamental Rights. Dr. Ambedkar called Article 32 "the heart and soul of the Constitution."'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is the Doctrine of Basic Structure?',
+    answer: 'Parliament cannot amend the Constitution to destroy its basic features',
+    explanation: 'Established in Kesavananda Bharati v. State of Kerala (1973), the Basic Structure Doctrine holds that while Parliament can amend the Constitution under Article 368, it cannot alter or destroy its basic features. Basic features include sovereignty, democracy, federalism, separation of powers, and judicial review.'
+  },
+  {
+    topic: 'constitutional', exam: 'AILET',
+    type: 'flashcard',
+    question: 'Which writ is issued when a public authority acts beyond its jurisdiction or refuses to perform a public duty?',
+    answer: 'Mandamus',
+    explanation: 'Mandamus means "we command." It is issued to a public official, government, court, or other authority directing them to perform a duty they are legally obligated to perform or to stop acting beyond their authority.'
+  },
+  {
+    topic: 'constitutional', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What does Article 21A guarantee?',
+    answer: 'Free and compulsory education for children aged 6-14',
+    explanation: 'Article 21A, inserted by the 86th Constitutional Amendment (2002), makes the Right to Education a Fundamental Right. It directs the state to provide free and compulsory education to all children aged 6 to 14 years. The RTE Act 2009 gives effect to this right.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'Under Article 19(1)(a), freedom of speech and expression can be restricted on what grounds?',
+    answer: 'Sovereignty, integrity, security of India, friendly relations with foreign states, public order, decency or morality, contempt of court, defamation, incitement to offence',
+    explanation: 'Article 19(2) lists the permissible restrictions on free speech. These are: sovereignty and integrity of India, security of the state, friendly relations with foreign states, public order, decency or morality, contempt of court, defamation, and incitement to an offence. Restrictions must be reasonable.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is the difference between Directive Principles of State Policy and Fundamental Rights?',
+    answer: 'DPSPs are non-justiciable guidelines for governance; FRs are justiciable and enforceable in court',
+    explanation: 'Fundamental Rights (Part III) are enforceable in courts — citizens can directly approach the Supreme Court under Article 32 for their enforcement. Directive Principles (Part IV) are guidelines for the state to achieve socio-economic justice but cannot be directly enforced in court. However, courts have often harmonized both through interpretation.'
+  },
+  {
+    topic: 'constitutional', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the power of the President under Article 356?',
+    answer: 'Imposition of President\'s Rule (Constitutional Emergency) in a state',
+    explanation: 'Article 356 allows the President to impose President\'s Rule in a state when the Governor reports that state governance cannot be carried on in accordance with the Constitution. The state legislature is dissolved or suspended and the state is governed by the Centre through the Governor. This is subject to parliamentary approval.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'Which Article protects against self-incrimination?',
+    answer: 'Article 20(3)',
+    explanation: 'Article 20(3) states that no person accused of an offence shall be compelled to be a witness against themselves. This is the constitutional protection against self-incrimination. It applies only to accused persons in criminal proceedings, not witnesses.'
+  },
+  {
+    topic: 'constitutional', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What is judicial review in the Indian constitutional context?',
+    answer: 'The power of courts to examine the constitutional validity of legislative and executive acts',
+    explanation: 'Judicial review is the power of the Supreme Court and High Courts to examine whether laws passed by Parliament/state legislatures and actions of the executive conform to the Constitution. If found unconstitutional, they can be struck down. It is part of the Basic Structure of the Constitution.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What does the writ of Habeas Corpus literally mean and when is it issued?',
+    answer: '"You shall have the body" — issued to produce a detained person before court to examine the legality of detention',
+    explanation: 'Habeas Corpus is Latin for "you shall have the body." It is issued to the person detaining another, directing them to produce the detainee in court so the court can determine whether the detention is lawful. It is the most important writ for personal liberty.'
+  },
+  {
+    topic: 'constitutional', exam: 'AILET',
+    type: 'flashcard',
+    question: 'Which Article grants the right to equality before law and equal protection of laws?',
+    answer: 'Article 14',
+    explanation: 'Article 14 has two components: equality before law (no one is above the law — derived from British common law) and equal protection of laws (like should be treated alike — derived from the US Constitution). It prohibits arbitrary action by the state and requires rational classification.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is the significance of the Maneka Gandhi v. Union of India (1978) case?',
+    answer: 'Expanded Article 21 — procedure must be fair, just and reasonable, not merely prescribed by law',
+    explanation: 'Before Maneka Gandhi, Article 21 (right to life) only required that a procedure established by law exist. The Supreme Court in Maneka Gandhi held that such procedure must also be fair, just, and reasonable. This transformed Article 21 into a powerful fundamental right and introduced substantive due process into Indian constitutional law.'
+  },
+  {
+    topic: 'constitutional', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'Under which schedule of the Constitution are anti-defection provisions contained?',
+    answer: 'Tenth Schedule',
+    explanation: 'The Tenth Schedule, inserted by the 52nd Constitutional Amendment (1985), contains anti-defection provisions. It disqualifies members of Parliament and state legislatures who voluntarily give up party membership or vote against party directions without the speaker\'s exemption. It aims to bring political stability.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is a Public Interest Litigation (PIL)?',
+    answer: 'A petition filed in the Supreme Court or High Court for the enforcement of constitutional or legal rights of the public at large',
+    explanation: 'PIL allows any public-spirited person — not just the aggrieved party — to approach the Supreme Court (Article 32) or High Court (Article 226) for enforcement of constitutional rights of groups who cannot access courts themselves. Pioneered by Justice P.N. Bhagwati in the 1980s, PILs have been instrumental in environmental protection, prisoner rights, and electoral reforms.'
+  },
+  {
+    topic: 'constitutional', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the constitutional provision regarding freedom of religion?',
+    answer: 'Articles 25-28 guarantee freedom of conscience, religion, and management of religious institutions',
+    explanation: 'Articles 25-28 form the group on religious freedom: Article 25 (freedom of conscience and free profession, practice and propagation of religion), Article 26 (freedom to manage religious affairs), Article 27 (no tax for promotion of any religion), Article 28 (no religious instruction in state-funded institutions).'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What does Article 32 say and why is it significant?',
+    answer: 'Guarantees the right to constitutional remedies — the right to move the Supreme Court for enforcement of Fundamental Rights; called "heart and soul" of the Constitution by Dr. Ambedkar',
+    explanation: 'Article 32 itself is a Fundamental Right that cannot be suspended (except during a formal emergency). It empowers the Supreme Court to issue writs for enforcement of Fundamental Rights. Dr. Ambedkar called it "the heart and soul of the Constitution" because without it, all other Fundamental Rights would be meaningless.'
+  },
+  {
+    topic: 'constitutional', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What is the Doctrine of Colourable Legislation?',
+    answer: 'A legislature cannot do indirectly what it cannot do directly — legislation disguised to achieve constitutionally impermissible ends is invalid',
+    explanation: 'If a legislature has no power to enact a law on a subject, it cannot enact a law that in form deals with another subject but in substance achieves the same result. The court "lifts the veil" of legislative form to examine the true purpose and effect of the law.'
+  },
+  {
+    topic: 'constitutional', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'Which Articles deal with the right against exploitation?',
+    answer: 'Articles 23 and 24 — prohibition of traffic in human beings and forced labour (23); prohibition of child labour (24)',
+    explanation: 'Article 23 prohibits traffic in human beings, begar (forced labour without pay), and other similar forms of forced labour. Article 24 prohibits the employment of children below 14 years in factories, mines, and other hazardous occupations. Both are enforceable against private individuals as well as the state.'
+  },
+
+  // ══════════════════════════════════════════
+  // LEGAL GK / BARE ACTS (20 cards)
+  // ══════════════════════════════════════════
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'Under which section of the Indian Penal Code (IPC) is murder defined?',
+    answer: 'Section 300 IPC defines murder; Section 302 provides punishment',
+    explanation: 'Section 300 IPC defines murder as culpable homicide with specific aggravating circumstances — intention to cause death, intention to cause injury likely to cause death, knowledge that the act will cause death, or causing death by an imminently dangerous act. Section 302 prescribes the punishment: death or imprisonment for life, plus fine.'
+  },
+  {
+    topic: 'legal-gk', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the period of limitation for filing a suit for recovery of money under the Limitation Act, 1963?',
+    answer: '3 years from when the right to sue accrues',
+    explanation: 'Article 113 of the Limitation Act, 1963 provides a 3-year limitation period for suits not otherwise provided for. Suits for recovery of money on a written contract have a 3-year limitation. The clock starts from when the right to sue first accrues (typically when the amount falls due).'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is the punishment for rape under the Protection of Children from Sexual Offences (POCSO) Act if the victim is below 12 years?',
+    answer: 'Rigorous imprisonment not less than 20 years, which may extend to life imprisonment or death penalty (post 2019 amendment)',
+    explanation: 'The POCSO Amendment Act 2019 introduced the death penalty for penetrative sexual assault on children below 12 years. The minimum sentence is rigorous imprisonment of 20 years extendable to life. POCSO 2012 protects children below 18 from sexual offences and has gender-neutral provisions.'
+  },
+  {
+    topic: 'legal-gk', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What are the grounds for divorce under the Hindu Marriage Act, 1955?',
+    answer: 'Adultery, cruelty, desertion (2 years), conversion, unsoundness of mind, venereal disease, leprosy, renunciation of world, not heard of for 7 years; plus mutual consent (Section 13B)',
+    explanation: 'Section 13 of the Hindu Marriage Act lists fault grounds for divorce. Section 13B provides for divorce by mutual consent after 1 year of separation. The Special Marriage Act applies to inter-religious marriages. The Hindu Marriage Act applies to Hindus, Buddhists, Jains, and Sikhs.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is "bail" and what is "bail in non-bailable offences" under the CrPC?',
+    answer: 'Bail is release from custody upon security; in non-bailable offences, bail is at the court\'s discretion under Section 437 CrPC',
+    explanation: 'Bail means release of an accused from custody on furnishing security that they will appear when required. In bailable offences (Schedule I, CrPC), bail is a right. In non-bailable offences, only a Magistrate or Sessions Court can grant bail under Section 437/439 CrPC, subject to conditions and the court\'s discretion. The accused may not get bail if charged with offences punishable with death or life imprisonment.'
+  },
+  {
+    topic: 'legal-gk', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the Consumer Protection Act, 2019\'s definition of a "consumer"?',
+    answer: 'A person who buys goods/services for personal use for consideration — not for commercial resale or manufacturing purposes',
+    explanation: 'Under the Consumer Protection Act 2019, a consumer is one who buys goods or hires services for a consideration for personal use. A person who buys goods for resale or for commercial purposes is NOT a consumer. The 2019 Act expanded protections, introduced product liability, and established the Central Consumer Protection Authority.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What does the Right to Information Act, 2005 guarantee?',
+    answer: 'Citizens\' right to access information held by public authorities, with a 30-day response deadline (48 hours if life/liberty is at stake)',
+    explanation: 'The RTI Act 2005 empowers citizens to request information from any "public authority" (government bodies). The authority must respond within 30 days (48 hours if the information relates to life or liberty). Exempt information includes national security, cabinet papers, personal information affecting privacy, and information received in confidence from foreign governments.'
+  },
+  {
+    topic: 'legal-gk', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What is the Prevention of Corruption Act (PCA) and who does it apply to?',
+    answer: 'Law to combat corruption among public servants; applies to government officials, public sector employees and those performing public duties',
+    explanation: 'The Prevention of Corruption Act 1988 (amended 2018) criminalises bribery and corruption by public servants. The 2018 amendment also made bribe-giving an offence. It applies to public servants as defined under Section 21 IPC. Cases are tried by Special Courts. CBI and state ACBs investigate PCA offences.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is Section 498A of the IPC?',
+    answer: 'Cruelty by husband or relatives of husband — covers dowry harassment and physical/mental cruelty',
+    explanation: 'Section 498A IPC was inserted in 1983 to address domestic violence and dowry harassment. It punishes husband or husband\'s relative who subjects a woman to cruelty — defined as conduct that drives her to suicide, causes grave injury, or coerces her or her relatives for unlawful demands including dowry. It is cognizable, non-bailable, and non-compoundable.'
+  },
+  {
+    topic: 'legal-gk', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the age of criminal responsibility in India?',
+    answer: 'Below 7 — no criminal liability; 7-12 — liability only if maturity to judge consequences is proven; above 12 — full liability',
+    explanation: 'Under Section 82 IPC, nothing is an offence done by a child under 7 years (doli incapax). Under Section 83, a child between 7-12 years of insufficient maturity has no liability. Above 12, full criminal liability applies. Children are generally tried under the Juvenile Justice Act, not the IPC, if below 18 years — unless the JJ Board transfers heinous offence cases of 16-18 year olds to adult courts.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is the Negotiable Instruments Act and what does Section 138 cover?',
+    answer: 'Governs cheques, bills of exchange, promissory notes; Section 138 covers dishonour of cheque — punishable with imprisonment up to 2 years or fine up to twice the cheque amount',
+    explanation: 'The Negotiable Instruments Act 1881 governs instruments like cheques. Section 138 creates a criminal offence when a cheque is dishonoured due to insufficient funds or amount exceeding the arrangement. The payee must send a demand notice within 30 days of dishonour, and the drawer has 15 days to pay. On failure, a complaint can be filed within 30 days.'
+  },
+  {
+    topic: 'legal-gk', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What are the conditions for a valid Muslim marriage (Nikah)?',
+    answer: 'Proposal (ijab) and acceptance (qubul) in the same meeting; competent parties; absence of prohibitions; free consent; two witnesses; mehr (dower)',
+    explanation: 'Under Muslim Personal Law, a valid Nikah requires: offer and acceptance in one sitting; both parties must be of sound mind and puberty (or age of majority); must not be within prohibited degrees of relationship; consent must be free; presence of two adult Muslim witnesses; and specification of mehr (a sum paid by husband to wife). Registration is not mandatory but is advisable.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What does the Scheduled Castes and Scheduled Tribes (Prevention of Atrocities) Act, 1989 do?',
+    answer: 'Prevents offences against SC/ST members; creates special courts; provides for relief and rehabilitation of victims',
+    explanation: 'The SC/ST PoA Act 1989 (amended 2015 and 2018) criminalises acts of atrocity against Scheduled Castes and Scheduled Tribes — including forcing them to eat inedible substances, parading them naked, dispossessing them of land, and sexual exploitation. It establishes Special Courts for speedy trials and provides for victim compensation and rehabilitation. The Supreme Court\'s 2018 Subhash Kashinath judgment on anticipatory bail was reversed by the 2018 amendment.'
+  },
+  {
+    topic: 'legal-gk', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is the Unlawful Activities (Prevention) Act (UAPA)?',
+    answer: 'Anti-terrorism and anti-secessionist law; allows designation of individuals and organisations as terrorists; permits extended detention without bail',
+    explanation: 'UAPA 1967 (amended 2019) is India\'s primary counter-terrorism legislation. The 2019 amendment allowed designation of individuals (not just organisations) as terrorists. It permits detention for up to 180 days without chargesheet and bail is stringent — courts must hear the public prosecutor before granting bail. It covers terrorist acts, unlawful activities, and funding of terrorism.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What is the difference between cognizable and non-cognizable offences under CrPC?',
+    answer: 'Cognizable — police can arrest without warrant and investigate without court order; Non-cognizable — police need court permission to investigate and cannot arrest without warrant',
+    explanation: 'In cognizable offences (like murder, rape, theft), the police can arrest the accused without a warrant, enter premises, and investigate without a Magistrate\'s order. An FIR is registered. In non-cognizable offences (like assault, cheating in some cases), the police must obtain a Magistrate\'s permission to investigate and cannot arrest without a warrant. A Non-cognizable Report (NCR) is filed instead of FIR.'
+  },
+  {
+    topic: 'legal-gk', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What is the difference between an FIR and a charge sheet?',
+    answer: 'FIR — initial complaint to police; charge sheet — police report filed in court after investigation, containing evidence and charges',
+    explanation: 'An FIR (First Information Report) is filed at a police station when a cognizable offence is reported. It sets the investigation in motion. A charge sheet (under Section 173 CrPC) is the police report submitted to the Magistrate after investigation, containing the evidence collected, witnesses, and the specific charges against the accused. The trial proceeds based on the charge sheet.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What does the Protection of Women from Domestic Violence Act, 2005 provide?',
+    answer: 'Civil remedies for domestic violence — protection orders, residence orders, monetary relief, custody orders; covers wife, partner, sister, mother in shared household',
+    explanation: 'The DV Act 2005 provides civil remedies (not criminal punishment primarily) against domestic violence. Domestic violence includes physical, sexual, verbal, emotional, and economic abuse. It covers women in marriage, live-in relationships, and family relationships. Remedies include: Protection Orders (restraining abuser), Residence Orders (right to stay in shared household), Monetary Relief, and Custody Orders for children.'
+  },
+  {
+    topic: 'legal-gk', exam: 'AILET',
+    type: 'flashcard',
+    question: 'What is contempt of court and what are its types?',
+    answer: 'Civil contempt — willful disobedience of court order; Criminal contempt — scandalises court, prejudices proceedings, or interferes with administration of justice',
+    explanation: 'Under the Contempt of Courts Act 1971, contempt is of two types. Civil contempt means wilful disobedience of a court judgment, decree, direction, or order. Criminal contempt means publication of anything that scandalises the court, prejudices pending proceedings, or otherwise interferes with the administration of justice. The Supreme Court has inherent power to punish for contempt under Article 129 and Article 215 grants High Courts the same power.'
+  },
+  {
+    topic: 'legal-gk', exam: 'CLAT',
+    type: 'flashcard',
+    question: 'What are the essential elements of a valid will under the Indian Succession Act?',
+    answer: 'Testator must be 21+, of sound mind; will must be in writing; signed by testator; attested by 2+ witnesses who must also sign in presence of testator',
+    explanation: 'Under the Indian Succession Act 1925 (applies to non-Hindus; Hindus governed by Hindu Succession Act but follow similar requirements), a valid will requires: testator must be 21 years or older and of sound mind; the will must be in writing; signed or thumb-marked by the testator; attested by at least two witnesses who each sign in the presence of the testator. A will can be registered but registration is not mandatory for validity.'
+  },
+  {
+    topic: 'legal-gk', exam: 'LSAT India',
+    type: 'flashcard',
+    question: 'What is the National Human Rights Commission (NHRC) and under which Act was it established?',
+    answer: 'Quasi-judicial body for protecting human rights; established under Protection of Human Rights Act, 1993',
+    explanation: 'The NHRC was established in 1993 under the Protection of Human Rights Act, 1993. It is a quasi-judicial body headed by a retired Chief Justice of India. It inquires into violations of human rights, reviews safeguards, studies international human rights instruments, and makes recommendations for remedial measures. It cannot try cases directly in court but its recommendations carry moral authority. State Human Rights Commissions exist at the state level.'
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let allCards = [...CARDS];
+let filteredCards = [...CARDS];
+let currentIndex = 0;
+let isFlipped = false;
+let correct = 0;
+let wrong = 0;
+let answered = new Set();
+
+// ── LEAD GATE ──────────────────────────────────────────────────────────────
+(function() {
+  try {
+    if (localStorage.getItem('gs_lead_submitted') === '1') {
+      var gate = document.getElementById('leadGate');
+      if (gate) gate.classList.add('hidden');
+      return;
+    }
+  } catch(e) {}
+  document.body.style.overflow = 'hidden';
+})();
+
+function submitLeadGate() {
+  var name  = document.getElementById('lg-name').value.trim();
+  var phone = document.getElementById('lg-phone').value.trim();
+  var email = document.getElementById('lg-email').value.trim();
+  var exam  = document.getElementById('lg-exam').value;
+
+  var showErr = function(id, show) {
+    var el = document.getElementById(id);
+    if (el) { el.style.display = show ? 'block' : 'none'; }
+  };
+
+  var phoneClean = phone.replace(/[\s\-\+]/g, '');
+  var phoneOk = /^[0-9]{10,13}$/.test(phoneClean);
+  var emailOk = /^[^@]+@[^@]+\.[^@]+$/.test(email);
+
+  showErr('lg-name-err',  !name);
+  showErr('lg-phone-err', !phoneOk);
+  showErr('lg-email-err', !emailOk);
+  showErr('lg-exam-err',  !exam);
+
+  if (!name || !phoneOk || !emailOk || !exam) return;
+
+  var btn = document.getElementById('lg-submit');
+  btn.disabled = true;
+  btn.textContent = 'Unlocking...';
+
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwejy59OKOrfsFQMtvBGnJtrXbNjHl-8x8wRqtjzDO8tfgjpCXtA_e0cStkOeVaqmxg_w/exec';
+  var payload = new URLSearchParams({
+    name: name, phone: phone, email: email,
+    exam: exam, tool: 'CLAT Legal Reasoning Tool', source: window.location.hostname,
+    ts: new Date().toISOString()
+  });
+  fetch(SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: payload.toString()
+  }).catch(function() {});
+
+  unlockTool();
+}
+
+function unlockTool() {
+  try { localStorage.setItem('gs_lead_submitted', '1'); } catch(e) {}
+  var gate = document.getElementById('leadGate');
+  if (gate) gate.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+// ── FILTERS ────────────────────────────────────────────────────────────────
+function setTopic(topic, btn) {
+  document.querySelectorAll('#topicFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filteredCards = topic === 'all' ? [...CARDS] : CARDS.filter(c => c.topic === topic);
+  currentIndex = 0;
+  correct = 0; wrong = 0; answered.clear();
+  updateScorePanel();
+  renderCard();
+  document.getElementById('completionCard').style.display = 'none';
+  document.getElementById('flashcardWrap').style.display = 'block';
+}
+
+// ── RENDER CARD ────────────────────────────────────────────────────────────
+function renderCard() {
+  if (currentIndex >= filteredCards.length) {
+    showCompletion();
+    return;
+  }
+
+  isFlipped = false;
+  var fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+
+  var card = filteredCards[currentIndex];
+  var front = document.getElementById('cardFront');
+  var back  = document.getElementById('cardBack');
+
+  // ── FRONT ──
+  var examLabel = `<span class="card-exam-tag">${card.exam}</span>`;
+  var topicLabel = {
+    'legal-reasoning': 'Legal Reasoning',
+    'constitutional': 'Constitutional Law',
+    'legal-gk': 'Legal GK'
+  }[card.topic] || card.topic;
+
+  if (card.type === 'principle-application') {
+    var optionsHtml = card.options.map((opt, i) => {
+      var letter = ['A','B','C','D'][i];
+      return `<div class="card-option" id="opt-${i}" onclick="selectOption(${i}, event)">
+        <span class="opt-letter">${letter}.</span> ${opt}
+      </div>`;
+    }).join('');
+
+    front.innerHTML = `
+      <div class="card-topic-tag">${topicLabel}</div>
+      ${examLabel}
+      <div class="card-type-label">Principle & Application</div>
+      <div class="card-principle">${card.principle}</div>
+      <div class="card-question">${card.question}</div>
+      <div class="card-options" id="optionsWrap">${optionsHtml}</div>
+    `;
+  } else {
+    // Flashcard (GK / Constitutional)
+    front.innerHTML = `
+      <div class="card-topic-tag">${topicLabel}</div>
+      ${examLabel}
+      <div class="card-type-label">Flashcard</div>
+      <div class="card-gk-question">${card.question}</div>
+      <div class="card-flip-hint">⟳ Tap card to reveal answer</div>
+    `;
+  }
+
+  // ── BACK ──
+  back.innerHTML = `
+    <div class="card-answer-label">Answer</div>
+    <div class="card-answer">${card.answer !== undefined && typeof card.answer !== 'number' ? card.answer : (card.options ? card.options[card.answer] : card.answer)}</div>
+    <div class="card-explanation">${card.explanation}</div>
+    <div class="card-back-meta">
+      <span class="card-back-source">${card.exam} · ${topicLabel}</span>
+      <div style="display:flex;gap:0.75rem;">
+        <button onclick="markResult(true, event)" style="font-family:var(--sans);font-size:0.75rem;font-weight:700;background:#e8f4e8;color:#2d6a2d;border:1.5px solid #2d8a4e;padding:5px 14px;border-radius:3px;cursor:pointer;">✓ Got it</button>
+        <button onclick="markResult(false, event)" style="font-family:var(--sans);font-size:0.75rem;font-weight:700;background:#fff0f0;color:var(--red-dark);border:1.5px solid var(--red-dark);padding:5px 14px;border-radius:3px;cursor:pointer;">✗ Missed</button>
+      </div>
+    </div>
+  `;
+
+  updateProgress();
+  updateNavBtns();
+}
+
+// ── OPTION SELECTION (principle-application cards) ──────────────────────
+function selectOption(idx, e) {
+  e.stopPropagation();
+  var card = filteredCards[currentIndex];
+  if (card.type !== 'principle-application') return;
+  if (answered.has(currentIndex)) return;
+
+  answered.add(currentIndex);
+  var isCorrect = idx === card.answer;
+  if (isCorrect) correct++; else wrong++;
+  updateScorePanel();
+
+  // Highlight options
+  card.options.forEach((_, i) => {
+    var el = document.getElementById(`opt-${i}`);
+    if (!el) return;
+    el.style.pointerEvents = 'none';
+    if (i === card.answer) el.classList.add('reveal-correct');
+    if (i === idx && !isCorrect) el.classList.add('selected-wrong');
+  });
+
+  // Auto-flip to show explanation after short delay
+  setTimeout(() => {
+    document.getElementById('flashcard').classList.add('flipped');
+    isFlipped = true;
+  }, 800);
+}
+
+// ── FLIP ──────────────────────────────────────────────────────────────────
+function flipCard() {
+  var fc = document.getElementById('flashcard');
+  isFlipped = !isFlipped;
+  fc.classList.toggle('flipped', isFlipped);
+}
+
+// ── MARK RESULT (for flashcards) ──────────────────────────────────────────
+function markResult(gotIt, e) {
+  e.stopPropagation();
+  if (answered.has(currentIndex)) return;
+  answered.add(currentIndex);
+  if (gotIt) correct++; else wrong++;
+  updateScorePanel();
+  setTimeout(() => navigate(1), 300);
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+function navigate(dir) {
+  currentIndex += dir;
+  if (currentIndex < 0) currentIndex = 0;
+  if (currentIndex >= filteredCards.length) {
+    showCompletion();
+    return;
+  }
+  renderCard();
+}
+
+function updateNavBtns() {
+  document.getElementById('prevBtn').disabled = currentIndex === 0;
+  document.getElementById('nextBtn').disabled = currentIndex >= filteredCards.length - 1;
+}
+
+function updateProgress() {
+  var total = filteredCards.length;
+  var pct = total ? ((currentIndex + 1) / total * 100).toFixed(1) : 0;
+  document.getElementById('progressText').textContent = `${currentIndex + 1} / ${total}`;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('cardCounter').textContent = `Card ${currentIndex + 1} of ${total}`;
+}
+
+function updateScorePanel() {
+  var seen = answered.size;
+  var acc = seen > 0 ? Math.round(correct / seen * 100) + '%' : '—';
+  document.getElementById('scoreTotal').textContent = seen;
+  document.getElementById('scoreCorrect').textContent = correct;
+  document.getElementById('scoreWrong').textContent = wrong;
+  document.getElementById('scoreAccuracy').textContent = acc;
+}
+
+// ── COMPLETION ────────────────────────────────────────────────────────────
+function showCompletion() {
+  document.getElementById('flashcardWrap').style.display = 'none';
+  document.getElementById('completionCard').style.display = 'block';
+  var pct = answered.size > 0 ? Math.round(correct / answered.size * 100) : 0;
+  var msg = pct >= 80 ? 'Excellent work — strong legal reasoning.' :
+            pct >= 60 ? 'Good effort — review the cards you missed.' :
+                        'Keep practising — revisit the explanations carefully.';
+  document.getElementById('completionSub').innerHTML = `
+    You scored <strong>${correct}</strong> correct out of <strong>${answered.size}</strong> answered (${pct}% accuracy).<br>${msg}
+  `;
+}
+
+function restart() {
+  currentIndex = 0; correct = 0; wrong = 0; answered.clear();
+  updateScorePanel();
+  document.getElementById('completionCard').style.display = 'none';
+  document.getElementById('flashcardWrap').style.display = 'block';
+  renderCard();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderCard();
+</script>
+</body>
+</html>
