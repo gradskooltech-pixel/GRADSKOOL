@@ -55,7 +55,7 @@ CACHES = {
 # ── SENTRY ────────────────────────────────────────────────────────────────────
 
 sentry_sdk.init(
-    dsn=config('SENTRY_DSN'),
+    dsn=config('SENTRY_DSN', default=''),
     integrations=[DjangoIntegration(transaction_style='url')],
     traces_sample_rate=0.2,
     send_default_pii=False,
