@@ -155,8 +155,8 @@ function Inner() {
                   const isWeak  = gam?.weak_topics?.some(w => w["topic_video__topic__slug"] === topic.slug)
                   const isDue   = gam?.due_reviews?.some(r => r.slug === topic.slug)
                   return (
-                    {/* isLocked = not enrolled AND video is not free preview */}
-                    {(() => {
+                    // isLocked = not enrolled AND video is not free preview
+                    (() => {
                       const isLocked = !isEnrolled && !topic.is_free_preview && !topic.videos?.some(v => v.is_free_preview)
                       if (isLocked) {
                         return (
@@ -194,7 +194,7 @@ function Inner() {
                       </div>
                     </Link>
                       )
-                    })()}
+                    })()
                   )
                 })}
               </div>
