@@ -62,19 +62,12 @@ export default function ToolPage() {
     </div>
   )
 
-  const showGate = tool.requires_lead_gate && !hasAccess && !justUnlocked
-
   return (
     <>
       <Head>
         <title>{tool.meta_title || `${tool.name} — GRADSKOOL Free Tool`}</title>
         <meta name="description" content={tool.meta_desc || tool.description} />
       </Head>
-
-      {/* Lead gate */}
-      {showGate && (
-        
-      )}
 
       {/* Topbar */}
       <header style={hdr.bar}>
