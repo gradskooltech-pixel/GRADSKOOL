@@ -52,7 +52,7 @@ function Inner() {
   // Load session details
   useEffect(() => {
     if (!sessionId) return
-    api.get(\`/learn/live-sessions/\${sessionId}/\`)
+    api.get(`/learn/live-sessions/${sessionId}/`)
       .then(({ data }) => {
         setSession(data)
         setStatus('ready')
