@@ -1,0 +1,36 @@
+# GRADSKOOL — Railway Deployment Configuration (Frontend)
+#
+# This is a SEPARATE Railway service from the backend (backend/railway.toml).
+# Both live in the same GitHub repo (monorepo) — when creating this service
+# in Railway, set its "Root Directory" to `frontend` so Railway only builds
+# this folder, not the whole repo.
+#
+# Setup:
+#   1. In Railway, click + New → GitHub Repo → select this repo
+#   2. Set Root Directory: frontend
+#   3. Add env vars below in the Railway dashboard (Variables tab)
+#   4. Railway auto-detects Next.js via Nixpacks — this file just pins the
+#      exact commands so nothing is left to auto-detection guesswork.
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm install && npm run build"
+
+[deploy]
+startCommand = "npm run start -- -p $PORT"
+healthcheckPath = "/"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# ── ENVIRONMENT VARIABLES (set in Railway dashboard) ─────────────────────────
+# NEXT_PUBLIC_ vars are baked in at BUILD time, not runtime — if you change
+# one, you must redeploy (a restart alone won't pick up the new value).
+#
+#   NEXT_PUBLIC_API_URL         → your backend's Railway public URL
+#                                  (e.g. https://gradskool-backend.up.railway.app/api/v1)
+#   NEXT_PUBLIC_MAIN_DOMAIN     → gradskool.in
+#   NODE_ENV=production
+#
+# See frontend/.env.example and frontend/envs/.env.main for the full list
+# of NEXT_PUBLIC_ variables this app reads.

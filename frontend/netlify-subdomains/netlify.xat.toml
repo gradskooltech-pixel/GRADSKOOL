@@ -1,0 +1,23 @@
+# GRADSKOOL — xat.gradskool.in
+# Deploy this config when setting up the XAT subdomain on Netlify.
+# Set NEXT_PUBLIC_EXAM = xat in Netlify environment variables for this site.
+
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+[build.environment]
+  NEXT_PUBLIC_EXAM      = "xat"
+  NEXT_PUBLIC_API_URL   = "https://api.gradskool.in"
+  NEXT_PUBLIC_MAIN_URL  = "https://gradskool.in"
+  NODE_VERSION          = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# / → /courses/xat
+[[redirects]]
+  from   = "/"
+  to     = "/courses/xat"
+  status = 302
+  force  = false

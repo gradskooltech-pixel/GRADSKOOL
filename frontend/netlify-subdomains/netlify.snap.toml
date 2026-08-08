@@ -1,0 +1,23 @@
+# GRADSKOOL — snap.gradskool.in
+# Deploy this config when setting up the SNAP subdomain on Netlify.
+# Set NEXT_PUBLIC_EXAM = snap in Netlify environment variables for this site.
+
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+[build.environment]
+  NEXT_PUBLIC_EXAM      = "snap"
+  NEXT_PUBLIC_API_URL   = "https://api.gradskool.in"
+  NEXT_PUBLIC_MAIN_URL  = "https://gradskool.in"
+  NODE_VERSION          = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# / → /courses/snap
+[[redirects]]
+  from   = "/"
+  to     = "/courses/snap"
+  status = 302
+  force  = false

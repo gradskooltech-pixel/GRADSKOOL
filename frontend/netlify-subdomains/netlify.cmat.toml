@@ -1,0 +1,23 @@
+# GRADSKOOL — cmat.gradskool.in
+# Deploy this config when setting up the CMAT subdomain on Netlify.
+# Set NEXT_PUBLIC_EXAM = cmat in Netlify environment variables for this site.
+
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+[build.environment]
+  NEXT_PUBLIC_EXAM      = "cmat"
+  NEXT_PUBLIC_API_URL   = "https://api.gradskool.in"
+  NEXT_PUBLIC_MAIN_URL  = "https://gradskool.in"
+  NODE_VERSION          = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# / → /courses/cmat
+[[redirects]]
+  from   = "/"
+  to     = "/courses/cmat"
+  status = 302
+  force  = false

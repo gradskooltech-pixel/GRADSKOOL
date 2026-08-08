@@ -1,0 +1,651 @@
+/**
+ * GRADSKOOL — Learning Portal Page
+ * Route: /learn/[examSlug]/[topicSlug]
+ *
+ * Shows the full gamified sequence:
+ *   Sidebar: ordered video list with lock/unlock/complete states
+ *   Main: active video player + quiz modal + cheat sheet modal
+ *   Bottom: live session card (Full Cohort) + topic completion
+ */
+import { useState, useEffect, useRef, useCallback } from 'react'
+import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { ProtectedRoute } from '../../../components/auth/ProtectedRoute'
+import { QuizModal } from '../../../components/learn/QuizModal'
+import { CheatSheet } from '../../../components/learn/CheatSheet'
+import { useTopicSequence, useLearnProgress } from '../../../hooks/useLearn'
+
+export default function LearnPage() {
+  return <ProtectedRoute><LearnPageInner /></ProtectedRoute>
+}
+
+function LearnPageInner() {
+  const router = useRouter()
+  const { examSlug, topicSlug } = router.query
+
+  const { data, loading, error, refetch } = useTopicSequence(examSlug, topicSlug)
+
+  // Active video — default to current (first non-completed)
+  const [activeId, setActiveId]      = useState(null)
+  const [showQuiz, setShowQuiz]      = useState(false)
+  const [showCheatSheet, setShowCS]  = useState(false)
+  const playerRef                    = useRef(null)
+  const progressInterval             = useRef(null)
+
+  const sequence = data?.sequence || []
+
+  // Set active video to current on load
+  useEffect(() => {
+    if (sequence.length && !activeId) {
+      const current = sequence.find(s => s.is_current) || sequence[0]
+      if (current) setActiveId(current.id)
+    }
+  }, [sequence])
+
+  const activeItem = sequence.find(s => s.id === activeId)
+  const { saveProgress } = useLearnProgress(examSlug, topicSlug, activeId)
+
+  // Track Bunny video progress via postMessage
+  useEffect(() => {
+    if (!activeItem || activeItem.video_source === 'youtube') return
+
+    const handler = (e) => {
+      if (!e.data?.type) return
+      if (e.data.type === 'timeupdate') {
+        const pos      = Math.floor(e.data.currentTime || 0)
+        const watched  = Math.floor(e.data.watchedTime || 0)
+        const duration = e.data.duration || 0
+        const pct      = duration > 0 ? Math.min(100, (watched / duration) * 100) : 0
+
+        clearTimeout(progressInterval.current)
+        progressInterval.current = setTimeout(() => {
+          saveProgress({ watchPct: pct, watchedSecs: watched, positionSecs: pos })
+            .then(result => {
+              if (!result) return
+              // Transition triggered by server
+              if (result.state === 'quiz_ready' && activeItem.has_quiz) {
+                setShowQuiz(true)
+              } else if (result.state === 'cheatsheet_required') {
+                setShowCS(true)
+              }
+              // Refetch to update sidebar states
+              if (result.newly_unlocked_next) refetch()
+            })
+        }, 3000)
+      }
+    }
+    window.addEventListener('message', handler)
+    return () => {
+      window.removeEventListener('message', handler)
+      clearTimeout(progressInterval.current)
+    }
+  }, [activeItem, saveProgress, refetch])
+
+  // Quiz completed → show cheat sheet
+  const handleQuizComplete = (nextStep) => {
+    setShowQuiz(false)
+    if (nextStep === 'cheatsheet') {
+      setShowCS(true)
+    }
+    refetch()
+  }
+
+  // Cheat sheet opened → next video unlocks
+  const handleCheatSheetComplete = (result) => {
+    setShowCS(false)
+    refetch()
+    // Auto-advance to next video
+    if (result?.next_topic_video_id) {
+      setActiveId(result.next_topic_video_id)
+    }
+  }
+
+  if (loading) return <LoadingShell />
+  if (error) return <ErrorShell error={error} />
+
+  const topic = data?.topic
+
+  return (
+    <>
+      <Head>
+        <title>{topic?.title} — {examSlug?.toUpperCase()} — GRADSKOOL</title>
+        <meta name="robots" content="noindex" />
+      </Head>
+
+      {/* Modals */}
+      {showQuiz && activeItem && (
+        <QuizModal
+          examSlug={examSlug}
+          topicSlug={topicSlug}
+          topicVideo={activeItem}
+          onComplete={handleQuizComplete}
+          onClose={() => setShowQuiz(false)}
+        />
+      )}
+      {showCheatSheet && activeItem && (
+        <CheatSheet
+          examSlug={examSlug}
+          topicSlug={topicSlug}
+          topicVideo={activeItem}
+          onComplete={handleCheatSheetComplete}
+        />
+      )}
+
+      {/* Top bar */}
+      <div style={s.topBar}>
+        <Link href={`/courses/${examSlug}`} style={s.topBack}>
+          ← {examSlug?.toUpperCase()}
+        </Link>
+        <div style={s.topMiddle}>
+          <span style={s.topTopicLabel}>{topic?.title}</span>
+          <CompletionPill completion={data?.completion} />
+        </div>
+        <Link href="/dashboard" style={s.topDash}>Dashboard</Link>
+      </div>
+
+      <div style={s.layout}>
+        {/* ── SIDEBAR ──────────────────────────────────────────────── */}
+        <div style={s.sidebar}>
+          <p style={s.sidebarLabel}>Videos</p>
+
+          {sequence.map((item) => (
+            <VideoRow
+              key={item.id}
+              item={item}
+              isActive={item.id === activeId}
+              onClick={() => {
+                if (!item.is_locked && !item.is_standalone_quiz) {
+                  setActiveId(item.id)
+                  setShowQuiz(false)
+                  setShowCS(false)
+                }
+              }}
+            />
+          ))}
+
+          {/* Live sessions */}
+          {data?.live_sessions?.length > 0 && (
+            <div style={s.liveSectionWrap}>
+              <p style={s.sidebarLabel}>Live Sessions</p>
+              {data.live_sessions.map(ls => (
+                <LiveSessionCard key={ls.id} session={ls} allDone={data.completion?.all_done} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── MAIN PLAYER ──────────────────────────────────────────── */}
+        <div style={s.main}>
+          {!activeItem ? (
+            <EmptyPlayer />
+          ) : activeItem.is_standalone_quiz ? (
+            <StandaloneQuizCard
+              item={activeItem}
+              examSlug={examSlug}
+              topicSlug={topicSlug}
+              onComplete={() => { refetch(); setShowQuiz(false) }}
+            />
+          ) : (
+            <>
+              {/* Video player */}
+              <div style={s.playerWrap}>
+                {activeItem.video_source === 'youtube' ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${activeItem.youtube_video_id}?rel=0&modestbranding=1`}
+                    style={s.iframe}
+                    allowFullScreen
+                    allow="autoplay; fullscreen"
+                    title={activeItem.title}
+                  />
+                ) : activeItem.bunny_video_id ? (
+                  <BunnyPlayer
+                    bunnyVideoId={activeItem.bunny_video_id}
+                    playerRef={playerRef}
+                    title={activeItem.title}
+                  />
+                ) : (
+                  <EmptyPlayer message="Video not yet uploaded" />
+                )}
+              </div>
+
+              {/* Video info */}
+              <div style={s.videoInfo}>
+                <div style={s.videoInfoLeft}>
+                  <span style={{ ...s.diffBadge, ...DIFF_COLORS[activeItem.difficulty] }}>
+                    {activeItem.difficulty}
+                  </span>
+                  <h1 style={s.videoTitle}>{activeItem.title}</h1>
+                  {activeItem.sub_tag && (
+                    <p style={s.subTag}>{activeItem.sub_tag}</p>
+                  )}
+                </div>
+                <div style={s.videoMeta}>
+                  <span style={s.duration}>{activeItem.duration_mins} min</span>
+                  <StateLabel item={activeItem} />
+                </div>
+              </div>
+
+              {/* Progress indicators */}
+              <div style={s.indicators}>
+                <Indicator
+                  icon="▶"
+                  label="Watch 70%"
+                  done={activeItem.watch_pct >= 70}
+                  active={activeItem.watch_pct > 0 && activeItem.watch_pct < 70}
+                  value={activeItem.watch_pct > 0 ? `${Math.round(activeItem.watch_pct)}%` : null}
+                />
+                {activeItem.has_quiz && (
+                  <Indicator
+                    icon="📝"
+                    label="Quiz"
+                    done={activeItem.quiz_passed || activeItem.quiz_bypassed}
+                    active={activeItem.state === 'quiz_ready'}
+                    value={activeItem.best_score_pct != null
+                      ? `${Math.round(activeItem.best_score_pct)}%`
+                      : null}
+                  />
+                )}
+                {activeItem.has_cheatsheet && (
+                  <Indicator
+                    icon="📄"
+                    label="Cheat Sheet"
+                    done={activeItem.cheatsheet_opened}
+                    active={activeItem.state === 'cheatsheet_required'}
+                  />
+                )}
+              </div>
+
+              {/* Action buttons */}
+              <div style={s.actions}>
+                {activeItem.state === 'quiz_ready' && activeItem.has_quiz && (
+                  <button onClick={() => setShowQuiz(true)} style={s.actionBtn}>
+                    📝 Take Quiz →
+                  </button>
+                )}
+                {activeItem.state === 'cheatsheet_required' && activeItem.has_cheatsheet && (
+                  <button onClick={() => setShowCS(true)} style={s.actionBtnCS}>
+                    📄 Open Cheat Sheet →
+                  </button>
+                )}
+                {activeItem.state === 'completed' && (
+                  <div style={s.completedMsg}>
+                    ✓ Completed — well done!
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  )
+}
+
+// ── SUB-COMPONENTS ────────────────────────────────────────────────────────────
+
+function BunnyPlayer({ bunnyVideoId, playerRef, title }) {
+  const src = `https://iframe.mediadelivery.net/embed/${process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID}/${bunnyVideoId}?autoplay=false&responsive=true`
+  return (
+    <iframe
+      ref={playerRef}
+      src={src}
+      style={s.iframe}
+      allowFullScreen
+      allow="autoplay; fullscreen"
+      title={title}
+    />
+  )
+}
+
+function VideoRow({ item, isActive, onClick }) {
+  const STATE_ICONS = {
+    locked:              '🔒',
+    unlocked:            '▶',
+    quiz_ready:          '📝',
+    cheatsheet_required: '📄',
+    completed:           '✓',
+  }
+  const icon = STATE_ICONS[item.state] || '▶'
+  const isCompleted = item.state === 'completed'
+  const isLocked    = item.is_locked
+
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        ...s.videoRow,
+        ...(isActive ? s.videoRowActive : {}),
+        ...(isLocked ? s.videoRowLocked : {}),
+        cursor: isLocked || item.is_standalone_quiz ? 'default' : 'pointer',
+      }}
+    >
+      {/* State icon */}
+      <div style={{
+        ...s.rowIcon,
+        background: isCompleted ? '#dcfce7' : isActive ? 'var(--black)' : 'var(--gray-100)',
+        color: isCompleted ? '#166534' : isActive ? 'var(--white)' : 'var(--gray-400)',
+      }}>
+        {icon}
+      </div>
+
+      <div style={s.rowInfo}>
+        <p style={{
+          ...s.rowTitle,
+          color: isLocked ? 'var(--gray-400)' : isActive ? 'var(--black)' : 'var(--gray-700)',
+          fontWeight: isActive ? '600' : '400',
+        }}>
+          {item.is_standalone_quiz ? '📝 ' : ''}{item.title || `Video ${item.sort_order}`}
+        </p>
+        <div style={s.rowMeta}>
+          {item.difficulty && (
+            <span style={{ ...s.rowDiff, ...DIFF_COLORS[item.difficulty] }}>
+              {item.difficulty}
+            </span>
+          )}
+          {item.duration_mins > 0 && (
+            <span style={s.rowDur}>{item.duration_mins}m</span>
+          )}
+          {item.has_quiz && !item.is_standalone_quiz && (
+            <span style={s.rowQuizBadge}>+ quiz</span>
+          )}
+        </div>
+        {/* Watch progress bar */}
+        {item.watch_pct > 0 && item.watch_pct < 100 && (
+          <div style={s.miniBar}>
+            <div style={{ ...s.miniBarFill, width: `${item.watch_pct}%` }} />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function Indicator({ icon, label, done, active, value }) {
+  return (
+    <div style={{
+      ...ind.wrap,
+      ...(done ? ind.done : active ? ind.active : {}),
+    }}>
+      <span style={ind.icon}>{done ? '✓' : icon}</span>
+      <span style={ind.label}>{label}</span>
+      {value && <span style={ind.value}>{value}</span>}
+    </div>
+  )
+}
+
+function StateLabel({ item }) {
+  const LABELS = {
+    locked:              { text: 'Locked',           color: '#9ca3af' },
+    unlocked:            { text: 'Watching',          color: '#3b82f6' },
+    quiz_ready:          { text: 'Quiz Ready',        color: '#f59e0b' },
+    cheatsheet_required: { text: 'Open Cheat Sheet',  color: '#8b5cf6' },
+    completed:           { text: 'Completed',         color: '#10b981' },
+  }
+  const l = LABELS[item.state] || LABELS.locked
+  return (
+    <span style={{
+      fontFamily: 'var(--font-sans)', fontSize: '0.72rem', fontWeight: '700',
+      color: l.color,
+    }}>
+      {l.text}
+    </span>
+  )
+}
+
+function CompletionPill({ completion }) {
+  if (!completion) return null
+  const { completed, total, pct } = completion
+  return (
+    <div style={cp.wrap}>
+      <div style={cp.bar}>
+        <div style={{ ...cp.fill, width: `${pct}%` }} />
+      </div>
+      <span style={cp.text}>{completed}/{total} done</span>
+    </div>
+  )
+}
+
+function LiveSessionCard({ session, allDone }) {
+  const locked = !allDone || !session.has_access
+  return (
+    <div style={{
+      ...ls.card,
+      opacity: locked ? 0.65 : 1,
+    }}>
+      <div style={ls.top}>
+        <span style={ls.icon}>📡</span>
+        <div>
+          <p style={ls.title}>{session.title}</p>
+          <p style={ls.time}>
+            {new Date(session.scheduled_at).toLocaleString('en-IN', {
+              dateStyle: 'medium', timeStyle: 'short'
+            })}
+          </p>
+        </div>
+      </div>
+
+      {locked ? (
+        <p style={ls.lockedMsg}>
+          {!allDone
+            ? '🔒 Complete all videos first'
+            : '🔒 Full Cohort only'}
+        </p>
+      ) : session.meet_link ? (
+        <a href={session.meet_link} target="_blank" rel="noreferrer" style={ls.joinBtn}>
+          Join Live →
+        </a>
+      ) : session.recording_available ? (
+        <a href={session.recording_url} target="_blank" rel="noreferrer" style={ls.recordingBtn}>
+          Watch Recording →
+        </a>
+      ) : (
+        <p style={ls.upcoming}>Upcoming</p>
+      )}
+    </div>
+  )
+}
+
+function StandaloneQuizCard({ item, examSlug, topicSlug, onComplete }) {
+  const [showQuiz, setShowQuiz] = useState(false)
+  return (
+    <div style={sq.wrap}>
+      <span style={sq.icon}>📝</span>
+      <h2 style={sq.title}>{item.title}</h2>
+      <p style={sq.desc}>{item.quiz_question_count} questions</p>
+      <button onClick={() => setShowQuiz(true)} style={sq.btn}
+              disabled={item.is_locked}>
+        {item.is_locked ? '🔒 Locked' : 'Start Quiz →'}
+      </button>
+      {showQuiz && (
+        <QuizModal
+          examSlug={examSlug}
+          topicSlug={topicSlug}
+          topicVideo={item}
+          onComplete={() => { setShowQuiz(false); onComplete() }}
+          onClose={() => setShowQuiz(false)}
+        />
+      )}
+    </div>
+  )
+}
+
+function EmptyPlayer({ message = 'Select a video from the sidebar' }) {
+  return (
+    <div style={{
+      ...s.playerWrap,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: '#0a0a0a',
+    }}>
+      <p style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-sans)', fontSize: '0.875rem' }}>
+        {message}
+      </p>
+    </div>
+  )
+}
+
+function LoadingShell() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  height: '100vh', fontFamily: 'var(--font-sans)', color: 'var(--gray-400)' }}>
+      Loading…
+    </div>
+  )
+}
+
+function ErrorShell({ error }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  height: '100vh', flexDirection: 'column', gap: '1rem' }}>
+      <p style={{ fontFamily: 'var(--font-sans)', color: 'var(--red)' }}>{error}</p>
+      <Link href="/dashboard" style={{ fontFamily: 'var(--font-sans)', color: 'var(--black)' }}>
+        ← Dashboard
+      </Link>
+    </div>
+  )
+}
+
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+
+const DIFF_COLORS = {
+  beginner:     { background: '#dcfce7', color: '#166534' },
+  intermediate: { background: '#fef9c3', color: '#92400e' },
+  advanced:     { background: '#fee2e2', color: '#991b1b' },
+}
+
+// ── STYLES ────────────────────────────────────────────────────────────────────
+
+const s = {
+  topBar: {
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    padding: '0 1.5rem', height: '52px',
+    borderBottom: '1px solid var(--gray-200)',
+    background: 'var(--white)', position: 'sticky', top: 0, zIndex: 100,
+  },
+  topBack: { fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: 'var(--gray-400)', textDecoration: 'none' },
+  topMiddle: { display: 'flex', alignItems: 'center', gap: '1rem' },
+  topTopicLabel: { fontFamily: 'var(--font-serif)', fontSize: '0.95rem', fontWeight: '500', color: 'var(--black)' },
+  topDash: { fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: 'var(--red)', textDecoration: 'none' },
+  layout: { display: 'grid', gridTemplateColumns: '300px 1fr', height: 'calc(100vh - 52px)', overflow: 'hidden' },
+  sidebar: { overflowY: 'auto', borderRight: '1px solid var(--gray-200)', background: 'var(--gray-50)' },
+  sidebarLabel: {
+    fontFamily: 'var(--font-sans)', fontSize: '0.62rem', fontWeight: '700',
+    letterSpacing: '0.1em', textTransform: 'uppercase',
+    color: 'var(--gray-400)', padding: '1rem 1.25rem 0.5rem',
+    position: 'sticky', top: 0, background: 'var(--gray-50)',
+    borderBottom: '1px solid var(--gray-200)',
+  },
+  liveSectionWrap: { borderTop: '1px solid var(--gray-200)', marginTop: '0.5rem' },
+  videoRow: {
+    display: 'flex', gap: '0.75rem', padding: '0.875rem 1.25rem',
+    transition: 'background 0.15s', borderLeft: '3px solid transparent',
+  },
+  videoRowActive: { background: 'var(--white)', borderLeftColor: 'var(--red)' },
+  videoRowLocked: { opacity: 0.55 },
+  rowIcon: {
+    width: '28px', height: '28px', borderRadius: '6px',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: '0.8rem', fontWeight: '700', flexShrink: 0,
+  },
+  rowInfo: { flex: 1, minWidth: 0 },
+  rowTitle: { fontFamily: 'var(--font-sans)', fontSize: '0.82rem', lineHeight: '1.4', marginBottom: '0.3rem' },
+  rowMeta: { display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' },
+  rowDiff: { fontFamily: 'var(--font-sans)', fontSize: '0.6rem', fontWeight: '700', padding: '0.1rem 0.35rem', borderRadius: '2px' },
+  rowDur: { fontFamily: 'var(--font-sans)', fontSize: '0.68rem', color: 'var(--gray-400)' },
+  rowQuizBadge: { fontFamily: 'var(--font-sans)', fontSize: '0.62rem', fontWeight: '600', color: '#8b5cf6', background: '#f3f0ff', padding: '0.1rem 0.35rem', borderRadius: '2px' },
+  miniBar: { height: '2px', background: 'var(--gray-200)', borderRadius: '1px', overflow: 'hidden', marginTop: '0.4rem' },
+  miniBarFill: { height: '100%', background: 'var(--red)', borderRadius: '1px' },
+  main: { overflowY: 'auto' },
+  playerWrap: { position: 'relative', width: '100%', paddingBottom: '56.25%', background: '#000' },
+  iframe: { position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' },
+  videoInfo: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+    padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--gray-100)',
+  },
+  videoInfoLeft: { display: 'flex', flexDirection: 'column', gap: '0.3rem' },
+  diffBadge: { fontFamily: 'var(--font-sans)', fontSize: '0.62rem', fontWeight: '700', padding: '0.15rem 0.5rem', borderRadius: '2px', display: 'inline-block', width: 'fit-content' },
+  videoTitle: { fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: '500', color: 'var(--black)', lineHeight: '1.3' },
+  subTag: { fontFamily: 'var(--font-sans)', fontSize: '0.78rem', color: 'var(--gray-400)' },
+  videoMeta: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.3rem', flexShrink: 0 },
+  duration: { fontFamily: 'var(--font-sans)', fontSize: '0.75rem', color: 'var(--gray-400)' },
+  indicators: { display: 'flex', gap: '0.75rem', padding: '1rem 1.5rem', flexWrap: 'wrap' },
+  actions: { padding: '0 1.5rem 1.5rem' },
+  actionBtn: {
+    background: 'var(--black)', color: 'var(--white)', border: 'none',
+    borderRadius: 'var(--radius)', padding: '0.8rem 1.75rem',
+    fontFamily: 'var(--font-sans)', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer',
+  },
+  actionBtnCS: {
+    background: '#8b5cf6', color: 'var(--white)', border: 'none',
+    borderRadius: 'var(--radius)', padding: '0.8rem 1.75rem',
+    fontFamily: 'var(--font-sans)', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer',
+  },
+  completedMsg: {
+    fontFamily: 'var(--font-sans)', fontSize: '0.9rem',
+    fontWeight: '600', color: '#10b981',
+    padding: '0.8rem 0',
+  },
+}
+
+const ind = {
+  wrap: {
+    display: 'flex', alignItems: 'center', gap: '0.4rem',
+    padding: '0.4rem 0.75rem', borderRadius: '100px',
+    border: '1px solid var(--gray-200)', background: 'var(--gray-50)',
+  },
+  done: { background: '#f0fdf4', borderColor: '#86efac' },
+  active: { background: '#fef9c3', borderColor: '#fde68a' },
+  icon: { fontSize: '0.8rem' },
+  label: { fontFamily: 'var(--font-sans)', fontSize: '0.72rem', color: 'var(--gray-600)' },
+  value: { fontFamily: 'var(--font-sans)', fontSize: '0.72rem', fontWeight: '700', color: 'var(--black)' },
+}
+
+const cp = {
+  wrap: { display: 'flex', alignItems: 'center', gap: '0.5rem' },
+  bar: { width: '80px', height: '4px', background: 'var(--gray-200)', borderRadius: '2px', overflow: 'hidden' },
+  fill: { height: '100%', background: 'var(--red)', borderRadius: '2px', transition: 'width 0.3s' },
+  text: { fontFamily: 'var(--font-sans)', fontSize: '0.72rem', color: 'var(--gray-400)' },
+}
+
+const ls = {
+  card: {
+    margin: '0.5rem', padding: '1rem',
+    border: '1px solid var(--gray-200)', borderRadius: 'var(--radius)',
+    background: 'var(--white)', display: 'flex', flexDirection: 'column', gap: '0.75rem',
+  },
+  top: { display: 'flex', gap: '0.75rem', alignItems: 'flex-start' },
+  icon: { fontSize: '1.2rem', flexShrink: 0 },
+  title: { fontFamily: 'var(--font-sans)', fontSize: '0.82rem', fontWeight: '600', color: 'var(--black)' },
+  time: { fontFamily: 'var(--font-sans)', fontSize: '0.72rem', color: 'var(--gray-400)' },
+  lockedMsg: { fontFamily: 'var(--font-sans)', fontSize: '0.75rem', color: 'var(--gray-400)' },
+  joinBtn: {
+    display: 'block', textAlign: 'center', padding: '0.5rem',
+    background: 'var(--black)', color: 'var(--white)',
+    borderRadius: 'var(--radius)', fontFamily: 'var(--font-sans)',
+    fontSize: '0.8rem', fontWeight: '600', textDecoration: 'none',
+  },
+  recordingBtn: {
+    display: 'block', textAlign: 'center', padding: '0.5rem',
+    background: 'var(--gray-100)', color: 'var(--black)',
+    borderRadius: 'var(--radius)', fontFamily: 'var(--font-sans)',
+    fontSize: '0.8rem', textDecoration: 'none',
+  },
+  upcoming: { fontFamily: 'var(--font-sans)', fontSize: '0.72rem', color: 'var(--gray-400)', textAlign: 'center' },
+}
+
+const sq = {
+  wrap: {
+    display: 'flex', flexDirection: 'column', alignItems: 'center',
+    justifyContent: 'center', padding: '4rem 2rem', gap: '1rem',
+    textAlign: 'center',
+  },
+  icon: { fontSize: '3rem' },
+  title: { fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: '700', color: 'var(--black)' },
+  desc: { fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: 'var(--gray-400)' },
+  btn: {
+    background: 'var(--black)', color: 'var(--white)',
+    border: 'none', borderRadius: 'var(--radius)',
+    padding: '0.8rem 2rem',
+    fontFamily: 'var(--font-sans)', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer',
+  },
+}

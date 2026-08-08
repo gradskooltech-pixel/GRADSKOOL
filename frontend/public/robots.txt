@@ -1,0 +1,18 @@
+# robots.txt — gradskool.in
+# Generated June 2026
+
+User-agent: *
+Allow: /
+
+# Block utility and transactional pages
+Disallow: /checkout
+Disallow: /thankyou
+Disallow: /admin
+
+# Block legal pages from being indexed as content
+Disallow: /privacy-policy
+Disallow: /refund-policy
+Disallow: /terms
+
+# Sitemap
+Sitemap: https://gradskool.in/sitemap.xml

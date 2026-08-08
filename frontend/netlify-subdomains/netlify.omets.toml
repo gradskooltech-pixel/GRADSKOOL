@@ -1,0 +1,15 @@
+# GRADSKOOL — omets.gradskool.in
+# OMETs hub — XAT, NMAT, SNAP, MAHCET, CMAT, GMAT, NMAT+SNAP bundle
+
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+[build.environment]
+  NEXT_PUBLIC_SUBDOMAIN = "omets"
+  NEXT_PUBLIC_API_URL   = "https://api.gradskool.in"
+  NEXT_PUBLIC_MAIN_URL  = "https://gradskool.in"
+  NODE_VERSION          = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

@@ -1,0 +1,34 @@
+{
+  "name": "gradskool-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "dev:main": "cp envs/.env.main .env.local && next dev -H gradskool.local",
+    "dev:cat": "cp envs/.env.cat .env.local && next dev -H cat.gradskool.local",
+    "dev:xat": "cp envs/.env.xat .env.local && next dev -H xat.gradskool.local",
+    "dev:snap": "cp envs/.env.snap .env.local && next dev -H snap.gradskool.local",
+    "dev:nmat": "cp envs/.env.nmat .env.local && next dev -H nmat.gradskool.local",
+    "dev:gmat": "cp envs/.env.gmat .env.local && next dev -H gmat.gradskool.local",
+    "dev:gre": "cp envs/.env.gre .env.local && next dev -H gre.gradskool.local",
+    "dev:ipmat": "cp envs/.env.ipmat .env.local && next dev -H ipmat.gradskool.local",
+    "dev:cmat": "cp envs/.env.cmat .env.local && next dev -H cmat.gradskool.local",
+    "dev:mhcet": "cp envs/.env.mhcet .env.local && next dev -H mhcet.gradskool.local",
+    "dev:clat": "cp envs/.env.clat .env.local && next dev -H clat.gradskool.local",
+    "dev:cuet": "cp envs/.env.cuet .env.local && next dev -H cuet.gradskool.local"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "axios": "^1.7.2",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.3"
+  }
+}
