@@ -2,12 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/checkout/[examSlug]": "pages/checkout/[examSlug].js",
-  "/courses/cat/catalysis": "pages/courses/cat/catalysis.js",
-  "/courses/cat": "pages/courses/cat.js",
-  "/courses/cat/cathlete": "pages/courses/cat/cathlete.js",
-  "/courses/cat/varc-hub": "pages/courses/cat/varc-hub.js",
   "/courses/cat/alpgebra": "pages/courses/cat/alpgebra.js",
-  "/courses/cat/lrdi-hub": "pages/courses/cat/lrdi-hub.js",
+  "/courses/cat/cathlete": "pages/courses/cat/cathlete.js",
   "/courses/[slug]/mocks": "pages/courses/[slug]/mocks.js"
 }
