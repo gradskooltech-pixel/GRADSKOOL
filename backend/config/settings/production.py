@@ -25,7 +25,21 @@ DATABASES = {
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True
+
+# Railway (like Heroku, Render, etc.) terminates TLS at its edge proxy —
+# the connection reaching this container itself is always plain HTTP,
+# even for requests that were genuinely HTTPS from the visitor's side.
+# Without this, Django can't tell the difference and re-redirects every
+# single request, including Railway's own internal healthcheck (which
+# doesn't follow redirects and would otherwise mark the service unhealthy).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Railway's own edge already enforces HTTP→HTTPS for public traffic before
+# it reaches this container — Django doing it again is redundant, and
+# specifically breaks Railway's internal healthcheck (which hits the
+# container directly, bypassing the edge, so it never sees this redirect
+# as anything but a failure).
+SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
