@@ -342,8 +342,7 @@ export default function CurriculumPage() {
                         </div>
                         <div>
                           <label style={s.fieldLabel}>Key Points (one per line, start with →)</label>
-                          <textarea rows={5} placeholder={"→ Key concept one
-→ Key concept two"} style={{ ...s.input, height:'100px', resize:'vertical' }} />
+                          <textarea rows={5} placeholder={"→ Key concept one\n→ Key concept two"} style={{ ...s.input, height:'100px', resize:'vertical' }} />
                         </div>
                         <button style={s.saveBtn}>Save Cheat Sheet</button>
                       </div>

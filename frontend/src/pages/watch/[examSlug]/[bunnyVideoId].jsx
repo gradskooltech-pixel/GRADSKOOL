@@ -59,7 +59,7 @@ function WatchPageInner() {
   // Load bookmarks, chapters, transcript, notes when video loads
   useEffect(() => {
     if (!topicVideoId) return
-    import('../../lib/api').then(({ default: api }) => {
+    import('../../../lib/api').then(({ default: api }) => {
       api.get('/learn/videos/' + topicVideoId + '/bookmarks/').then(({ data }) => setBookmarks(data)).catch(() => {})
       api.get('/learn/videos/' + topicVideoId + '/chapters/').then(({ data }) => setChapters(data)).catch(() => {})
       api.get('/learn/videos/' + topicVideoId + '/transcript/').then(({ data }) => setTranscript(data)).catch(() => {})
@@ -137,7 +137,8 @@ function WatchPageInner() {
 
             {/* Bunny player — paid enrolled content */}
             {streamUrl && !meta?.youtube_video_id && (
-                    {/* Speed controls */}
+              <>
+                {/* Speed controls */}
       <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", padding:"0.5rem 1rem", background:"#1a1a1a", borderBottom:"1px solid #333" }}>
         <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.68rem", color:"rgba(255,255,255,0.5)" }}>Speed:</span>
         {[0.75, 1.0, 1.25, 1.5, 2.0].map(s => (
@@ -155,7 +156,7 @@ function WatchPageInner() {
             const secs = Math.round(currentSecs)
             const note = prompt("Note for " + Math.floor(secs/60) + ":" + String(secs%60).padStart(2,"0") + " (optional)") || ""
             if (typeof topicVideoId !== "undefined" && topicVideoId) {
-              import("../../lib/api").then(({ default: api }) => {
+              import("../../../lib/api").then(({ default: api }) => {
                 api.post("/learn/videos/" + topicVideoId + "/bookmarks/", { timestamp_secs: secs, note }).then(({ data }) => {
                   setBookmarks(b => [...b, { id:data.id, timestamp_secs:secs, timestamp_display:Math.floor(secs/60)+":"+String(secs%60).padStart(2,"0"), note }])
                 })
@@ -183,6 +184,7 @@ function WatchPageInner() {
                   title={meta?.title || 'Lecture video'}
                 />
               </div>
+              </>
             )}
 
             {/* YouTube player — free preview content */}
@@ -239,7 +241,7 @@ function WatchPageInner() {
                   </span>
                   <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.75rem", color:"rgba(255,255,255,0.7)", flex:1 }}>{b.note || "(no note)"}</span>
                   <button onClick={() => {
-                    import("../../lib/api").then(({ default: api }) => api.delete("/learn/videos/" + topicVideoId + "/bookmarks/" + b.id + "/"))
+                    import("../../../lib/api").then(({ default: api }) => api.delete("/learn/videos/" + topicVideoId + "/bookmarks/" + b.id + "/"))
                     setBookmarks(bk => bk.filter(x => x.id !== b.id))
                   }} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(255,255,255,0.3)", fontSize:"0.75rem" }}>✕</button>
                 </div>
@@ -255,7 +257,7 @@ function WatchPageInner() {
                 {noteSaved && <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.68rem", color:"#22c55e" }}>✓ Saved</span>}
                 <button onClick={() => {
                   if (!topicVideoId) return
-                  import("../../lib/api").then(({ default: api }) => {
+                  import("../../../lib/api").then(({ default: api }) => {
                     api.post("/learn/notes/", { topic_video_id: topicVideoId, content: noteText }).then(() => {
                       setNoteSaved(true); setTimeout(() => setNoteSaved(false), 2000)
                     })

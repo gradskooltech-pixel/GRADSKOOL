@@ -69,8 +69,7 @@ export default function BatchHealth() {
     const rows = [['Name','Email','Status','Days since login','Videos','Quizzes','Avg score'],
       ...students.map(s=>[s.name,s.email,s.status,s.days_since,s.videos,s.quizzes,s.avg_quiz+'%'])]
     const a = document.createElement('a')
-    a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r=>r.join(',')).join('
-'))
+    a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r=>r.join(',')).join('\n'))
     a.download = `batch-health-${exam}.csv`
     a.click()
   }

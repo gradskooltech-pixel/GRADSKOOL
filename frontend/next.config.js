@@ -44,6 +44,7 @@ const nextConfig = {
       { source: '/cat-books',      destination: '/courses/cat-books',      permanent: true },
       { source: '/catalysis-2027', destination: '/courses/catalysis-2027', permanent: true },
       { source: '/pi-wat-gd',      destination: '/courses/pi-wat-gd',      permanent: true },
+      { source: '/foundations',    destination: '/free',                   permanent: true },
     ]
   },
 

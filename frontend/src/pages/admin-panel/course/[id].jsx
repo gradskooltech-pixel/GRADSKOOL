@@ -635,17 +635,14 @@ export default function CourseBuilder() {
                                   <label style={s.lbl}>Key Points (one per line)</label>
                                   <textarea id="cs-points" rows={5}
                                     key={'cs-pts-'+activeVideo?.id}
-                                    defaultValue={(cheatsheet?.key_points||[]).map(p=>'→ '+p).join('
-')}
+                                    defaultValue={(cheatsheet?.key_points||[]).map(p=>'→ '+p).join('\n')}
                                     style={{ ...s.inp, height:'100px', resize:'vertical', fontFamily:"'SF Mono',monospace", fontSize:'0.75rem' }}
-                                    placeholder={"→ First key point
-→ Second key point"} />
+                                    placeholder={"→ First key point\n→ Second key point"} />
                                 </div>
                                 <button onClick={async () => {
                                   const summary   = document.getElementById('cs-summary')?.value || ''
                                   const rawPoints = document.getElementById('cs-points')?.value || ''
-                                  const keyPoints = rawPoints.split('
-').map(l=>l.replace(/^[→•-]\s*/,'')).filter(Boolean)
+                                  const keyPoints = rawPoints.split('\n').map(l=>l.replace(/^[→•-]\s*/,'')).filter(Boolean)
                                   try {
                                     await api.post('/dashboard/curriculum/videos/' + activeVideo.id + '/cheatsheet/', { summary, key_points: keyPoints })
                                     notify('Cheat sheet saved ✓')
@@ -909,9 +906,7 @@ export default function CourseBuilder() {
                   <div>
                     <label style={s.lbl}>Resources (one per line: Title | URL)</label>
                     <textarea value={form.items_text||''} onChange={e=>setForm(f=>({...f,items_text:e.target.value}))}
-                      placeholder={"CAT Formula Sheet | https://...
-RC Strategy PDF | https://...
-Mock Test Schedule | https://..."}
+                      placeholder={"CAT Formula Sheet | https://...\nRC Strategy PDF | https://...\nMock Test Schedule | https://..."}
                       style={{ width:'100%', padding:'0.5rem 0.625rem', fontFamily:"'SF Mono',monospace", fontSize:'0.75rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', boxSizing:'border-box', height:'120px', resize:'vertical' }} />
                   </div>
                 </div>

@@ -32,21 +32,7 @@ export default function FoundationsPage({ exam }) {
   )
 }
 
-export async function getStaticPaths() {
-  return {
-    // nmat/snap paths kept here ONLY so getStaticProps below can redirect
-    // them — they don't get their own real page content anymore.
-    paths: [
-      { params: { exam: 'xat' } },
-      { params: { exam: 'cat' } },
-      { params: { exam: 'nmat' } },
-      { params: { exam: 'snap' } },
-    ],
-    fallback: false,
-  }
-}
-
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   if (params.exam === 'nmat' || params.exam === 'snap') {
     return {
       redirect: {
@@ -54,6 +40,9 @@ export async function getStaticProps({ params }) {
         permanent: true,
       },
     }
+  }
+  if (!EXAM_META[params.exam]) {
+    return { notFound: true }
   }
   return { props: { exam: params.exam } }
 }

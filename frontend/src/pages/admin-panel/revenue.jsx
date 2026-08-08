@@ -91,8 +91,7 @@ export default function Revenue() {
       ...data.orders.map(o => [o.created_at?.slice(0,10), o.email, o.plan_name, o.amount, o.status]),
     ]
     const a = document.createElement('a')
-    a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r => r.join(',')).join('
-'))
+    a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r => r.join(',')).join('\n'))
     a.download = `orders-${days}d.csv`
     a.click()
   }

@@ -9,6 +9,7 @@
  */
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
@@ -35,8 +36,17 @@ const C = {
 }
 
 export default function CohortPage({ cohort }) {
+  const router = useRouter()
   const [openFaq, setOpenFaq] = useState(null)
   const [openMod, setOpenMod] = useState(0)
+
+  if (router.isFallback || !cohort) {
+    return (
+      <div style={{ padding:'6rem 2rem', textAlign:'center', fontFamily:'var(--font-sans)' }}>
+        <p style={{ color:'#999' }}>Loading cohort details…</p>
+      </div>
+    )
+  }
 
   const exam    = cohort.exam_detail || {}
   const plans   = exam.plans || []

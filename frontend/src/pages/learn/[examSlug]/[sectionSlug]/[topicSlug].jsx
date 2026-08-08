@@ -11,7 +11,6 @@ import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { SoftRoute } from '../../../../components/auth/SoftRoute'
 import { ProtectedRoute } from '../../../../components/auth/ProtectedRoute'
 import { useAuth } from '../../../../hooks/useAuth'
 import { CATQuiz } from '../../../../components/learn/CATQuiz'
@@ -46,7 +45,7 @@ const STEP_CONFIG = {
 }
 
 export default function TopicPage() {
-  return <SoftRoute><Inner /></ProtectedRoute>
+  return <ProtectedRoute><Inner /></ProtectedRoute>
 }
 
 function Inner() {
@@ -575,7 +574,7 @@ function VideoWatchCard({ video, onMarkWatched }) {
       <div style={{ padding:'1rem 1.5rem', background:canMark ? C.greenBg : C.muted, display:'flex', alignItems:'center', justifyContent:'space-between', gap:'0.75rem', flexWrap:'wrap', transition:'background 0.3s' }}>
         <p style={{ fontFamily:"'DM Sans', sans-serif", fontSize:'0.72rem', color:canMark ? C.green : C.gray3, fontWeight: canMark ? '600' : '400' }}>
           {canMark
-            ? '✓ Great! You've watched enough to continue.'
+            ? '✓ Great! You\'ve watched enough to continue.'
             : 'Drag the slider to your current position in the video.'}
         </p>
         <button onClick={onMarkWatched} disabled={!canMark}

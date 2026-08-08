@@ -49,8 +49,7 @@ export default function ContentPerformance() {
     const rows = [['Title','Section','Views','Avg Watch%','Completion%','Avg Quiz'],
       ...filtered.map(v=>[v.title,v.section,v.unique_viewers,v.avg_watch_pct+'%',v.completion_rate+'%',v.avg_quiz_score+'%'])]
     const a = document.createElement('a')
-    a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r=>r.join(',')).join('
-'))
+    a.href = 'data:text/csv,' + encodeURIComponent(rows.map(r=>r.join(',')).join('\n'))
     a.download = `content-performance-${exam}.csv`
     a.click()
   }
