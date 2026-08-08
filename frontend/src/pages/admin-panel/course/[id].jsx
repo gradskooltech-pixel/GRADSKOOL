@@ -642,8 +642,7 @@ export default function CourseBuilder() {
                                 <button onClick={async () => {
                                   const summary   = document.getElementById('cs-summary')?.value || ''
                                   const rawPoints = document.getElementById('cs-points')?.value || ''
-                                  const keyPoints = rawPoints.split('
-').map(l=>l.replace(/^[→•-]\s*/,'')).filter(Boolean)
+                                  const keyPoints = rawPoints.split('\n').map(l=>l.replace(/^[→•-]\s*/,'')).filter(Boolean)
                                   try {
                                     await api.post('/dashboard/curriculum/videos/' + activeVideo.id + '/cheatsheet/', { summary, key_points: keyPoints })
                                     notify('Cheat sheet saved ✓')
