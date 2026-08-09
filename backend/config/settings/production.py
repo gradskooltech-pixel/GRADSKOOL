@@ -67,14 +67,20 @@ CACHES = {
 }
 
 # ── SENTRY ────────────────────────────────────────────────────────────────────
-
-sentry_sdk.init(
-    dsn=config('SENTRY_DSN', default=''),
-    integrations=[DjangoIntegration(transaction_style='url')],
-    traces_sample_rate=0.2,
-    send_default_pii=False,
-    environment='production',
-)
+# Wrapped in try/except: Sentry is optional error-monitoring, not core
+# functionality. A malformed or placeholder SENTRY_DSN (from any source -
+# Railway shared variables, service variables, etc.) should never be able
+# to crash the entire app on startup.
+try:
+    sentry_sdk.init(
+        dsn=config('SENTRY_DSN', default=''),
+        integrations=[DjangoIntegration(transaction_style='url')],
+        traces_sample_rate=0.2,
+        send_default_pii=False,
+        environment='production',
+    )
+except Exception:
+    pass
 
 # Wildcard CORS for all gradskool.in subdomains
 CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://.*\.gradskool\.in$"]
