@@ -28,6 +28,7 @@ import { useRouter } from 'next/router'
 const EXAM_SLUG_OVERRIDES = {
   cathlete: 'cat',
   'cat-books': 'cat',
+  alpgebra: 'cat',
 }
 
 export default function CheckoutBridge() {

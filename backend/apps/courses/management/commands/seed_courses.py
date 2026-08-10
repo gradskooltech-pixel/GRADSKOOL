@@ -282,10 +282,10 @@ EXAMS = [
 
 PLANS = {
     'cat': [
-        dict(name='Live + CAT Mocks', slug='live-cat-mocks',
+        dict(name='Live + CAT Mocks', slug='live-mocks',
              price_inr=Decimal('17999'), is_featured=True, badge_text='Most Popular', sort_order=1,
              includes_live=True, includes_mocks=True, mock_exams_covered=['CAT'],
-             razorpay_sku='cat-live-cat-mocks',
+             razorpay_sku='cat-live-mocks',
              features=[
                  ('Live sessions  -  27 students per cohort', True),
                  ('30 full-length CAT mocks', True),
@@ -380,6 +380,36 @@ PLANS = {
                  ('16-book printed set', True),
                  ('Live sessions', False),
              ]),
+        dict(name='CAThlete — Without Mocks', slug='base',
+             price_inr=Decimal('6999'), sort_order=9,
+             includes_live=True, mock_exams_covered=['CAT'],
+             razorpay_sku='cathlete-base',
+             features=[
+                 ('Structured rapid CAT preparation — VARC, DILR, QA', True),
+                 ('Live sessions', True),
+                 ('Session PDFs and cheat sheets', True),
+                 ('30 CAT mocks', False),
+             ]),
+        dict(name='CAThlete + Mocks', slug='with-mocks',
+             price_inr=Decimal('9999'), is_featured=True, badge_text='Recommended', sort_order=10,
+             includes_live=True, includes_mocks=True, mock_exams_covered=['CAT'],
+             razorpay_sku='cathlete-with-mocks',
+             features=[
+                 ('Structured rapid CAT preparation — VARC, DILR, QA', True),
+                 ('Live sessions', True),
+                 ('31 full-length CAT mocks + post-test analysis', True),
+                 ('Session PDFs and cheat sheets', True),
+             ]),
+        dict(name='ALPgebra — 99 Theorems', slug='alpgebra',
+             price_inr=Decimal('999'), badge_text='Early Bird', sort_order=11,
+             mock_exams_covered=['CAT'],
+             razorpay_sku='cat-alpgebra',
+             features=[
+                 ('19 complete Algebra chapters', True),
+                 ('1,485 curated practice problems', True),
+                 ('Downloadable notes and worked solutions', True),
+                 ('Lifetime self-paced access', True),
+             ]),
     ],
     'xat': [
         dict(name='XAT Full Course', slug='xat-full-course',
@@ -395,10 +425,10 @@ PLANS = {
                  ('Doubt resolution sessions', True),
                  ('PI WAT GD prep for XLRI', True),
              ]),
-        dict(name='XAT Mocks Only', slug='xat-mocks-only',
+        dict(name='XAT Mocks Only', slug='mocks',
              price_inr=Decimal('499'), sort_order=2,
              includes_mocks=True, mock_exams_covered=['XAT'],
-             razorpay_sku='xat-mocks-only',
+             razorpay_sku='xat-mocks',
              features=[
                  ('6 full-length XAT tests', True),
                  ('Post-test strategic analysis', True),

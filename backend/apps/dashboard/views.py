@@ -10,7 +10,7 @@ from django.db.models import Avg, Count, Max, Sum, Q
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework import serializers
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.urls import path
@@ -58,9 +58,9 @@ class DashboardSummaryView(APIView):
 
         # Payments
         total_spent = (
-            Order.objects
-            .filter(user=user, status='paid')
-            .aggregate(t=Sum('total_amount'))['t'] or 0
+                Order.objects
+                .filter(user=user, status='paid')
+                .aggregate(t=Sum('total_amount'))['t'] or 0
         )
 
         return Response({
@@ -209,8 +209,8 @@ class RecentActivityView(APIView):
 
         # Recent video progress
         for vp in VideoProgress.objects.filter(
-            user=request.user,
-            watched_secs__gt=30,
+                user=request.user,
+                watched_secs__gt=30,
         ).select_related('video__course__exam').order_by('-updated_at')[:10]:
             events.append({
                 'type':        'video',
@@ -223,8 +223,8 @@ class RecentActivityView(APIView):
 
         # Recent tool sessions
         for s in ToolSession.objects.filter(
-            lead__email=request.user.email,
-            ended_at__isnull=False,
+                lead__email=request.user.email,
+                ended_at__isnull=False,
         ).select_related('tool').order_by('-started_at')[:10]:
             events.append({
                 'type':      'tool_session',
@@ -1475,10 +1475,10 @@ class AdminHomepageContentView(APIView):
 class AdminManualEnrollView(APIView):
     """
     POST /api/v1/dashboard/manual-enroll/
-    
+
     Admin-only endpoint to manually enroll a student in a plan.
     Used for: testing, scholarship enrollments, demo access.
-    
+
     Body: { email, plan_id, note }
     """
     permission_classes = [IsAuthenticated]
@@ -1539,6 +1539,90 @@ class AdminManualEnrollView(APIView):
             'created': created,
             'note': note,
         }, status=201)
+
+
+class AdminPricingPlansView(APIView):
+    """
+    Full CRUD for pricing plans (create/edit/delete), for the admin panel's
+    Pricing Plans manager. Separate from AdminListPlansView below, which is
+    a read-only simplified list used for the manual-enrollment dropdown.
+    GET    /dashboard/pricing-plans/            — all plans (full detail) + exam list
+    POST   /dashboard/pricing-plans/            — create
+    PATCH  /dashboard/pricing-plans/<id>/       — update
+    DELETE /dashboard/pricing-plans/<id>/       — delete
+    """
+    permission_classes = [IsAuthenticated]
+
+    def _serialize(self, p):
+        return {
+            'id': p.id, 'exam_id': p.exam_id, 'exam_slug': p.exam.slug, 'exam_name': p.exam.short_name,
+            'name': p.name, 'slug': p.slug, 'description': p.description,
+            'price_inr': str(p.price_inr), 'original_price': str(p.original_price) if p.original_price else None,
+            'badge_text': p.badge_text, 'is_featured': p.is_featured, 'is_active': p.is_active,
+            'sort_order': p.sort_order, 'includes_live': p.includes_live, 'includes_mocks': p.includes_mocks,
+            'includes_books': p.includes_books, 'includes_gdpi': p.includes_gdpi,
+            'includes_recordings': p.includes_recordings, 'mock_exams_covered': p.mock_exams_covered,
+            'razorpay_sku': p.razorpay_sku,
+        }
+
+    def get(self, request):
+        if not (request.user.is_staff or request.user.role == 'admin'): return Response({'error':'Forbidden'},status=403)
+        from apps.courses.models import PricingPlan, Exam
+        plans = PricingPlan.objects.select_related('exam').order_by('exam__sort_order', 'sort_order', 'price_inr')
+        exams = list(Exam.objects.order_by('sort_order').values('id', 'slug', 'short_name'))
+        return Response({'plans': [self._serialize(p) for p in plans], 'exams': exams})
+
+    def post(self, request):
+        if not (request.user.is_staff or request.user.role == 'admin'): return Response({'error':'Forbidden'},status=403)
+        from django.utils.text import slugify
+        from apps.courses.models import PricingPlan, Exam
+        d = request.data
+        try:
+            exam = Exam.objects.get(id=d.get('exam_id'))
+        except Exam.DoesNotExist:
+            return Response({'error': 'Invalid exam'}, status=400)
+        slug = d.get('slug', '').strip() or slugify(d.get('name', ''))
+        sku = d.get('razorpay_sku', '').strip() or f'{exam.slug}-{slug}'
+        p = PricingPlan.objects.create(
+            exam=exam, name=d.get('name', ''), slug=slug, description=d.get('description', ''),
+            price_inr=d.get('price_inr', 0), original_price=d.get('original_price') or None,
+            badge_text=d.get('badge_text', ''), is_featured=bool(d.get('is_featured', False)),
+            is_active=bool(d.get('is_active', True)), sort_order=int(d.get('sort_order', 0)),
+            includes_live=bool(d.get('includes_live', False)), includes_mocks=bool(d.get('includes_mocks', False)),
+            includes_books=bool(d.get('includes_books', False)), includes_gdpi=bool(d.get('includes_gdpi', False)),
+            includes_recordings=bool(d.get('includes_recordings', False)),
+            mock_exams_covered=d.get('mock_exams_covered', []), razorpay_sku=sku,
+        )
+        return Response(self._serialize(p), status=201)
+
+    def patch(self, request, plan_id):
+        if not (request.user.is_staff or request.user.role == 'admin'): return Response({'error':'Forbidden'},status=403)
+        from apps.courses.models import PricingPlan, Exam
+        try:
+            p = PricingPlan.objects.get(id=plan_id)
+        except PricingPlan.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+        d = request.data
+        if 'exam_id' in d:
+            try: p.exam = Exam.objects.get(id=d['exam_id'])
+            except Exam.DoesNotExist: return Response({'error': 'Invalid exam'}, status=400)
+        text_fields = ['name', 'slug', 'description', 'badge_text', 'razorpay_sku']
+        for f in text_fields:
+            if f in d: setattr(p, f, d[f])
+        if 'price_inr' in d: p.price_inr = d['price_inr']
+        if 'original_price' in d: p.original_price = d['original_price'] or None
+        if 'sort_order' in d: p.sort_order = int(d['sort_order'])
+        for f in ['is_featured', 'is_active', 'includes_live', 'includes_mocks', 'includes_books', 'includes_gdpi', 'includes_recordings']:
+            if f in d: setattr(p, f, bool(d[f]))
+        if 'mock_exams_covered' in d: p.mock_exams_covered = d['mock_exams_covered']
+        p.save()
+        return Response(self._serialize(p))
+
+    def delete(self, request, plan_id):
+        if not (request.user.is_staff or request.user.role == 'admin'): return Response({'error':'Forbidden'},status=403)
+        from apps.courses.models import PricingPlan
+        PricingPlan.objects.filter(id=plan_id).delete()
+        return Response({'deleted': True})
 
 
 class AdminListPlansView(APIView):
@@ -1979,7 +2063,7 @@ class AdminVideoView(APIView):
                 )
 
             sort_order = d.get('sort_order',
-                TopicVideo.objects.filter(topic=topic).count() + 1)
+                               TopicVideo.objects.filter(topic=topic).count() + 1)
 
             tv = TopicVideo.objects.create(
                 topic=topic,
@@ -2268,8 +2352,8 @@ class AdminBulkEnrollView(APIView):
                 e, created = Enrollment.objects.get_or_create(user=user, plan=plan, defaults={'status':'active'})
                 if not created: e.status = 'active'; e.save()
                 CourseAccess.objects.get_or_create(user=user, exam=plan.exam,
-                    defaults={'can_watch_recordings':True,'can_attempt_quizzes':True,
-                              'can_view_cheat_sheets':True,'can_access_mocks':True})
+                                                   defaults={'can_watch_recordings':True,'can_attempt_quizzes':True,
+                                                             'can_view_cheat_sheets':True,'can_access_mocks':True})
                 results['enrolled'].append(email) if created else results['skipped'].append(email)
             except User.DoesNotExist:
                 results['not_found'].append(email)
@@ -2786,7 +2870,7 @@ class CourseComponentView(APIView):
             title=d.get('title', ''),
             description=d.get('description', ''),
             sort_order=d.get('sort_order',
-                CourseComponent.objects.filter(course=course).count()),
+                             CourseComponent.objects.filter(course=course).count()),
             is_enabled=bool(d.get('is_enabled', True)),
             is_mandatory=bool(d.get('is_mandatory', False)),
             config=d.get('config', {}),
@@ -3032,7 +3116,7 @@ class AttachVideoToTopicView(APIView):
             return Response({'error': 'Topic not found'}, status=404)
 
         sort_order = d.get('sort_order',
-            TopicVideo.objects.filter(topic=topic).count() + 1)
+                           TopicVideo.objects.filter(topic=topic).count() + 1)
 
         tv = TopicVideo.objects.create(
             topic=topic,
@@ -3060,6 +3144,23 @@ class AdminResultsView(APIView):
     """CRUD for the student results wall."""
     permission_classes = [IsAuthenticated]
 
+    def _unique_slug(self, base, exclude_id=None):
+        from django.utils.text import slugify
+        from apps.learn.models import StudentResult
+        base = slugify(base) or 'result'
+        slug = base
+        n = 1
+        qs = StudentResult.objects.filter(slug=slug)
+        if exclude_id:
+            qs = qs.exclude(id=exclude_id)
+        while qs.exists():
+            n += 1
+            slug = f'{base}-{n}'
+            qs = StudentResult.objects.filter(slug=slug)
+            if exclude_id:
+                qs = qs.exclude(id=exclude_id)
+        return slug
+
     def get(self, request):
         if request.user.role != 'admin': return Response({'error':'Admin only'},status=403)
         from apps.learn.models import StudentResult
@@ -3070,20 +3171,82 @@ class AdminResultsView(APIView):
         if request.user.role != 'admin': return Response({'error':'Admin only'},status=403)
         from apps.learn.models import StudentResult
         d = request.data
+        slug = d.get('slug','').strip() or self._unique_slug(d.get('name',''))
         r = StudentResult.objects.create(
             name=d.get('name',''), exam=d.get('exam','cat'),
             year=int(d.get('year',2025)), percentile=float(d.get('percentile',0)),
             score=d.get('score',''), college_calls=d.get('college_calls',''),
             photo_url=d.get('photo_url',''), testimonial=d.get('testimonial',''),
             is_verified=bool(d.get('is_verified',False)), is_featured=bool(d.get('is_featured',False)),
+            slug=slug, video_type=d.get('video_type',''), video_url=d.get('video_url',''),
+            body=d.get('body',''), meta_title=d.get('meta_title',''),
+            meta_description=d.get('meta_description',''),
         )
-        return Response({'id':r.id,'name':r.name},status=201)
+        return Response({'id':r.id,'name':r.name,'slug':r.slug},status=201)
+
+    def patch(self, request, result_id):
+        if request.user.role != 'admin': return Response({'error':'Admin only'},status=403)
+        from apps.learn.models import StudentResult
+        try:
+            r = StudentResult.objects.get(id=result_id)
+        except StudentResult.DoesNotExist:
+            return Response({'error':'Not found'}, status=404)
+        d = request.data
+        fields = ['name','exam','score','college_calls','photo_url','testimonial',
+                  'video_type','video_url','body','meta_title','meta_description']
+        for f in fields:
+            if f in d: setattr(r, f, d[f])
+        if 'year' in d: r.year = int(d['year'])
+        if 'percentile' in d: r.percentile = float(d['percentile'])
+        if 'is_verified' in d: r.is_verified = bool(d['is_verified'])
+        if 'is_featured' in d: r.is_featured = bool(d['is_featured'])
+        if 'slug' in d:
+            new_slug = d['slug'].strip()
+            r.slug = self._unique_slug(new_slug, exclude_id=r.id) if new_slug else self._unique_slug(r.name, exclude_id=r.id)
+        r.save()
+        return Response({'id':r.id,'name':r.name,'slug':r.slug})
 
     def delete(self, request, result_id):
         if request.user.role != 'admin': return Response({'error':'Admin only'},status=403)
         from apps.learn.models import StudentResult
         StudentResult.objects.filter(id=result_id).delete()
         return Response({'deleted':True})
+
+
+class PublicResultsView(APIView):
+    """GET /results-wall/public/ — verified results only, no auth required."""
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        from apps.learn.models import StudentResult
+        exam = request.query_params.get('exam', '')
+        qs = StudentResult.objects.filter(is_verified=True).order_by('-is_featured', '-percentile', '-year')
+        if exam and exam != 'all':
+            qs = qs.filter(exam=exam)
+        results = list(qs.values(
+            'id','name','exam','year','percentile','score','college_calls',
+            'photo_url','testimonial','slug','video_type','video_url',
+        ))
+        return Response({'results': results})
+
+
+class PublicResultDetailView(APIView):
+    """GET /results-wall/public/<slug>/ — single verified result by slug, no auth required."""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        from apps.learn.models import StudentResult
+        try:
+            r = StudentResult.objects.get(slug=slug, is_verified=True)
+        except StudentResult.DoesNotExist:
+            return Response({'error':'Not found'}, status=404)
+        return Response({
+            'id': r.id, 'name': r.name, 'exam': r.exam, 'year': r.year,
+            'percentile': r.percentile, 'score': r.score, 'college_calls': r.college_calls,
+            'photo_url': r.photo_url, 'testimonial': r.testimonial, 'slug': r.slug,
+            'video_type': r.video_type, 'video_url': r.video_url, 'body': r.body,
+            'meta_title': r.meta_title, 'meta_description': r.meta_description,
+        })
 
 
 class QuestionBankView(APIView):

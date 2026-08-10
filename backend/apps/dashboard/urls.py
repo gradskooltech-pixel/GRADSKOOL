@@ -19,11 +19,11 @@ from .views import (
     AdminTestimonialListView, AdminTestimonialDetailView,
     AdminExamListView, AdminExamDetailView,
     AdminHomepageContentView,
-    AdminManualEnrollView, AdminListPlansView,
+    AdminManualEnrollView, AdminListPlansView, AdminPricingPlansView,
     DynamicPageListView, DynamicPageDetailView, DynamicPagePublicView,
     AdminMockCredentialListView, AdminMockCredentialDetailView,
     StudentMockCredentialsView,
-    AdminResultsView, QuestionBankView, QuestionBulkUpdateView,
+    AdminResultsView, PublicResultsView, PublicResultDetailView, QuestionBankView, QuestionBulkUpdateView,
     AdminStudentPasswordResetView, AdminStudentSuspendView,
     AdminQuizAnalyticsView, AdminNudgeView,
     VideoQuizQuestionsView, CheatSheetManageView,
@@ -94,6 +94,8 @@ urlpatterns = [
 
     path('manual-enroll/',   AdminManualEnrollView.as_view(), name='admin-manual-enroll'),
     path('plans/',           AdminListPlansView.as_view(),    name='admin-plans-list'),
+    path('pricing-plans/',                AdminPricingPlansView.as_view(), name='admin-pricing-plans'),
+    path('pricing-plans/<int:plan_id>/',  AdminPricingPlansView.as_view(), name='admin-pricing-plan-detail'),
 
     # Mock credentials
     path('mock-credentials/',            AdminMockCredentialListView.as_view(),   name='admin-mock-creds'),
@@ -148,7 +150,9 @@ urlpatterns = [
     path('video-library/<int:video_id>/attach/',      AttachVideoToTopicView.as_view(),  name='attach-video'),
 
     path('results-wall/',                    AdminResultsView.as_view(), name='results-wall'),
-    path('results-wall/<int:result_id>/',     AdminResultsView.as_view(), name='result-delete'),
+    path('results-wall/<int:result_id>/',     AdminResultsView.as_view(), name='result-detail'),
+    path('results-wall/public/',              PublicResultsView.as_view(), name='results-wall-public'),
+    path('results-wall/public/<slug:slug>/',  PublicResultDetailView.as_view(), name='results-wall-public-detail'),
 
     path('questions/',                        QuestionBankView.as_view(),        name='question-bank'),
     path('questions/<int:question_id>/',      QuestionBankView.as_view(),        name='question-detail'),
