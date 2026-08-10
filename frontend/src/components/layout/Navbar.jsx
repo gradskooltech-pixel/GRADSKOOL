@@ -1,7 +1,7 @@
 /**
  * GRADSKOOL — Navbar
  * Matches gradskool.in exactly:
- * Logo | Courses dropdown | Free Classes & Courses | Blog | About | FAQs | All Courses btn | Enrol Now btn
+ * Logo | Courses dropdown | Free Classes & Courses | Blog | About | Results | All Courses btn | Enrol Now btn
  * Mobile: hamburger → fullscreen overlay
  *
  * CHANGE (promotion shift): CAThlete is now the featured product — leads the
@@ -16,7 +16,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 const COURSES_DROP = [
-  { href:'/courses/cat/cathlete', label:'CAThlete — Crash Course' },
   { href:'/courses/cat/catalysis', label:'CATalysis 2027' },
   { href:'/courses/gmat',         label:'GMAT Focus Edition' },
   { href:'/courses/xat',          label:'XAT' },
@@ -25,6 +24,7 @@ const COURSES_DROP = [
   { href:'/courses/nmat-snap',    label:'SNAP + NMAT Bundle' },
   { href:'/courses/mhcet',        label:'MH CET' },
   { href:'/courses/pi-wat-gd',    label:'PI WAT GD' },
+  { href:'/courses/cat/cathlete', label:'CAThlete — Crash Course' },
 ]
 
 export function Navbar() {
@@ -104,7 +104,7 @@ export function Navbar() {
             <Link href="/free" className="gs-nav-link">Free Classes &amp; Courses</Link>
             <Link href="/fyqs" className="gs-nav-link">FYQs</Link>
             <Link href="/about" className="gs-nav-link">About</Link>
-            <Link href="/faqs"  className="gs-nav-link">FAQs</Link>
+            <Link href="/results"  className="gs-nav-link">Results</Link>
           </div>
 
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }} className="gs-nav-actions">
@@ -134,7 +134,7 @@ export function Navbar() {
           <Link href="/free" className="gs-mob-link">Free Classes &amp; Courses</Link>
           <Link href="/fyqs" className="gs-mob-link">FYQs</Link>
           <Link href="/about"  className="gs-mob-link">About ALP Sir</Link>
-          <Link href="/faqs"   className="gs-mob-link">FAQs</Link>
+          <Link href="/results"   className="gs-mob-link">Results</Link>
         </div>
         <div style={{ marginTop:'auto', display:'flex', flexDirection:'column', gap:'10px', paddingTop:'24px' }}>
           <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
