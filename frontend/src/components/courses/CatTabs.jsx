@@ -2,7 +2,7 @@
  * GRADSKOOL — Shared CAT product tab bar
  *
  * Used identically across every CAT-related page (main CAT page, CAThlete,
- * CATalysis, LRDI Hub, VARC Hub, ALPgebra) so navigation and styling stay
+ * CATalysis, ALPgebra) so navigation and styling stay
  * consistent no matter which page you land on first.
  *
  * CAThlete leads (the near-term crash course), CATalysis follows.
@@ -18,8 +18,6 @@ const catalysisYear = new Date(FALLBACK_EXAM_DATE).getFullYear() + 1
 const TABS = [
   { href:'/courses/cat/cathlete',  label:'CAThlete — Crash Course',                  key:'cathlete' },
   { href:'/courses/cat/catalysis', label:`CATalysis ${catalysisYear} Flagship Cohort`, key:'catalysis' },
-  { href:'/courses/cat/lrdi-hub',  label:'LRDI Hub',                    key:'lrdi-hub' },
-  { href:'/courses/cat/varc-hub',  label:'VARC Hub',                    key:'varc-hub' },
   { href:'/courses/cat/alpgebra',  label:'ALPgebra',                    key:'alpgebra' },
   { href:'/courses/cat/mocks',     label:'Mocks',                       key:'mocks' },
   { href:'/courses/cat/books',     label:'Books',                       key:'books' },

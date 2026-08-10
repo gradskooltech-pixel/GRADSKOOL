@@ -458,8 +458,6 @@ export default function CATPage({ examData }) {
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:1, background:'var(--g200)', border:'var(--border)', borderRadius:4, overflow:'hidden' }}>
               {[
-                ['/courses/cat/lrdi-hub',  'LRDI Hub',    '₹499',  'Comprehensive DILR practice. All pattern types. For students who need focused LR/DI work.'],
-                ['/courses/cat/varc-hub',  'VARC Hub',    '₹499',  'RC passages, para-jumbles, para-summary. The complete verbal practice system.'],
                 ['/courses/cat/mocks', 'CAT Mocks',   '₹2,999','30 full-length CAT mocks with sectional tests. If you already have coaching but need mocks.'],
                 ['/courses/cat/books', 'CAT Books',   '₹3,999',`Curated physical books for CAT ${examYear} — recommended reading list with ALP Sir's notes.`],
               ].map(([href,name,price,desc]) => (

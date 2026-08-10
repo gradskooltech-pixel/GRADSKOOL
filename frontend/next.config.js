@@ -38,8 +38,6 @@ const nextConfig = {
       { source: '/cmat',           destination: '/courses/cmat',           permanent: true },
       { source: '/cathlete',       destination: '/courses/cat#cathlete',   permanent: true },
       { source: '/nmat-snap',      destination: '/courses/nmat-snap',      permanent: true },
-      { source: '/lrdi-hub',       destination: '/courses/lrdi-hub',       permanent: true },
-      { source: '/varc-hub',       destination: '/courses/varc-hub',       permanent: true },
       { source: '/cat-mocks',      destination: '/courses/cat-mocks',      permanent: true },
       { source: '/cat-books',      destination: '/courses/cat-books',      permanent: true },
       { source: '/catalysis-2027', destination: '/courses/catalysis-2027', permanent: true },

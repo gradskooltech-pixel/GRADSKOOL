@@ -27,8 +27,6 @@ import { useRouter } from 'next/router'
 // their plans are stored under the "cat" exam instead.
 const EXAM_SLUG_OVERRIDES = {
   cathlete: 'cat',
-  'lrdi-hub': 'cat',
-  'varc-hub': 'cat',
   'cat-books': 'cat',
 }
 

@@ -51,8 +51,6 @@ export function Footer() {
             <Link href="/courses/cat/cathlete">CAThlete — Crash Course</Link>
             <Link href="/courses/cat/catalysis">CATalysis 2027</Link>
             <Link href="/courses/cat/alpgebra">ALPgebra</Link>
-            <Link href="/courses/cat/lrdi-hub">LRDI Hub</Link>
-            <Link href="/courses/cat/varc-hub">VARC Hub</Link>
             <Link href="/courses/gmat">GMAT</Link>
             <Link href="/courses/xat">XAT</Link>
             <Link href="/courses/snap">SNAP</Link>

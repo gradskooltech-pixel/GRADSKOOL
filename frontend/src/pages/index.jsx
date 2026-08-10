@@ -529,7 +529,7 @@ export default function Home() {
           <div className="container">
             <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
               <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--g500)', marginRight:8 }}>Self-Paced</span>
-              {[['LRDI Hub','/courses/cat/lrdi-hub'],['VARC Hub','/courses/cat/varc-hub'],['ALPgebra','/courses/cat/alpgebra'],['CAT Mocks ₹2,999','/courses/cat/mocks'],['Books ₹3,999','/courses/cat/books']].map(([label,href]) => (
+              {[['ALPgebra','/courses/cat/alpgebra'],['CAT Mocks ₹2,999','/courses/cat/mocks'],['Books ₹3,999','/courses/cat/books']].map(([label,href]) => (
                 <Link key={href} href={href} style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--black)', padding:'6px 14px', border:'var(--border)', borderRadius:2, background:'#fff', whiteSpace:'nowrap' }}>{label}</Link>
               ))}
               <Link href="/courses" style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--red)', padding:'6px 14px', border:'1px solid rgba(217,79,80,.3)', borderRadius:2, background:'#fff', whiteSpace:'nowrap' }}>All Courses →</Link>
@@ -563,7 +563,6 @@ export default function Home() {
                     ['Full mocks included','✓','✓'],
                     ['College counselling','✓','Few'],
                     ['CAThlete crash course','✓','Few'],
-                    ['LRDI Hub and VARC Hub','✓','Few'],
                     ['GRADSCALE — daily practice drills','✓','Few'],
                     ['GRADFLIX — essay repository','✓','None'],
                   ].map(([feat, gs, other], ri) => (

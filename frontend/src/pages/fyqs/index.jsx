@@ -49,9 +49,9 @@ export default function FYQListing() {
   const [resultsLoading, setResultsLoading] = useState(false)
   const [page, setPage] = useState(1)
 
-  // Deep-link support — e.g. /fyqs?section=lrdi from the LRDI Hub /
-  // VARC Hub pages, matched case-insensitively against section name
-  // once the tree has loaded (router.query isn't ready on first render).
+  // Deep-link support — e.g. /fyqs?section=lrdi, matched case-insensitively
+  // against section name once the tree has loaded (router.query isn't
+  // ready on first render).
   useEffect(() => {
     if (!router.isReady || tree.length === 0) return
     const wanted = router.query.section
