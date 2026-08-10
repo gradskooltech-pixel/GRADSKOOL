@@ -52,14 +52,14 @@ export default function NMATPage() {
   return (
     <>
       <PageSEO
-        title="NMAT Mocks — GRADSKOOL | ₹2,999 | Mocks + Sectionals + Area-wise Tests"
+        title="NMAT Mocks — GRADSKOOL | ₹1,499 | Mocks + Sectionals + Area-wise Tests"
         description="GRADSKOOL NMAT Mocks. 10 full-length mocks, 12 sectional tests, 40 area-wise tests, with detailed analysis. Pairs with the free NMAT course at /courses/nmat/live."
         keywords="NMAT mock tests, NMAT sectional tests, NMAT area-wise tests, NMIMS Mumbai coaching, ALP Sir NMAT, GRADSKOOL NMAT, NMAT by GMAC"
         canonical="https://gradskool.in/courses/nmat"
         ogImage="/assets/og-nmat.jpg"
         breadcrumbs={[{name:'Home',url:'/'},{name:'OMETs',url:'/omets'},{name:'NMAT',url:'/courses/nmat'}]}
         schema={[
-          courseSchema({name:'NMAT Mocks',description:"GRADSKOOL NMAT Mocks. 10 full-length mocks, 12 sectional tests, 40 area-wise tests, with detailed analysis reports.",url:'/courses/nmat',price:'2999',mode:['online','asynchronous']}),
+          courseSchema({name:'NMAT Mocks',description:"GRADSKOOL NMAT Mocks. 10 full-length mocks, 12 sectional tests, 40 area-wise tests, with detailed analysis reports.",url:'/courses/nmat',price:'1499',mode:['online','asynchronous']}),
           faqSchema(FAQS),
         ]}
       />
@@ -74,7 +74,7 @@ export default function NMATPage() {
             10 full-length NMAT mocks in the real exam interface. 12 sectional tests. 40 area-wise topic tests. Every attempt comes with a detailed analysis report. The complete course is free — this is the practice layer.
           </p>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-            <Link href="/checkout?course=nmat" className="btn btn-red">Enrol Now — ₹2,999 →</Link>
+            <Link href="/checkout?course=nmat" className="btn btn-red">Enrol Now — ₹1,499 →</Link>
             <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20about%20NMAT%20Mocks" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
               <span className="wa-dot" />WhatsApp ALP Sir
             </a>
@@ -106,7 +106,7 @@ export default function NMATPage() {
                   </div>
                 ))}
                 <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
-                  <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹2,999</div>
+                  <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹1,499</div>
                   <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
                 </div>
                 <Link href="/checkout?course=nmat" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
@@ -219,7 +219,7 @@ export default function NMATPage() {
             Ready to test yourself?<br /><em style={R}>3 attempts. Start strong.</em>
           </h2>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap', marginTop:24 }}>
-            <Link href="/checkout?course=nmat" className="btn btn-red">Enrol Now — ₹2,999 →</Link>
+            <Link href="/checkout?course=nmat" className="btn btn-red">Enrol Now — ₹1,499 →</Link>
             <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20NMAT" target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><span className="wa-dot" />WhatsApp first</a>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function NMATPage() {
       <div className="mob-sticky">
         <div>
           <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>NMAT Mocks</div>
-          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹2,999 + GST</div>
+          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹1,499 + GST</div>
         </div>
         <div style={{ display:'flex', gap:8 }}>
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20NMAT" target="_blank" rel="noopener noreferrer"

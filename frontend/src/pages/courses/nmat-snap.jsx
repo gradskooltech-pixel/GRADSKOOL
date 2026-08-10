@@ -30,7 +30,7 @@ const TESTIS = [
 
 const FAQS = [
   { q:'What exactly is in the bundle?', a:'Everything from NMAT Mocks (10 full-length mocks, 12 sectional tests, 40 area-wise tests) and everything from SNAP Mocks (20 full-length mocks, 9 sectional tests, area-wise tests) — both exams, one price.' },
-  { q:'How much do I save?', a:'NMAT Mocks and SNAP Mocks are ₹2,999 each separately (₹5,998 total). The bundle is ₹4,499 — a saving of ₹1,499.' },
+  { q:'How much do I save?', a:'NMAT Mocks and SNAP Mocks are ₹1,499 each separately (₹2,999 total). The bundle is ₹2,499 — a saving of ₹500.' },
   { q:'Are the complete NMAT and SNAP courses included too?', a:'The complete courses for both exams are free, separately, at /courses/nmat/live and /courses/snap/live — taught live by ALP Sir, no cost. This bundle is the mocks and testing layer on top of that.' },
   { q:'Why prepare for both NMAT and SNAP together?', a:'Both exams share significant overlap in Language Skills, Quantitative Skills, and Logical Reasoning. Many students targeting NMIMS and Symbiosis colleges appear for both — preparing together is efficient.' },
   { q:'Can I add this bundle to CATalysis?', a:"The bundle itself is priced for standalone purchase. If you're enrolled in CATalysis, NMAT and SNAP Mocks are each available as individual add-ons at ₹1,999 (saving ₹1,000 each) instead." },
@@ -41,14 +41,14 @@ export default function NMATSnapBundlePage() {
   return (
     <>
       <PageSEO
-        title="SNAP + NMAT Mocks Bundle — GRADSKOOL | ₹4,499 | Save ₹1,499"
-        description="Both exams' mocks, sectionals, and area-wise tests together. 10 NMAT mocks + 20 SNAP mocks, with detailed analysis. ₹4,499, saving ₹1,499 vs buying separately."
+        title="SNAP + NMAT Mocks Bundle — GRADSKOOL | ₹2,499 | Save ₹500"
+        description="Both exams' mocks, sectionals, and area-wise tests together. 10 NMAT mocks + 20 SNAP mocks, with detailed analysis. ₹2,499, saving ₹500 vs buying separately."
         keywords="NMAT SNAP bundle, SNAP NMAT mock tests, NMIMS coaching, SCMHRD coaching, ALP Sir NMAT SNAP, GRADSKOOL bundle"
         canonical="https://gradskool.in/courses/nmat-snap"
         ogImage="/assets/og-nmat.jpg"
         breadcrumbs={[{name:'Home',url:'/'},{name:'OMETs',url:'/omets'},{name:'SNAP + NMAT Bundle',url:'/courses/nmat-snap'}]}
         schema={[
-          courseSchema({name:'SNAP + NMAT Mocks Bundle',description:"Both exams' mocks, sectionals, and area-wise tests together — 10 NMAT mocks, 20 SNAP mocks, with detailed analysis reports.",url:'/courses/nmat-snap',price:'4499',mode:['online','asynchronous']}),
+          courseSchema({name:'SNAP + NMAT Mocks Bundle',description:"Both exams' mocks, sectionals, and area-wise tests together — 10 NMAT mocks, 20 SNAP mocks, with detailed analysis reports.",url:'/courses/nmat-snap',price:'2499',mode:['online','asynchronous']}),
           faqSchema(FAQS),
         ]}
       />
@@ -63,13 +63,13 @@ export default function NMATSnapBundlePage() {
             Full mocks, sectional tests, and area-wise tests for both NMAT and SNAP — the two exams share significant syllabus overlap, and most students preparing for one end up appearing for both.
           </p>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-            <Link href="/checkout?course=nmat-snap" className="btn btn-red">Enrol Now — ₹4,499 →</Link>
+            <Link href="/checkout?course=nmat-snap" className="btn btn-red">Enrol Now — ₹2,499 →</Link>
             <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20about%20the%20SNAP%20%2B%20NMAT%20bundle" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
               <span className="wa-dot" />WhatsApp ALP Sir
             </a>
           </div>
           <div style={{ display:'flex', gap:32, marginTop:44, paddingTop:24, borderTop:'1px solid rgba(255,255,255,.1)', flexWrap:'wrap' }}>
-            {[['30','Full-length mocks'],['21','Sectional tests'],['₹1,499','You save'],['2','Exams covered']].map(([v,l]) => (
+            {[['30','Full-length mocks'],['21','Sectional tests'],['₹500','You save'],['2','Exams covered']].map(([v,l]) => (
               <div key={l}>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'#fff', lineHeight:1 }}>{v}</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginTop:3 }}>{l}</div>
@@ -95,8 +95,8 @@ export default function NMATSnapBundlePage() {
                   </div>
                 ))}
                 <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
-                  <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹4,499</div>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', textDecoration:'line-through' }}>₹5,998</div>
+                  <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹2,499</div>
+                  <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', textDecoration:'line-through' }}>₹2,999</div>
                   <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
                 </div>
                 <Link href="/checkout?course=nmat-snap" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
@@ -186,7 +186,7 @@ export default function NMATSnapBundlePage() {
             Two exams.<br /><em style={R}>One decision.</em>
           </h2>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap', marginTop:24 }}>
-            <Link href="/checkout?course=nmat-snap" className="btn btn-red">Enrol Now — ₹4,499 →</Link>
+            <Link href="/checkout?course=nmat-snap" className="btn btn-red">Enrol Now — ₹2,499 →</Link>
             <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20the%20SNAP%20%2B%20NMAT%20bundle" target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><span className="wa-dot" />WhatsApp first</a>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function NMATSnapBundlePage() {
       <div className="mob-sticky">
         <div>
           <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>SNAP + NMAT Bundle</div>
-          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹4,499 + GST</div>
+          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹2,499 + GST</div>
         </div>
         <div style={{ display:'flex', gap:8 }}>
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20the%20SNAP%20%2B%20NMAT%20bundle" target="_blank" rel="noopener noreferrer"

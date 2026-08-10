@@ -20,7 +20,7 @@ const FALLBACK = {
   examDate: '2026-11-29',
   cathleteBasePrice: 6999,
   cathleteMocksPrice: 9999,
-  cathleteStart: '2026-09-03',
+  cathleteStart: '2026-08-18',
   catalysisPrice: 17999,
 }
 
@@ -71,7 +71,7 @@ export default function CathletePage({ examData }) {
   const activeHref = withMocks ? '/checkout?course=cathlete&plan=with-mocks' : '/checkout?course=cathlete&plan=base'
 
   const FEATURES = withMocks
-    ? ['Structured rapid CAT preparation — VARC, DILR, QA', `Live sessions starting ${cathleteStartFormatted}`, '30 full-length CAT mocks + post-test analysis', 'Session PDFs and cheat sheets for every topic', 'Doubt resolution sessions throughout the course']
+    ? ['Structured rapid CAT preparation — VARC, DILR, QA', `Live sessions starting ${cathleteStartFormatted}`, '31 full-length CAT mocks + post-test analysis', 'Session PDFs and cheat sheets for every topic', 'Doubt resolution sessions throughout the course']
     : ['Structured rapid CAT preparation — VARC, DILR, QA', `Live sessions starting ${cathleteStartFormatted}`, 'Session PDFs and cheat sheets for every topic', 'Doubt resolution sessions throughout the course', 'GRADSKOOL platform access — watch, bookmark, notes']
 
   return (
@@ -103,7 +103,7 @@ export default function CathletePage({ examData }) {
           </div>
           <Link href="/courses/cat/pricing" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', display:'inline-block', marginTop:14 }}>View full CATalysis &amp; CAThlete pricing →</Link>
           <div style={{ display:'flex', gap:28, marginTop:44, paddingTop:24, borderTop:'var(--border)', flexWrap:'wrap' }}>
-            {[['30 mocks','Full-length CAT (with mocks plan)'],[cathleteStartFormatted,'Live sessions start'],['3','Sections covered']].map(([v,l]) => (
+            {[['31 mocks','Full-length CAT (with mocks plan)'],[cathleteStartFormatted,'Live sessions start'],['3','Sections covered']].map(([v,l]) => (
               <div key={l}>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', lineHeight:1 }}>{v}</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginTop:3 }}>{l}</div>
@@ -129,7 +129,7 @@ export default function CathletePage({ examData }) {
           </div>
           <button onClick={() => setWithMocks(!withMocks)}
             style={{ width:'100%', padding:'12px 20px', border:'var(--border)', borderRadius:3, background:'#fff', fontFamily:'var(--font-sans)', fontSize:13, fontWeight:500, color:'var(--g700)', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer' }}>
-            <span>{withMocks ? 'Switch to without mocks' : `Add 30 CAT mocks (+${fmtPrice(cathleteMocksPrice - cathleteBasePrice)})`}</span>
+            <span>{withMocks ? 'Switch to without mocks' : `Add 31 CAT mocks (+${fmtPrice(cathleteMocksPrice - cathleteBasePrice)})`}</span>
             <span>↓</span>
           </button>
         </div>
