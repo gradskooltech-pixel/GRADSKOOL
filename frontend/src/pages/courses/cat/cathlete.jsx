@@ -159,6 +159,29 @@ export default function CathletePage({ examData }) {
         </div>
       </section>
 
+      {/* also available */}
+      <section style={{ padding:'56px 0', borderBottom:'var(--border)', background:'var(--off)' }}>
+        <div className="container">
+          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Also preparing for CAT</div>
+          <h2 className="d-lg" style={{ marginBottom:28 }}>Round out your <em style={R}>prep.</em></h2>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }} className="also-grid-3">
+            <style>{`@media(max-width:800px){.also-grid-3{grid-template-columns:1fr!important}}`}</style>
+            {[
+              ['/courses/cat/alpgebra', 'ALPgebra', '₹999', "99 theorems covering CAT's full Algebra syllabus, from first principles."],
+              ['/courses/cat/mocks', 'CAT Mocks', '₹2,999', '30 full-length mocks with sectional tests, if you already have coaching but need mocks.'],
+              ['/courses/cat/books', 'CAT Books', '₹3,999', "Curated physical books with ALP Sir's own notes in the margins."],
+            ].map(([href, name, price, desc]) => (
+              <Link key={href} href={href} style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'24px', textDecoration:'none', display:'block' }}>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>{name}</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:700, color:'var(--red)', marginBottom:10 }}>{price}</div>
+                <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>{desc}</p>
+                <span style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'var(--red)' }}>Explore →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* daily practice */}
       <section style={{ padding:'32px 0', borderBottom:'var(--border)' }}>
         <div className="container">

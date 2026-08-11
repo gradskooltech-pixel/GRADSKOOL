@@ -16,6 +16,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 const COURSES_DROP = [
+  { href:'/courses/cat/cathlete', label:'CAThlete — Crash Course' },
   { href:'/courses/cat/catalysis', label:'CATalysis 2027' },
   { href:'/courses/gmat',         label:'GMAT Focus Edition' },
   { href:'/courses/xat',          label:'XAT' },
@@ -24,7 +25,6 @@ const COURSES_DROP = [
   { href:'/courses/nmat-snap',    label:'SNAP + NMAT Bundle' },
   { href:'/courses/mhcet',        label:'MH CET' },
   { href:'/courses/pi-wat-gd',    label:'PI WAT GD' },
-  { href:'/courses/cat/cathlete', label:'CAThlete — Crash Course' },
 ]
 
 export function Navbar() {

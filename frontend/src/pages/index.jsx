@@ -110,6 +110,17 @@ const PROOFS = [
   {name:'Priya M.',detail:'started GMAT preparation',time:'24 min ago',city:'Bangalore'},
   {name:'Rohan K.',detail:'enrolled in CATalysis 2027',time:'38 min ago',city:'Pune'},
   {name:'Sneha T.',detail:'enrolled in CAThlete',time:'1 hr ago',city:'Hyderabad'},
+  {name:'Aditya V.',detail:'enrolled in CATalysis 2027',time:'6 min ago',city:'Chennai'},
+  {name:'Meera J.',detail:'started ALPgebra',time:'17 min ago',city:'Ahmedabad'},
+  {name:'Karan D.',detail:'enrolled in XAT Full Course',time:'29 min ago',city:'Kolkata'},
+  {name:'Ishita P.',detail:'started GMAT preparation',time:'44 min ago',city:'Jaipur'},
+  {name:'Varun N.',detail:'enrolled in CAThlete',time:'52 min ago',city:'Mumbai'},
+  {name:'Ananya B.',detail:'enrolled in SNAP Mocks',time:'8 min ago',city:'Pune'},
+  {name:'Siddharth L.',detail:'enrolled in NMAT Mocks',time:'19 min ago',city:'Delhi'},
+  {name:'Tanvi G.',detail:'started ALPgebra',time:'33 min ago',city:'Bangalore'},
+  {name:'Yash M.',detail:'enrolled in CATalysis 2027',time:'47 min ago',city:'Indore'},
+  {name:'Riya K.',detail:'enrolled in CAThlete',time:'1 hr ago',city:'Chandigarh'},
+  {name:'Nikhil T.',detail:'enrolled in XAT Full Course',time:'1 hr ago',city:'Lucknow'},
 ]
 
 const TESTIMONIALS = [
@@ -167,11 +178,13 @@ export default function Home() {
 
   // Social proof popup
   useEffect(() => {
-    let cur = 0
+    let lastIdx = -1
     const show = () => {
-      setProof(PROOFS[cur % PROOFS.length])
+      let idx = Math.floor(Math.random() * PROOFS.length)
+      if (idx === lastIdx) idx = (idx + 1) % PROOFS.length
+      lastIdx = idx
+      setProof(PROOFS[idx])
       setProofVisible(true)
-      cur++
       setTimeout(() => { setProofVisible(false); setTimeout(show, 4000) }, 7000)
     }
     const t = setTimeout(show, 5000)
