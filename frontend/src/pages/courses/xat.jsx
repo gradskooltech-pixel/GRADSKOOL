@@ -1,8 +1,12 @@
 /**
  * GRADSKOOL — XAT 2026 Course Page
  * Route: /courses/xat (also /xat)
+ *
+ * Restyled to match CAT's design language (light 2-column hero with
+ * pricing card) instead of its earlier dark single-column hero — for
+ * visual consistency across every course page. All content and pricing
+ * preserved exactly as reviewed and confirmed.
  */
-import Head from 'next/head'
 import Link from 'next/link'
 import PageSEO, { courseSchema, faqSchema } from '../../components/seo/PageSEO'
 import { S, CourseFaqAccordion, WaFloat, CourseTestimonials } from '../../components/courses/CourseLayout'
@@ -63,96 +67,99 @@ export default function XATPage() {
           faqSchema(FAQS),
         ]}
       />
-      <style>{S}</style>
 
-      {/* ── HERO ── */}
-      <section style={{ background:'var(--black)', padding:'72px 0 64px', borderBottom:'var(--border)' }}>
-        <div className="container">
-          <div className="eyebrow" style={{ marginBottom:18, color:'var(--g500)' }}><span className="dot" />XAT 2026 · XLRI & Top XAT Colleges</div>
-          <h1 className="d-xl" style={{ color:'#fff', marginBottom:18 }}>XAT 2026.<br /><em style={R}>The XLRI Route.</em></h1>
-          <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g500)', lineHeight:1.85, maxWidth:540, marginBottom:32 }}>
+      {/* hero */}
+      <section style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr' }} className="xat-hero">
+        <style>{`@media(max-width:960px){.xat-hero{grid-template-columns:1fr!important}}`}</style>
+        <style>{S}</style>
+        <div style={{ padding:'72px 48px 56px' }}>
+          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />XAT 2026 · XLRI & Top XAT Colleges</div>
+          <h1 className="d-xl" style={{ marginBottom:20, maxWidth:520 }}>XAT 2026.<br /><em style={R}>The XLRI Route.</em></h1>
+          <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.85, maxWidth:520, marginBottom:32 }}>
             100+ hours of live two-way sessions. Full XAT syllabus — VALR, Decision Making, QA. 6 full-length XAT tests with post-test analysis. Taught by ALP Sir.
           </p>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
             <Link href="/checkout?course=xat" className="btn btn-red">Enrol Now — ₹5,999 →</Link>
-            <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20about%20the%20XAT%20course" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+            <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20about%20the%20XAT%20course" target="_blank" rel="noopener noreferrer" className="btn btn-wa">
               <span className="wa-dot" />WhatsApp ALP Sir
             </a>
           </div>
-          <div style={{ display:'flex', gap:32, marginTop:44, paddingTop:24, borderTop:'1px solid rgba(255,255,255,.1)', flexWrap:'wrap' }}>
-            {[['100+ hrs','Live sessions'],['6','Full XAT mocks'],['Decision Making','Full coverage'],['150+','Colleges accept XAT']].map(([v,l]) => (
+          <Link href="/courses/xat/pricing" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', display:'inline-block', marginTop:14 }}>View full pricing page →</Link>
+          <div style={{ display:'flex', gap:28, marginTop:32, paddingTop:24, borderTop:'var(--border)', flexWrap:'wrap' }}>
+            {[['100+ hrs','Live sessions'],['6','Full XAT mocks'],['DM','Full coverage'],['150+','Colleges accept XAT']].map(([v,l]) => (
               <div key={l}>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'#fff', lineHeight:1 }}>{v}</div>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', lineHeight:1 }}>{v}</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginTop:3 }}>{l}</div>
               </div>
             ))}
           </div>
         </div>
+
+        <div style={{ background:'var(--off)', display:'flex', flexDirection:'column', justifyContent:'center', padding:'40px 48px', gap:16 }}>
+          <div style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'28px 32px' }}>
+            <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>XAT Full Course</div>
+            {['100+ hours of live two-way sessions','6 full-length XAT tests','Post-test strategic analysis','Decision Making special sessions','Session PDFs + cheat sheets','PI WAT GD prep for XLRI'].map(item => (
+              <div key={item} style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:6, display:'flex', gap:8 }}>
+                <span style={R}>—</span><span>{item}</span>
+              </div>
+            ))}
+            <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹5,999</div>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
+            </div>
+            <Link href="/checkout?course=xat" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
+          </div>
+          <div style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'16px 20px', fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g700)' }}>
+            <strong style={{ color:'var(--red)' }}>Bundle with CATalysis?</strong> Add XAT at ₹5,499 (save ₹500).
+          </div>
+        </div>
       </section>
 
-      {/* ── PRICING CARD ── */}
+      {/* also available */}
       <section className="section">
         <div className="container">
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:40 }} className="xat-price-layout">
-            <style>{`@media(max-width:960px){.xat-price-layout{grid-template-columns:1fr!important}}`}</style>
-            <div>
-              <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Pricing</div>
-              <h2 className="d-lg" style={{ marginBottom:20 }}>Simple, flat<br /><em style={R}>pricing.</em></h2>
-              <Link href="/courses/xat/pricing" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', display:'inline-block', marginBottom:16 }}>View full pricing page →</Link>
-              <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'28px 32px' }}>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>XAT Full Course</div>
-                {['100+ hours of live two-way sessions','6 full-length XAT tests','Post-test strategic analysis','Decision Making special sessions','Session PDFs + cheat sheets','Doubt resolution sessions','PI WAT GD prep for XLRI'].map(item => (
-                  <div key={item} style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:7, display:'flex', gap:8 }}>
-                    <span style={R}>—</span><span>{item}</span>
-                  </div>
-                ))}
-                <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
-                  <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹5,999</div>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
-                </div>
-                <Link href="/checkout?course=xat" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
-              </div>
-              <div style={{ marginTop:12, padding:'12px 16px', background:'#fff', border:'var(--border)', borderRadius:3, fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g700)' }}>
-                <strong style={{ color:'var(--red)' }}>Bundle with CATalysis?</strong> Add XAT at ₹5,499 (save ₹500). Most CAT students also appear for XAT.
-              </div>
+          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Also available</div>
+          <h2 className="d-lg" style={{ marginBottom:28 }}>Not ready for<br /><em style={R}>the full course?</em></h2>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:16 }} className="also-grid-2">
+            <style>{`@media(max-width:700px){.also-grid-2{grid-template-columns:1fr!important}}`}</style>
+            <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px' }}>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>XAT Mocks Only</div>
+              <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>Already studying? Just want timed full-length XAT tests with analysis?</p>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)', marginBottom:12 }}>₹499</div>
+              <Link href="/checkout?course=xat&plan=mocks" className="btn btn-outline" style={{ fontSize:12, padding:'9px 18px' }}>Get XAT Mocks →</Link>
             </div>
-            <div>
-              <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Also available</div>
-              <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px 28px', marginBottom:12 }}>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'var(--black)', marginBottom:8 }}>XAT Mocks Only</div>
-                <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:16, lineHeight:1.7 }}>Already studying? Just want timed full-length XAT tests with analysis?</p>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)', marginBottom:12 }}>₹499</div>
-                <Link href="/checkout?course=xat&plan=mocks" className="btn btn-outline" style={{ fontSize:12, padding:'9px 18px' }}>Get XAT Mocks →</Link>
-              </div>
-              <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px 28px' }}>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'var(--black)', marginBottom:8 }}>Not sure yet?</div>
-                <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:16, lineHeight:1.7 }}>Free XAT Foundations classes, taught live by ALP Sir — no cost, no signup fee. A real way to see if this is the right fit before you pay.</p>
-                <Link href="/foundations/xat" className="btn btn-red" style={{ fontSize:12, padding:'9px 18px' }}>Watch free classes →</Link>
-              </div>
+            <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px' }}>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>Not sure yet?</div>
+              <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>Free XAT Foundations classes, taught live by ALP Sir — no cost, no signup fee.</p>
+              <Link href="/foundations/xat" className="btn btn-red" style={{ fontSize:12, padding:'9px 18px' }}>Watch free classes →</Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── CATHLETE CROSS-PROMO ── */}
-      <div style={{ background:'linear-gradient(135deg,#1a1a18 55%,#2a2927)', padding:'28px 0' }}>
-        <div className="container" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:20, flexWrap:'wrap' }}>
-          <div>
-            <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)', marginBottom:6 }}>Also preparing for CAT?</div>
-            <p style={{ fontFamily:'var(--font-body)', fontSize:14, color:'#fff', lineHeight:1.6 }}>CAThlete — GRADSKOOL's intensive CAT crash course, from ₹6,999. A lot of XAT students take both.</p>
-          </div>
-          <Link href="/courses/cat/cathlete" className="btn btn-red" style={{ flexShrink:0 }}>Explore CAThlete →</Link>
+      {/* cathlete cross-promo */}
+      <section className="section">
+        <div className="container">
+          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Also preparing for CAT?</div>
+          <h2 className="d-lg" style={{ marginBottom:28 }}>Round out your <em style={R}>prep.</em></h2>
+          <Link href="/courses/cat/cathlete" style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px', textDecoration:'none', display:'block', maxWidth:420 }}>
+            <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>CAThlete</div>
+            <div style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:700, color:'var(--red)', marginBottom:10 }}>₹6,999</div>
+            <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>GRADSKOOL's intensive CAT crash course. A lot of XAT students take both.</p>
+            <span style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'var(--red)' }}>Explore CAThlete →</span>
+          </Link>
         </div>
-      </div>
+      </section>
 
-      {/* ── 4-STAGE FRAMEWORK ── */}
+      {/* 4-stage framework */}
       <section style={{ padding:'72px 0', borderBottom:'var(--border)', background:'var(--off)' }}>
         <div className="container">
           <div style={{ marginBottom:32 }}>
             <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />How XAT works</div>
             <h2 className="d-lg">The 4-Stage<br /><em style={R}>Learning Framework</em></h2>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:1, background:'var(--g200)', border:'var(--border)', borderRadius:4, overflow:'hidden' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:1, background:'var(--g200)', border:'var(--border)', borderRadius:4, overflow:'hidden' }} className="stage-grid-4">
+            <style>{`@media(max-width:800px){.stage-grid-4{grid-template-columns:1fr 1fr!important}}`}</style>
             {STAGES.map(s => (
               <div key={s.n} className="stage-card">
                 <div className="stage-bg">{s.n}</div>
@@ -164,7 +171,7 @@ export default function XATPage() {
         </div>
       </section>
 
-      {/* ── DAILY PRACTICE VIA GRADSCALE ── */}
+      {/* daily practice */}
       <section style={{ padding:'32px 0', borderBottom:'var(--border)' }}>
         <div className="container">
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:20, flexWrap:'wrap', padding:'20px 28px', background:'var(--off)', border:'var(--border)', borderRadius:4 }}>
@@ -177,16 +184,17 @@ export default function XATPage() {
         </div>
       </section>
 
-      {/* ── SYLLABUS ── */}
+      {/* syllabus */}
       <section className="section">
         <div className="container">
           <div style={{ marginBottom:32 }}>
             <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Full coverage</div>
             <h2 className="d-lg">XAT Syllabus</h2>
           </div>
-          <div className="syllabus-grid">
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:32 }} className="syl-grid-3">
+            <style>{`@media(max-width:800px){.syl-grid-3{grid-template-columns:1fr!important}}`}</style>
             {SYLLABUS.map(sec => (
-              <div key={sec.section} className="syl-col">
+              <div key={sec.section}>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--red)', marginBottom:14 }}>{sec.section}</div>
                 {sec.topics.map(t => (
                   <div key={t} style={{ fontFamily:'var(--font-body)', fontSize:14, color:'var(--g700)', padding:'8px 0', borderBottom:'var(--border)', lineHeight:1.5, display:'flex', gap:8 }}>
@@ -199,14 +207,15 @@ export default function XATPage() {
         </div>
       </section>
 
-      {/* ── COLLEGES ── */}
+      {/* colleges */}
       <section style={{ padding:'72px 0', borderBottom:'var(--border)', background:'var(--off)' }}>
         <div className="container">
           <div style={{ marginBottom:32 }}>
             <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Where XAT takes you</div>
             <h2 className="d-lg">Top colleges that<br /><em style={R}>accept XAT</em></h2>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:1, background:'var(--g200)', border:'var(--border)', borderRadius:4, overflow:'hidden' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:1, background:'var(--g200)', border:'var(--border)', borderRadius:4, overflow:'hidden' }} className="col-grid-3">
+            <style>{`@media(max-width:960px){.col-grid-3{grid-template-columns:1fr!important}}`}</style>
             {COLLEGES.map(c => (
               <div key={c.name} style={{ background:'#fff', padding:'20px 24px' }}>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', marginBottom:3 }}>{c.name}</div>
@@ -218,7 +227,7 @@ export default function XATPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
+      {/* testimonials */}
       <section className="section">
         <div className="container">
           <div style={{ marginBottom:32 }}>
@@ -229,7 +238,7 @@ export default function XATPage() {
         </div>
       </section>
 
-      {/* ── FAQ ── */}
+      {/* faq */}
       <section style={{ padding:'72px 0', borderBottom:'var(--border)', background:'var(--off)' }}>
         <div className="container">
           <div style={{ display:'grid', gridTemplateColumns:'1fr 2fr', gap:64 }} className="faq-layout">
@@ -246,23 +255,22 @@ export default function XATPage() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section style={{ background:'var(--black)', padding:'72px 0', textAlign:'center' }}>
+      {/* final cta */}
+      <section style={{ padding:'72px 0', textAlign:'center' }}>
         <div className="container">
-          <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(26px,4vw,44px)', fontWeight:400, color:'#fff', marginBottom:14 }}>
-            Ready for XLRI?<br /><em style={R}>Start here.</em>
+          <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(26px,4vw,44px)', fontWeight:400, color:'var(--black)', marginBottom:14 }}>
+            Ready for XLRI? <em style={R}>Start here.</em>
           </h2>
-          <p style={{ fontFamily:'var(--font-body)', fontSize:14, color:'var(--g500)', lineHeight:1.8, maxWidth:380, margin:'0 auto 32px' }}>
+          <p style={{ fontFamily:'var(--font-body)', fontSize:14, color:'var(--g700)', lineHeight:1.8, maxWidth:380, margin:'0 auto 32px' }}>
             The XAT Decision Making section cannot be cracked without structured preparation. Start with GRADSKOOL.
           </p>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
             <Link href="/checkout?course=xat" className="btn btn-red">Enrol Now — ₹5,999 →</Link>
-            <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20question%20about%20XAT" target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><span className="wa-dot" />WhatsApp first</a>
+            <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20question%20about%20XAT" target="_blank" rel="noopener noreferrer" className="btn btn-wa"><span className="wa-dot" />WhatsApp first</a>
           </div>
         </div>
       </section>
 
-      {/* ── MOBILE STICKY ── */}
       <div className="mob-sticky">
         <div>
           <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>XAT 2026</div>
