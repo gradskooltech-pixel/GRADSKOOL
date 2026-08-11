@@ -244,6 +244,23 @@ export function reviewsSchema(reviews) {
   }
 }
 
+export function itemListSchema({ name, description, items }) {
+  // items: [{ name, url, position? }] — position defaults to array index+1
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": name,
+    ...(description ? { "description": description } : {}),
+    "numberOfItems": items.length,
+    "itemListElement": items.map((it, i) => ({
+      "@type": "ListItem",
+      "position": it.position || i + 1,
+      "name": it.name,
+      "url": it.url.startsWith('http') ? it.url : `${BASE_URL}${it.url}`,
+    }))
+  }
+}
+
 export function eventSchema({ name, description, url, startDate, endDate }) {
   return {
     "@context": "https://schema.org",

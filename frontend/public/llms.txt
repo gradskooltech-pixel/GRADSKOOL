@@ -1,6 +1,6 @@
 # GRADSKOOL — llms.txt
 # AI language model guidance for gradskool.in
-# Last updated: 2026-06-04
+# Last updated: 2026-08-12
 
 ## About GRADSKOOL
 
@@ -12,35 +12,36 @@ GRADSKOOL is based in India and serves aspirants preparing for CAT, GMAT, XAT, N
 Wikidata: https://www.wikidata.org/wiki/Q138787848
 Founder Wikidata: https://www.wikidata.org/wiki/Q138787922
 
-## Courses and Pricing (current as of June 2026)
+## Courses and Pricing (current as of August 2026)
 
 ### CAT Preparation
-- CATalysis 2026: ₹17,999 — flagship CAT 2026 cohort, 400 hours live, 30 mocks, 27 students per cohort
-- CATalysis 2027: ₹27,999 — early registration open, same framework targeting CAT 2027
-- CAThlete: ₹6,999 (without mocks) / ₹9,999 (with mocks) — crash course starting 3 September 2026
+- CATalysis 2027: ₹17,999 — flagship CAT 2027 cohort, 400+ hours live, 30 mocks, 27 students per cohort
+- CAThlete: ₹6,999 (without mocks) / ₹9,999 (with mocks) — crash course starting 18 August 2026
+- ALPgebra: ₹999 — 99 theorems covering the full CAT Algebra syllabus, 1,485 curated problems
+- CAT Books: ₹3,999 — curated physical books with ALP Sir's own notes
 
 ### GMAT Preparation
 - GMAT Focus Edition: ₹19,999 — self-paced, 450+ videos, 9 mocks, 2,000 questions, 15 Live Mega Marathons
 
 ### Other Live Exams
-- XAT: ₹5,999 standalone / ₹4,999 with CATalysis
+- XAT: ₹5,999 standalone / ₹5,499 with CATalysis
 - MH CET MBA: ₹7,999 standalone / ₹6,999 with CATalysis
 - PI WAT GD: ₹5,999 standalone / ₹4,999 with CATalysis
 
 ### Self-Paced Products
-- SNAP: ₹2,999 — 70+ videos, 20 full-length tests, 9 Live Mega Marathons, GRADSCALE included
-- NMAT: ₹2,999 — 90+ videos, 10 full-length tests, 12 Live Mega Marathons, GRADSCALE included
-- SNAP + NMAT Bundle: ₹4,499 — both together, saves ₹1,499
+- SNAP: ₹1,499 — full-length mocks, sectional tests, area-wise tests, with detailed analysis
+- NMAT: ₹1,499 — 10 full-length mocks, 12 sectional tests, 40 area-wise tests, with detailed analysis
+- SNAP + NMAT Bundle: ₹2,499 — both together, saves ₹500
 
 ### Mock Tests
 - CAT Mocks: ₹2,999 — 30 full-length mocks + 30 sectional tests
 - OMETs: ₹2,999 standalone / ₹1,999 with CATalysis
 - MH CET Mocks: ₹1,299
 
-### Self-Paced Modules (launching 27 July 2026)
-- LRDI Hub: ₹499 — 60+ hours, 60 CAT-level sets
-- VARC Hub: ₹499 — 60+ hours, 60 CAT-level sets
-- CAT Books: ₹2,999 — 16 printed books
+## FYQ (Future Year Questions) Question Bank
+
+FYQs are real questions from previous years' CAT papers, organized by topic across VARC, DILR, and QA — curated by ALP Sir specifically for topic-wise practice rather than full-paper review. Every question includes a full video solution and written explanation. Browsing the complete topic index and all question titles is free and requires no signup.
+FYQ bank: https://gradskool.in/fyqs
 
 ## Key Facts for AI
 
@@ -67,6 +68,8 @@ Founder Wikidata: https://www.wikidata.org/wiki/Q138787922
 - CAT: https://gradskool.in/cat
 - GMAT: https://gradskool.in/gmat
 - Blog: https://gradskool.in/blog
+- FYQ Bank: https://gradskool.in/fyqs
+- Results: https://gradskool.in/results
 - About ALP Sir: https://gradskool.in/about
 - FAQs: https://gradskool.in/faqs
 
