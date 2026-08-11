@@ -26,12 +26,24 @@ import { useState, useEffect } from 'react'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
+// These exam slugs each have their own dedicated page file
+// (pages/courses/<slug>.jsx) which Next.js treats as a separate,
+// higher-priority route. This page's getStaticPaths must exclude them,
+// or the build fails with "Conflicting paths returned from
+// getStaticPaths" the moment the exam exists in the database.
+const DEDICATED_PAGE_SLUGS = new Set([
+  'cat', 'xat', 'snap', 'nmat', 'nmat-snap', 'cmat', 'mhcet',
+  'gmat', 'gre', 'ipmat', 'cuet', 'pi-wat-gd', 'clat',
+])
+
 export async function getStaticPaths() {
   try {
     const res  = await fetch(`${API}/courses/exams/`)
     const data = await res.json()
     return {
-      paths: (data.exams || []).map(e => ({ params: { slug: e.slug } })),
+      paths: (data.exams || [])
+        .filter(e => !DEDICATED_PAGE_SLUGS.has(e.slug))
+        .map(e => ({ params: { slug: e.slug } })),
       fallback: 'blocking',
     }
   } catch {
