@@ -19,7 +19,7 @@ from .views import (
     AdminTestimonialListView, AdminTestimonialDetailView,
     AdminExamListView, AdminExamDetailView,
     AdminHomepageContentView,
-    AdminManualEnrollView, AdminListPlansView, AdminPricingPlansView,
+    AdminManualEnrollView, AdminListPlansView,
     DynamicPageListView, DynamicPageDetailView, DynamicPagePublicView,
     AdminMockCredentialListView, AdminMockCredentialDetailView,
     StudentMockCredentialsView,
@@ -94,8 +94,6 @@ urlpatterns = [
 
     path('manual-enroll/',   AdminManualEnrollView.as_view(), name='admin-manual-enroll'),
     path('plans/',           AdminListPlansView.as_view(),    name='admin-plans-list'),
-    path('pricing-plans/',                AdminPricingPlansView.as_view(), name='admin-pricing-plans'),
-    path('pricing-plans/<int:plan_id>/',  AdminPricingPlansView.as_view(), name='admin-pricing-plan-detail'),
 
     # Mock credentials
     path('mock-credentials/',            AdminMockCredentialListView.as_view(),   name='admin-mock-creds'),

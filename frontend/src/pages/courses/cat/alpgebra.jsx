@@ -8,8 +8,8 @@
  * 2-column hero with a pricing card on the right, for consistency
  * across every CAT page.
  */
-import Head from 'next/head'
 import Link from 'next/link'
+import PageSEO, { courseSchema } from '../../../components/seo/PageSEO'
 import { S, WaFloat } from '../../../components/courses/CourseLayout'
 import CatTabs from '../../../components/courses/CatTabs'
 
@@ -47,10 +47,18 @@ const FOR_WHOM = [
 export default function AlpgebraPage() {
   return (
     <>
-      <Head>
-        <title>{`ALPgebra — 99 Theorems by Abhishek Leela Pandey | ${fmtPrice(PRICE)} Early Bird — GRADSKOOL`}</title>
-        <meta name="description" content={`ALPgebra — the most rigorous Algebra program built for CAT aspirants. 99 interconnected theorems, 19 chapters, 1,485 curated problems. Early bird ${fmtPrice(PRICE)}.`} />
-      </Head>
+      <PageSEO
+        title={`ALPgebra — 99 Theorems by Abhishek Leela Pandey | ${fmtPrice(PRICE)} Early Bird — GRADSKOOL`}
+        description={`ALPgebra — the most rigorous Algebra program built for CAT aspirants. 99 interconnected theorems, 19 chapters, 1,485 curated problems. Early bird ${fmtPrice(PRICE)}.`}
+        keywords="ALPgebra, CAT Algebra, CAT Quant preparation, Abhishek Leela Pandey Algebra, GRADSKOOL ALPgebra, 99 theorems"
+        canonical="https://gradskool.in/courses/cat/alpgebra"
+        ogImage="/assets/og-alpgebra.jpg"
+        breadcrumbs={[{name:'Home',url:'/'},{name:'CAT',url:'/courses/cat'},{name:'ALPgebra',url:'/courses/cat/alpgebra'}]}
+        schema={[
+          courseSchema({name:'ALPgebra', description:'99 interconnected theorems covering the full CAT Algebra syllabus, from first principles.', url:'/courses/cat/alpgebra', price:String(PRICE)}),
+        ]}
+        speakableSelectors={['h1', '.eyebrow']}
+      />
 
       <CatTabs active="alpgebra" />
 

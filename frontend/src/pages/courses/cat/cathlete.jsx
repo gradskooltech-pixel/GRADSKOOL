@@ -8,8 +8,8 @@
  * across every CAT page rather than each having its own layout.
  */
 import { useState } from 'react'
-import Head from 'next/head'
 import Link from 'next/link'
+import PageSEO, { courseSchema } from '../../../components/seo/PageSEO'
 import { S, WaFloat } from '../../../components/courses/CourseLayout'
 import CatTabs from '../../../components/courses/CatTabs'
 
@@ -76,10 +76,18 @@ export default function CathletePage({ examData }) {
 
   return (
     <>
-      <Head>
-        <title>{`CAThlete — CAT ${examYear} Crash Course by ALP Sir | From ${fmtPrice(cathleteBasePrice)}`}</title>
-        <meta name="description" content={`CAThlete is GRADSKOOL's intensive CAT ${examYear} crash course starting ${cathleteStartFormatted}. Structured rapid preparation, live sessions.`} />
-      </Head>
+      <PageSEO
+        title={`CAThlete — CAT ${examYear} Crash Course by ALP Sir | From ${fmtPrice(cathleteBasePrice)}`}
+        description={`CAThlete is GRADSKOOL's intensive CAT ${examYear} crash course starting ${cathleteStartFormatted}. Structured rapid preparation, live sessions, 31 mocks.`}
+        keywords="CAThlete, CAT crash course, CAT 2026 preparation, ALP Sir CAT, GRADSKOOL CAThlete, last minute CAT prep"
+        canonical="https://gradskool.in/courses/cat/cathlete"
+        ogImage="/assets/og-cathlete.jpg"
+        breadcrumbs={[{name:'Home',url:'/'},{name:'CAT',url:'/courses/cat'},{name:'CAThlete',url:'/courses/cat/cathlete'}]}
+        schema={[
+          courseSchema({name:'CAThlete', description:`GRADSKOOL's intensive CAT ${examYear} crash course. Structured rapid preparation, live sessions, 31 mocks.`, url:'/courses/cat/cathlete', price:String(cathleteBasePrice), startDate:FALLBACK.cathleteStart}),
+        ]}
+        speakableSelectors={['h1', '.eyebrow']}
+      />
 
       <CatTabs active="cathlete" />
 

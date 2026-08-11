@@ -7,8 +7,8 @@
  * no public page to actually display them — this fills that gap.
  */
 import { useState, useEffect } from 'react'
-import Head from 'next/head'
 import Link from 'next/link'
+import PageSEO from '../components/seo/PageSEO'
 import api from '../lib/api'
 import { S } from '../components/courses/CourseLayout'
 
@@ -21,20 +21,26 @@ export default function ResultsPage() {
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
-    api.get('/dashboard/results-wall/')
+    setLoading(true)
+    const q = filter !== 'all' ? `?exam=${filter}` : ''
+    api.get(`/dashboard/results-wall/public/${q}`)
       .then(({ data }) => setResults(data.results || []))
-      .catch(() => {})
+      .catch(() => setResults([]))
       .finally(() => setLoading(false))
-  }, [])
+  }, [filter])
 
-  const filtered = filter === 'all' ? results : results.filter(r => r.exam === filter)
+  const filtered = results
 
   return (
     <>
-      <Head>
-        <title>Results — GRADSKOOL Student Selections</title>
-        <meta name="description" content="Verified student results from GRADSKOOL — percentiles, scores, and college calls across CAT, XAT, SNAP, NMAT, GMAT and more." />
-      </Head>
+      <PageSEO
+        title="Results — GRADSKOOL Student Selections"
+        description="Verified student results from GRADSKOOL — percentiles, scores, and college calls across CAT, XAT, SNAP, NMAT, GMAT and more."
+        keywords="GRADSKOOL results, CAT results, student selections, GRADSKOOL toppers, ALP Sir student results"
+        canonical="https://gradskool.in/results"
+        breadcrumbs={[{name:'Home',url:'/'},{name:'Results',url:'/results'}]}
+        speakableSelectors={['h1']}
+      />
 
       <section style={{ padding:'72px 24px 40px', maxWidth:960, margin:'0 auto' }}>
         <style>{S}</style>
@@ -75,14 +81,17 @@ export default function ResultsPage() {
         )}
 
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16 }}>
-          {filtered.map(r => (
-            <div key={r.id} style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'20px 24px' }}>
+          {filtered.map(r => {
+            const CardTag = r.slug ? Link : 'div'
+            const cardProps = r.slug ? { href: `/results/${r.slug}` } : {}
+            return (
+            <CardTag key={r.id} {...cardProps} style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'20px 24px', textDecoration:'none', display:'block', cursor: r.slug ? 'pointer' : 'default' }}>
               <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
                 <div style={{ width:44, height:44, borderRadius:'50%', background:'var(--red)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontFamily:'var(--font-serif)', fontSize:17, flexShrink:0 }}>
                   {r.name?.[0]?.toUpperCase()}
                 </div>
                 <div>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:14, fontWeight:700, color:'var(--black)' }}>{r.name}</div>
+                  <div style={{ fontFamily:'var(--font-sans)', fontSize:14, fontWeight:700, color:'var(--black)' }}>{r.name}{r.video_type && ' 🎬'}</div>
                   <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>{r.exam?.toUpperCase()} {r.year}</div>
                 </div>
               </div>
@@ -99,8 +108,12 @@ export default function ResultsPage() {
                   "{r.testimonial}"
                 </p>
               )}
-            </div>
-          ))}
+              {r.slug && (
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--red)', fontWeight:600, marginTop:10 }}>Read full story →</div>
+              )}
+            </CardTag>
+            )
+          })}
         </div>
       </section>
 

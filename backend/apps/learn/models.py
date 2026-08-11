@@ -54,8 +54,8 @@ class TopicVideo(models.Model):
 
     # Quiz config
     is_free_preview = models.BooleanField(default=False,
-        help_text='First ~10%% of course — visible without enrollment. '
-                  'Admin marks specific videos as free previews.')
+                                          help_text='First ~10%% of course — visible without enrollment. '
+                                                    'Admin marks specific videos as free previews.')
     has_quiz    = models.BooleanField(default=False)
     # Which QATopic to draw questions from
     quiz_source = models.ForeignKey(
@@ -64,7 +64,7 @@ class TopicVideo(models.Model):
     )
     quiz_question_count = models.PositiveIntegerField(default=10)
     quiz_duration_mins  = models.PositiveIntegerField(default=40,
-        help_text='Time limit for the quiz in minutes. Admin sets this per video.')
+                                                      help_text='Time limit for the quiz in minutes. Admin sets this per video.')
 
     # Cheat sheet (auto-generated from video transcript)
     # Bunny videos: generated via Whisper → GPT-4o-mini
@@ -143,17 +143,17 @@ class LiveSession(models.Model):
     # After the session ends, recording is uploaded
     recording_url           = models.URLField(blank=True)
     bunny_video_id          = models.CharField(max_length=200, blank=True,
-        help_text='Bunny Stream video ID after recording is processed')
+                                               help_text='Bunny Stream video ID after recording is processed')
     recording_available     = models.BooleanField(default=False)
     recording_processing    = models.BooleanField(default=False,
-        help_text='True while Bunny is encoding the uploaded recording')
+                                                  help_text='True while Bunny is encoding the uploaded recording')
 
     # Zoom cloud recording details (set by webhook)
     zoom_meeting_id         = models.CharField(max_length=100, blank=True)
     zoom_recording_file_url = models.URLField(blank=True,
-        help_text='Direct download URL from Zoom (expires in 24h)')
+                                              help_text='Direct download URL from Zoom (expires in 24h)')
     zoom_recording_token    = models.CharField(max_length=500, blank=True,
-        help_text='Access token for Zoom recording download')
+                                               help_text='Access token for Zoom recording download')
 
     created_at   = models.DateTimeField(auto_now_add=True)
 
@@ -403,7 +403,7 @@ class Badge(models.Model):
     icon        = models.CharField(max_length=10, default='🏅')
     badge_type  = models.CharField(max_length=20, choices=BADGE_TYPES)
     threshold   = models.IntegerField(default=1,
-        help_text='Value needed to earn this badge (days for streak, % for score, count for completion)')
+                                      help_text='Value needed to earn this badge (days for streak, % for score, count for completion)')
     xp_reward   = models.IntegerField(default=50)
     is_active   = models.BooleanField(default=True)
 
@@ -492,9 +492,9 @@ class CourseBatch(models.Model):
     ]
     course      = models.ForeignKey('courses.Course', on_delete=models.CASCADE, related_name='batches')
     name        = models.CharField(max_length=100,
-        help_text='e.g. "Morning Batch", "Evening Batch", "Weekend Batch"')
+                                   help_text='e.g. "Morning Batch", "Evening Batch", "Weekend Batch"')
     timing      = models.CharField(max_length=100, blank=True,
-        help_text='e.g. "7:00 AM – 9:00 AM IST"')
+                                   help_text='e.g. "7:00 AM – 9:00 AM IST"')
     days        = models.CharField(max_length=10, choices=DAYS, default='mwf')
     max_seats   = models.IntegerField(default=30)
     seats_filled= models.IntegerField(default=0)
@@ -638,21 +638,36 @@ class StudentMilestone(models.Model):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class StudentResult(models.Model):
-    """Verified student results shown on the public results wall."""
+    """Verified student results shown on the public results wall.
+    Each result can optionally have a full detail page (like a blog post)
+    with an interview video (YouTube or Bunny) and write-up text."""
+    VIDEO_TYPE_CHOICES = [('', 'None'), ('youtube', 'YouTube'), ('bunny', 'Bunny')]
+
     user        = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
-                                     related_name='results', null=True, blank=True)
+                                    related_name='results', null=True, blank=True)
     name        = models.CharField(max_length=100)
     exam        = models.CharField(max_length=20)
     year        = models.IntegerField()
     percentile  = models.FloatField()
     score       = models.CharField(max_length=50, blank=True)
     college_calls = models.CharField(max_length=300, blank=True,
-        help_text='e.g. "IIM A, IIM B, XLRI"')
+                                     help_text='e.g. "IIM A, IIM B, XLRI"')
     photo_url   = models.URLField(blank=True)
     testimonial = models.TextField(blank=True)
     is_verified = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
     created_at  = models.DateTimeField(auto_now_add=True)
+
+    # ── Detail page (optional, blog-style) ──────────────────────────
+    slug        = models.SlugField(max_length=140, unique=True, blank=True, null=True,
+                                   help_text='Leave blank to auto-generate from name. Used for the public /results/<slug> page.')
+    video_type  = models.CharField(max_length=10, choices=VIDEO_TYPE_CHOICES, blank=True, default='')
+    video_url   = models.URLField(blank=True,
+                                  help_text='YouTube: any normal watch/share link. Bunny: the direct iframe embed URL.')
+    body        = models.TextField(blank=True,
+                                   help_text='Full write-up / interview content for the detail page.')
+    meta_title  = models.CharField(max_length=70, blank=True)
+    meta_description = models.CharField(max_length=300, blank=True)
 
     class Meta:
         db_table = 'student_results'
@@ -680,11 +695,11 @@ class CheatSheet(models.Model):
 class StudyPlan(models.Model):
     """AI-generated personalised study plan for a student."""
     user          = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
-                                       related_name='study_plans')
+                                      related_name='study_plans')
     exam_slug     = models.CharField(max_length=20)
     exam_date     = models.DateField(help_text='Target exam date')
     daily_hours   = models.FloatField(default=2.0,
-                                       help_text='Study hours available per day')
+                                      help_text='Study hours available per day')
     generated_at  = models.DateTimeField(auto_now_add=True)
     is_active     = models.BooleanField(default=True)
 
@@ -700,7 +715,7 @@ class StudyPlan(models.Model):
 
     # Input context used to generate (for regeneration)
     context_used  = models.JSONField(default=dict,
-                                      help_text='Snapshot of weak topics, goals etc used to generate')
+                                     help_text='Snapshot of weak topics, goals etc used to generate')
 
     class Meta:
         db_table  = 'study_plans'
@@ -778,11 +793,11 @@ class CheatSheetFile(models.Model):
         related_name='cheatsheet_files'
     )
     title        = models.CharField(max_length=200,
-        help_text='e.g. "RC Strategy — Formula Sheet"')
+                                    help_text='e.g. "RC Strategy — Formula Sheet"')
     bunny_file_url = models.URLField(
         help_text='Full Bunny CDN URL to the PDF file')
     bunny_storage_path = models.CharField(max_length=500, blank=True,
-        help_text='Path in Bunny Storage for deletion')
+                                          help_text='Path in Bunny Storage for deletion')
     file_size_kb = models.IntegerField(default=0)
     uploaded_by  = models.ForeignKey(
         'accounts.User', on_delete=models.SET_NULL,
@@ -820,7 +835,7 @@ class ActiveCourse(models.Model):
     )
     selected_at = models.DateTimeField(auto_now=True)
     is_primary  = models.BooleanField(default=False,
-        help_text='Primary course shown first on dashboard')
+                                      help_text='Primary course shown first on dashboard')
 
     class Meta:
         db_table        = 'active_courses'
@@ -851,17 +866,17 @@ class MockScore(models.Model):
     )
     exam_slug    = models.CharField(max_length=20, db_index=True)
     mock_name    = models.CharField(max_length=200, blank=True,
-        help_text='e.g. "Testfunda CAT Mock 3" or "GRADSKOOL Full Mock 1"')
+                                    help_text='e.g. "Testfunda CAT Mock 3" or "GRADSKOOL Full Mock 1"')
     provider     = models.CharField(max_length=20, choices=PROVIDERS, default='testfunda')
     taken_on     = models.DateField()
     mock_number  = models.IntegerField(default=0,
-        help_text='Sequential mock number — used to order on trend chart')
+                                       help_text='Sequential mock number — used to order on trend chart')
 
     # Overall
     overall_score      = models.FloatField(default=0,
-        help_text='Raw score (CAT: typically -72 to 198)')
+                                           help_text='Raw score (CAT: typically -72 to 198)')
     overall_percentile = models.FloatField(null=True, blank=True,
-        help_text='Percentile if known (0-100)')
+                                           help_text='Percentile if known (0-100)')
 
     # Section scores — stored as JSON so it works for all exams
     # CAT:  {"varc": {"score": 48, "correct": 19, "wrong": 4, "time_mins": 40},
@@ -871,7 +886,7 @@ class MockScore(models.Model):
 
     # Optional analysis notes
     notes        = models.TextField(blank=True,
-        help_text="Student own analysis -- what went wrong, what to improve")
+                                    help_text="Student own analysis -- what went wrong, what to improve")
 
     created_at   = models.DateTimeField(auto_now_add=True)
     updated_at   = models.DateTimeField(auto_now=True)

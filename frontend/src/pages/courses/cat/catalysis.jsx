@@ -7,8 +7,8 @@
  * catalysisYear = examYear + 1 below); same logic as the main CAT page.
  */
 import { useState } from 'react'
-import Head from 'next/head'
 import Link from 'next/link'
+import PageSEO, { courseSchema } from '../../../components/seo/PageSEO'
 import { S, WaFloat } from '../../../components/courses/CourseLayout'
 import CatTabs from '../../../components/courses/CatTabs'
 
@@ -61,10 +61,18 @@ export default function CatalysisPage({ examData }) {
 
   return (
     <>
-      <Head>
-        <title>{`CATalysis — CAT ${catalysisYear} Preparation by ALP Sir | From ${fmtPrice(catalysisPrice)}`}</title>
-        <meta name="description" content={`GRADSKOOL's flagship CAT ${catalysisYear} cohort. 5-stage learning framework. ${cohortSize} students per cohort. 400+ hours live, 30 full mocks.`} />
-      </Head>
+      <PageSEO
+        title={`CATalysis — CAT ${catalysisYear} Preparation by ALP Sir | From ${fmtPrice(catalysisPrice)}`}
+        description={`GRADSKOOL's flagship CAT ${catalysisYear} cohort. 5-stage learning framework. ${cohortSize} students per cohort. 400+ hours live, 30 full mocks.`}
+        keywords="CATalysis, CAT 2027 preparation, CAT coaching, ALP Sir CAT, GRADSKOOL CATalysis, IIM preparation"
+        canonical="https://gradskool.in/courses/cat/catalysis"
+        ogImage="/assets/og-catalysis.jpg"
+        breadcrumbs={[{name:'Home',url:'/'},{name:'CAT',url:'/courses/cat'},{name:'CATalysis',url:'/courses/cat/catalysis'}]}
+        schema={[
+          courseSchema({name:`CATalysis ${catalysisYear}`, description:`GRADSKOOL's flagship CAT ${catalysisYear} cohort — 5-stage learning framework, ${cohortSize} students per cohort, 400+ hours live.`, url:'/courses/cat/catalysis', price:String(catalysisPrice)}),
+        ]}
+        speakableSelectors={['h1', '.eyebrow']}
+      />
 
       <CatTabs active="catalysis" />
 

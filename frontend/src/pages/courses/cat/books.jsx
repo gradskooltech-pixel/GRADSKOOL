@@ -7,8 +7,8 @@
  * visual style: light 2-column hero with a pricing card on the right,
  * for consistency across every CAT page.
  */
-import Head from 'next/head'
 import Link from 'next/link'
+import PageSEO, { courseSchema } from '../../../components/seo/PageSEO'
 import { S, WaFloat } from '../../../components/courses/CourseLayout'
 import CatTabs from '../../../components/courses/CatTabs'
 
@@ -25,10 +25,18 @@ export default function CatBooksPage() {
 
   return (
     <>
-      <Head>
-        <title>{`CAT Books — Curated Reading List for CAT ${examYear} — GRADSKOOL`}</title>
-        <meta name="description" content={`Curated physical books for CAT ${examYear} — a recommended reading list with ALP Sir's own notes. ${fmtPrice(BOOKS_PRICE)}.`} />
-      </Head>
+      <PageSEO
+        title={`CAT Books — Curated Reading List for CAT ${examYear} — GRADSKOOL`}
+        description={`Curated physical books for CAT ${examYear} — a recommended reading list with ALP Sir's own notes. ${fmtPrice(BOOKS_PRICE)}.`}
+        keywords="CAT books, CAT reading list, CAT preparation books, ALP Sir notes, GRADSKOOL books"
+        canonical="https://gradskool.in/courses/cat/books"
+        ogImage="/assets/og-cat-books.jpg"
+        breadcrumbs={[{name:'Home',url:'/'},{name:'CAT',url:'/courses/cat'},{name:'Books',url:'/courses/cat/books'}]}
+        schema={[
+          courseSchema({name:'CAT Books', description:`Curated physical books for CAT ${examYear} with ALP Sir's own notes.`, url:'/courses/cat/books', price:String(BOOKS_PRICE)}),
+        ]}
+        speakableSelectors={['h1', '.eyebrow']}
+      />
 
       <CatTabs active="books" />
 
