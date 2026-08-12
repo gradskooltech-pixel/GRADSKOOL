@@ -235,7 +235,7 @@ export default function Home() {
             "numberOfItems":7,
             "itemListElement":[
               {position:1,item:{name:'CAThlete — CAT Crash Course',url:'https://gradskool.in/courses/cat/cathlete',offers:{price:'6999',priceCurrency:'INR'}}},
-              {position:2,item:{name:'CATalysis — CAT 2027',url:'https://gradskool.in/courses/cat',offers:{price:'17999',priceCurrency:'INR'}}},
+              {position:2,item:{name:'CATalysis — CAT 2027',url:'https://gradskool.in/courses/cat',offers:{price:'27999',priceCurrency:'INR'}}},
               {position:3,item:{name:'XAT Course',url:'https://gradskool.in/courses/xat',offers:{price:'5999',priceCurrency:'INR'}}},
               {position:4,item:{name:'NMAT Mocks',url:'https://gradskool.in/courses/nmat',offers:{price:'2999',priceCurrency:'INR'}}},
               {position:5,item:{name:'SNAP Mocks',url:'https://gradskool.in/courses/snap',offers:{price:'2999',priceCurrency:'INR'}}},
@@ -405,7 +405,7 @@ export default function Home() {
               </div>
               <div style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:4 }}>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:2 }}>Base price</div>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:42, fontWeight:400, color:'var(--black)', lineHeight:1 }}>₹17,999</div>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:42, fontWeight:400, color:'var(--black)', lineHeight:1 }}>₹27,999</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:12 }}>+ GST</div>
                 <Link href="/checkout?course=cat&plan=live-mocks" className="btn btn-red">Enrol Now →</Link>
               </div>

@@ -283,7 +283,7 @@ EXAMS = [
 PLANS = {
     'cat': [
         dict(name='Live + CAT Mocks', slug='live-mocks',
-             price_inr=Decimal('17999'), is_featured=True, badge_text='Most Popular', sort_order=1,
+             price_inr=Decimal('27999'), is_featured=True, badge_text='Most Popular', sort_order=1,
              includes_live=True, includes_mocks=True, mock_exams_covered=['CAT'],
              razorpay_sku='cat-live-mocks',
              features=[
@@ -295,7 +295,7 @@ PLANS = {
                  ('GDPI preparation', False),
              ]),
         dict(name='Live + All MBA Mocks', slug='live-all-mba-mocks',
-             price_inr=Decimal('19999'), is_featured=False, badge_text='Best Value',
+             price_inr=Decimal('29999'), is_featured=False, badge_text='Best Value',
              sort_order=2,
              includes_live=True, includes_mocks=True,
              mock_exams_covered=['CAT', 'XAT', 'SNAP', 'NMAT', 'CMAT'],
@@ -309,7 +309,7 @@ PLANS = {
                  ('GDPI preparation', False),
              ]),
         dict(name='Live + CAT Mocks + Books', slug='live-cat-mocks-books',
-             price_inr=Decimal('21999'), sort_order=3,
+             price_inr=Decimal('31999'), sort_order=3,
              includes_live=True, includes_mocks=True, includes_books=True,
              mock_exams_covered=['CAT', 'XAT', 'SNAP', 'NMAT', 'CMAT'],
              razorpay_sku='cat-live-all-mocks-books',
@@ -321,7 +321,7 @@ PLANS = {
                  ('GDPI preparation', False),
              ]),
         dict(name='Live + All MBA Mocks + Books', slug='live-all-mba-mocks-books',
-             price_inr=Decimal('24999'), sort_order=4,
+             price_inr=Decimal('34999'), sort_order=4,
              includes_live=True, includes_mocks=True, includes_books=True, includes_gdpi=True,
              mock_exams_covered=['CAT', 'XAT', 'SNAP', 'NMAT', 'CMAT'],
              razorpay_sku='cat-live-all-mocks-books-gdpi',

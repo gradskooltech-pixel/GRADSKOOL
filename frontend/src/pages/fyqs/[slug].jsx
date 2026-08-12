@@ -190,6 +190,32 @@ export default function FYQDetail() {
         )}
       </div>
 
+      {(q.prev || q.next) && (
+        <div className="pg-wide fyq-prevnext">
+          <style>{`
+            .fyq-prevnext { padding:0 0 40px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+            @media(max-width:700px){ .fyq-prevnext{ grid-template-columns:1fr!important; } }
+            .fyq-nav-card { display:flex; flex-direction:column; gap:4px; padding:16px 20px; border:1px solid var(--g200); border-radius:6px; text-decoration:none; background:#fff; transition:transform .15s, box-shadow .15s; }
+            .fyq-nav-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); }
+            .fyq-nav-card.next { text-align:right; align-items:flex-end; }
+            .fyq-nav-label { font-family:var(--font-sans); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--red); }
+            .fyq-nav-title { font-family:var(--font-serif); font-size:15px; color:var(--black); line-height:1.3; }
+          `}</style>
+          {q.prev ? (
+            <Link href={`/fyqs/${q.prev.slug}`} className="fyq-nav-card prev">
+              <span className="fyq-nav-label">← FYQ {String(q.prev.question_number).padStart(3,'0')}</span>
+              <span className="fyq-nav-title">{q.prev.title}</span>
+            </Link>
+          ) : <div />}
+          {q.next ? (
+            <Link href={`/fyqs/${q.next.slug}`} className="fyq-nav-card next">
+              <span className="fyq-nav-label">FYQ {String(q.next.question_number).padStart(3,'0')} →</span>
+              <span className="fyq-nav-title">{q.next.title}</span>
+            </Link>
+          ) : <div />}
+        </div>
+      )}
+
       <div style={{ background:'var(--black)', padding:'36px 0' }}>
         <div className="pg-wide" style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16 }}>
           <div>

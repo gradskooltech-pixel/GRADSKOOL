@@ -323,6 +323,21 @@ function SidePanel({ panel, onClose, onSave, notify }) {
     is_published:       q?.is_published ?? true,
   }))
   const [saving, setSaving] = useState(false)
+  // The list view (which populates panel.q) omits long_description/notes/
+  // pdfs for performance — fetch the full record here so editing an
+  // existing FYQ doesn't show these as empty and risk overwriting them.
+  const [fullyLoaded, setFullyLoaded] = useState(isNew)
+  useEffect(() => {
+    if (isNew || !q?.id) return
+    let cancelled = false
+    api.get(`/dashboard/fyq/questions/${q.id}/`).then(({ data }) => {
+      if (cancelled) return
+      setForm(f => ({ ...f, long_description: data.long_description || '', notes: data.notes || '' }))
+      setFullyLoaded(true)
+    }).catch(() => { notify('Could not load full question content', 'error'); setFullyLoaded(true) })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q?.id])
 
   const set = key => e => setForm(f => ({ ...f, [key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
 
@@ -407,6 +422,24 @@ function SidePanel({ panel, onClose, onSave, notify }) {
     init()
     return () => { cancelled = true; notesQuillRef.current = null }
   }, [])
+
+  // Once the full record has loaded AND each editor is ready, push the
+  // real content in — handles either completing first, since Quill init
+  // (via polling for window.Quill) and this fetch are independent async
+  // operations with no guaranteed order.
+  useEffect(() => {
+    if (fullyLoaded && longDescStatus === 'ready' && longDescQuillRef.current) {
+      longDescQuillRef.current.root.innerHTML = form.long_description || ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullyLoaded, longDescStatus])
+
+  useEffect(() => {
+    if (fullyLoaded && notesStatus === 'ready' && notesQuillRef.current) {
+      notesQuillRef.current.root.innerHTML = form.notes || ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullyLoaded, notesStatus])
 
   const save = async () => {
     setSaving(true)
@@ -546,8 +579,8 @@ function SidePanel({ panel, onClose, onSave, notify }) {
 
         <div style={{ padding:'16px 24px', borderTop:`1px solid ${C.border}`, display:'flex', justifyContent:'flex-end', gap:8, flexShrink:0 }}>
           <button onClick={onClose} style={{ fontFamily:'var(--font-sans)', fontSize:13, padding:'9px 18px', border:`1px solid ${C.border}`, borderRadius:2, background:C.white, cursor:'pointer', color:C.black }}>Cancel</button>
-          <button onClick={save} disabled={saving} style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'9px 22px', background:C.red, color:C.white, border:'none', borderRadius:2, cursor:saving?'not-allowed':'pointer' }}>
-            {saving ? 'Saving…' : 'Save'}
+          <button onClick={save} disabled={saving || !fullyLoaded} style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'9px 22px', background:(saving || !fullyLoaded)?C.gray:C.red, color:C.white, border:'none', borderRadius:2, cursor:(saving || !fullyLoaded)?'not-allowed':'pointer' }}>
+            {saving ? 'Saving…' : !fullyLoaded ? 'Loading…' : 'Save'}
           </button>
         </div>
       </div>

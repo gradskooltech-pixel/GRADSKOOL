@@ -19,7 +19,7 @@ const R = { color: 'var(--red)' }
 // data exists, then this page switches over automatically, no code change.
 const FALLBACK = {
   examDate: '2026-11-29',
-  catalysisPrice: 17999,
+  catalysisPrice: 27999,
   cathleteBasePrice: 6999,
   cathleteMocksPrice: 9999,
 }

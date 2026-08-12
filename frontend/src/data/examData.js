@@ -39,7 +39,7 @@ export const CAT_DATA = {
   tagline: 'Crack CAT 2026 the Structured Way.',
   description: 'Live two-way classes, daily practice, 30 full-length mocks, and deep post-test analysis — all in a cohort of just 27 students. Founded and taught by Abhishek Leela Pandey.',
   badge: 'Cohort Now Open',
-  enrolPrice: '17,999',
+  enrolPrice: '27,999',
   enrolNote: 'Mocks-only plans from ₹2,999',
   enrolFeatures: [
     'Live two-way sessions with ALP Sir',
@@ -133,9 +133,9 @@ export const CAT_DATA = {
   ],
   howSteps: HOW_STEPS_DEFAULT,
   plans: [
-    { featured:true,  badge:'Most Popular', name:'Live + CAT Mocks',         price:'17,999', note:'Live sessions + 30 CAT mocks + 30 sectional + 140 area-wise', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes · Micro Videos · Cheat Sheets',ok:true},{t:'Doubt support every session',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional + 140 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'16 Printed Books',ok:false}] },
-    { featured:false, badge:'Best Value',   name:'Live + All MBA Mocks',     price:'19,999', note:'CAT + XAT + SNAP + NMAT + CMAT — 500 area-wise tests', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'30 CAT Mocks + XAT + SNAP + NMAT + CMAT',ok:true},{t:'30 Sectional + 500 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'16 Printed Books',ok:false}] },
-    { featured:false, badge:'With Books',   name:'Live + CAT Mocks + Books', price:'21,999', note:'Live + 30 CAT mocks + 16 printed books', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional + 140 Area-wise Tests',ok:true},{t:'16 Printed Books — 2,236 pages',ok:true}] },
+    { featured:true,  badge:'Most Popular', name:'Live + CAT Mocks',         price:'27,999', note:'Live sessions + 30 CAT mocks + 30 sectional + 140 area-wise', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes · Micro Videos · Cheat Sheets',ok:true},{t:'Doubt support every session',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional + 140 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'16 Printed Books',ok:false}] },
+    { featured:false, badge:'Best Value',   name:'Live + All MBA Mocks',     price:'29,999', note:'CAT + XAT + SNAP + NMAT + CMAT — 500 area-wise tests', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'30 CAT Mocks + XAT + SNAP + NMAT + CMAT',ok:true},{t:'30 Sectional + 500 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'16 Printed Books',ok:false}] },
+    { featured:false, badge:'With Books',   name:'Live + CAT Mocks + Books', price:'31,999', note:'Live + 30 CAT mocks + 16 printed books', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional + 140 Area-wise Tests',ok:true},{t:'16 Printed Books — 2,236 pages',ok:true}] },
     { featured:false, badge:'Self-Paced',   name:'CAT Mocks Only',           price:'2,999',  note:'30 CAT + 30 sectional + 140 area-wise tests', features:[{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional Mocks',ok:true},{t:'140 Area-wise Tests',ok:true},{t:'Post-test score reports',ok:true},{t:'Live sessions',ok:false}] },
   ],
   colleges: [

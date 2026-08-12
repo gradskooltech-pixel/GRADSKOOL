@@ -117,7 +117,7 @@ class PublicFYQListView(APIView):
     permission_classes = []
 
     def get(self, request):
-        qs = FYQQuestion.objects.filter(is_published=True).select_related('topic__category__section', 'topic__section')
+        qs = FYQQuestion.objects.filter(is_published=True).select_related('topic__category__section', 'topic__section').order_by('question_number')
 
         topic_id = request.query_params.get('topic')
         if topic_id:
@@ -148,9 +148,19 @@ class PublicFYQDetailView(APIView):
     def get(self, request, slug):
         try:
             q = FYQQuestion.objects.select_related('topic__category__section', 'topic__section').get(slug=slug, is_published=True)
-            return Response(question_to_dict(q))
         except FYQQuestion.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
+
+        d = question_to_dict(q)
+        # Sequential prev/next by question_number across the whole bank
+        # (not scoped to topic), matching the FYQ 001/002/003 numbering.
+        prev_q = (FYQQuestion.objects.filter(is_published=True, question_number__lt=q.question_number)
+                  .order_by('-question_number').values('slug', 'question_number', 'title').first())
+        next_q = (FYQQuestion.objects.filter(is_published=True, question_number__gt=q.question_number)
+                  .order_by('question_number').values('slug', 'question_number', 'title').first())
+        d['prev'] = prev_q
+        d['next'] = next_q
+        return Response(d)
 
 
 # ── ADMIN VIEWS: hierarchy ────────────────────────────────────────────────────

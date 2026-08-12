@@ -67,11 +67,15 @@ function flattenTopics(tree) {
 
 export async function getStaticProps() {
   try {
-    const res = await fetch(`${API}/fyq/tree/`)
-    const initialTree = res.ok ? await res.json() : []
-    return { props: { initialTree }, revalidate: 3600 }
+    const [treeRes, firstRes] = await Promise.all([
+      fetch(`${API}/fyq/tree/`),
+      fetch(`${API}/fyq/?page=1&page_size=3`),
+    ])
+    const initialTree = treeRes.ok ? await treeRes.json() : []
+    const firstData = firstRes.ok ? await firstRes.json() : { results: [] }
+    return { props: { initialTree, firstThree: firstData.results || [] }, revalidate: 3600 }
   } catch {
-    return { props: { initialTree: [] }, revalidate: 300 }
+    return { props: { initialTree: [], firstThree: [] }, revalidate: 300 }
   }
 }
 
@@ -97,7 +101,33 @@ function BrowseCard({ title, sub, href, onClick }) {
   return <div onClick={onClick} className="fyq-browse-card" style={style}>{inner}</div>
 }
 
-export default function FYQListing({ initialTree }) {
+function getYoutubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+function ThumbCard({ q }) {
+  const ytId = getYoutubeId(q.youtube_url)
+  return (
+    <Link href={`/fyqs/${q.slug}`} className="fyq-thumb-card">
+      <div className="fyq-thumb-img-wrap">
+        {ytId ? (
+          <img src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} alt={q.title} loading="lazy" />
+        ) : (
+          <div className="fyq-thumb-placeholder">FYQ {String(q.question_number).padStart(3,'0')}</div>
+        )}
+        {ytId && <span className="fyq-thumb-play">▶</span>}
+      </div>
+      <div className="fyq-thumb-body">
+        <span className="fyq-thumb-num">FYQ {String(q.question_number).padStart(3,'0')}</span>
+        <span className="fyq-thumb-title">{q.title}</span>
+      </div>
+    </Link>
+  )
+}
+
+export default function FYQListing({ initialTree, firstThree }) {
   const router = useRouter()
   const [tree, setTree] = useState(initialTree || [])
   const [loading, setLoading] = useState(false)
@@ -210,12 +240,6 @@ export default function FYQListing({ initialTree }) {
         .fyq-browse-grid { max-width:1000px; margin:0 auto; padding:0 40px 80px; display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
         .fyq-browse-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); }
 
-        .fyq-grid { max-width:1100px; margin:0 auto; padding:8px 40px 40px; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-        .fyq-card { border:1px solid var(--g200); border-radius:6px; padding:18px 20px; text-decoration:none; background:#fff; transition:transform .15s, box-shadow .15s; display:flex; flex-direction:column; gap:8px; }
-        .fyq-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); }
-        .fyq-card-num { font-family:var(--font-sans); font-size:10px; font-weight:700; letter-spacing:.05em; color:var(--red); }
-        .fyq-card-title { font-family:var(--font-serif); font-size:16px; color:var(--black); line-height:1.3; }
-
         .fyq-pagination { max-width:1100px; margin:0 auto; padding:0 40px 64px; display:flex; justify-content:center; align-items:center; gap:16px; }
         .fyq-page-btn { font-family:var(--font-sans); font-size:13px; padding:8px 16px; border:1px solid var(--g200); border-radius:3px; background:#fff; cursor:pointer; color:var(--black); }
         .fyq-page-btn:disabled { opacity:.4; cursor:not-allowed; }
@@ -236,6 +260,22 @@ export default function FYQListing({ initialTree }) {
         .fyq-faq-item { border-bottom:1px solid var(--g200); padding:16px 0; }
         .fyq-faq-q { font-family:var(--font-sans); font-size:14.5px; font-weight:700; color:var(--black); margin-bottom:8px; }
         .fyq-faq-a { font-family:var(--font-body); font-size:14px; color:var(--g700); line-height:1.7; }
+
+        .fyq-featured-section { max-width:1000px; margin:0 auto; padding:8px 40px 24px; }
+        .fyq-featured-head { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:12px; margin-bottom:18px; }
+        .fyq-featured-title { font-family:var(--font-serif); font-size:22px; color:var(--black); }
+        .fyq-featured-browse { font-family:var(--font-sans); font-size:13px; font-weight:600; color:var(--red); text-decoration:none; white-space:nowrap; }
+        .fyq-thumb-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+        @media(max-width:800px){ .fyq-thumb-grid{ grid-template-columns:1fr!important; } }
+        .fyq-thumb-card { display:block; text-decoration:none; border:1px solid var(--g200); border-radius:8px; overflow:hidden; background:#fff; transition:transform .15s, box-shadow .15s; }
+        .fyq-thumb-card:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(0,0,0,.09); }
+        .fyq-thumb-img-wrap { position:relative; width:100%; aspect-ratio:16/9; background:var(--g100); overflow:hidden; }
+        .fyq-thumb-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+        .fyq-thumb-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family:var(--font-sans); font-size:13px; font-weight:700; color:var(--g500); background:var(--g100); }
+        .fyq-thumb-play { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:50%; background:rgba(0,0,0,.6); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; pointer-events:none; }
+        .fyq-thumb-body { padding:12px 14px 14px; display:flex; flex-direction:column; gap:4px; }
+        .fyq-thumb-num { font-family:var(--font-sans); font-size:10px; font-weight:700; letter-spacing:.08em; color:var(--red); }
+        .fyq-thumb-title { font-family:var(--font-serif); font-size:15px; color:var(--black); line-height:1.3; }
       `}</style>
 
       <div className="fyq-hero">
@@ -257,6 +297,18 @@ export default function FYQListing({ initialTree }) {
           Every question in this bank has been personally selected by ALP Sir (99.93 percentile CAT, 770 GMAT), who curates for questions that best reveal how a topic is actually tested — not just any past question, but ones that expose common traps and efficient approaches. Each comes with a full video walkthrough and a written explanation, so you can review however suits you best. Browsing the full bank — every topic, every question title — is completely free.
         </p>
       </div>
+
+      {firstThree.length > 0 && (
+        <div className="fyq-featured-section">
+          <div className="fyq-featured-head">
+            <h2 className="fyq-featured-title">Start here</h2>
+            <a href={`/fyqs/${firstThree[0].slug}`} className="fyq-featured-browse">Browse sequentially from FYQ 001 →</a>
+          </div>
+          <div className="fyq-thumb-grid">
+            {firstThree.map(q => <ThumbCard key={q.id} q={q} />)}
+          </div>
+        </div>
+      )}
 
       <div className="fyq-search-wrap">
         <input className="fyq-search" placeholder="Search all questions or topics…" value={search}
@@ -292,13 +344,8 @@ export default function FYQListing({ initialTree }) {
           ) : results.results.length === 0 ? (
             <div className="fyq-empty">No questions match this yet.</div>
           ) : (
-            <div className="fyq-grid">
-              {results.results.map(q => (
-                <Link key={q.id} href={`/fyqs/${q.slug}`} className="fyq-card">
-                  <span className="fyq-card-num">FYQ {String(q.question_number).padStart(3,'0')}</span>
-                  <span className="fyq-card-title">{q.title}</span>
-                </Link>
-              ))}
+            <div className="fyq-thumb-grid" style={{ maxWidth:1100, margin:'0 auto', padding:'8px 40px 40px' }}>
+              {results.results.map(q => <ThumbCard key={q.id} q={q} />)}
             </div>
           )}
           {results.num_pages > 1 && (

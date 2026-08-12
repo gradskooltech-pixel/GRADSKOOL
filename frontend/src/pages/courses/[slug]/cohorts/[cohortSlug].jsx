@@ -163,7 +163,7 @@ export default function CohortPage({ cohort }) {
                 {cohort.cohort_label || 'This Cohort'} — Starting From
               </div>
               <div style={{ fontFamily:'Georgia,serif', fontSize:'2.8rem', color:'#fff', fontWeight:'700', lineHeight:'1', marginBottom:'0.3rem' }}>
-                ₹17,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>+ GST</sub>
+                ₹27,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>+ GST</sub>
               </div>
               {cohort.start_date && (
                 <div style={{ fontFamily:'Georgia,serif', fontSize:'0.82rem', color:C.gray400, fontStyle:'italic' }}>

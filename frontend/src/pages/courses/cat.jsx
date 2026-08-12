@@ -3,7 +3,7 @@
  * Route: /courses/cat (and /cat)
  *
  * Contains both products:
- *  - CATalysis (flagship cohort, ₹17,999) — main content
+ *  - CATalysis (flagship cohort, ₹27,999) — main content
  *  - CAThlete (crash course, ₹6,999/₹9,999) — anchored at #cathlete
  */
 import { useState } from 'react'
@@ -27,7 +27,7 @@ const R = { color:'var(--red)' }
 const FALLBACK = {
   examDate: '2026-11-29',
   cohortSize: 27,
-  catalysisPrice: 17999,
+  catalysisPrice: 27999,
   cathleteBasePrice: 6999,
   cathleteMocksPrice: 9999,
   cathleteStart: '2026-09-03',

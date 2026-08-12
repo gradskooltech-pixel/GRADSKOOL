@@ -43,7 +43,7 @@ class Command(BaseCommand):
         # (exam_slug, plan dict) — prices/slugs match what's live in the
         # frontend right now, confirmed during tonight's pricing review.
         plans = [
-            ('cat', dict(name='Live + CAT Mocks', slug='live-mocks', price_inr=Decimal('17999'),
+            ('cat', dict(name='Live + CAT Mocks', slug='live-mocks', price_inr=Decimal('27999'),
                          is_featured=True, badge_text='Most Popular', sort_order=1,
                          includes_live=True, includes_mocks=True, mock_exams_covered=['CAT'],
                          razorpay_sku='cat-live-mocks')),

@@ -15,7 +15,7 @@ import CatTabs from '../../../components/courses/CatTabs'
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 const R = { color: 'var(--red)' }
 
-const FALLBACK = { examDate: '2026-11-29', catalysisPrice: 17999, cohortSize: 27 }
+const FALLBACK = { examDate: '2026-11-29', catalysisPrice: 27999, cohortSize: 27 }
 
 function fmtPrice(n) { return `₹${Number(n).toLocaleString('en-IN')}` }
 

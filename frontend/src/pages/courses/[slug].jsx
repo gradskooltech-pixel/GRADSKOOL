@@ -164,10 +164,10 @@ const CAT_DATA = {
     { slug:'courses',  tag:'All Exams',    name:'View All Courses',desc:'GRADSKOOL prepares students for 13 exams including SNAP, NMAT, CMAT, MH CET, CUET and PI WAT GD.' },
   ],
   pricing_plans: [
-    { featured:true,  badge:'Most Popular', badgeStyle:{}, name:'Live + CAT Mocks',          price:'17,999', note:'Live sessions + 30 CAT mocks + 30 sectional + 140 area-wise', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'Doubt support every session',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional Mocks + 140 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'All MBA Exam Mocks',ok:false},{t:'16 Printed Books',ok:false}] },
-    { featured:false, badge:'Best Value',   badgeStyle:{}, name:'Live + All MBA Mocks',       price:'19,999', note:'CAT + XAT + SNAP + NMAT + CMAT \u2014 500 area-wise tests',     features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'Doubt support every session',ok:true},{t:'30 Full-Length CAT Mocks + XAT + SNAP + NMAT + CMAT',ok:true},{t:'30 Sectional Mocks + 500 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'16 Printed Books',ok:false}] },
-    { featured:false, badge:'With Books',   badgeStyle:{background:'#e8f4e8',color:'#2d6a2d'}, name:'Live + CAT Mocks + Books', price:'21,999', note:'Live + 30 CAT mocks + 16 printed books', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional Mocks + 140 Area-wise Tests',ok:true},{t:'16 Printed Books \u2014 2,236 pages',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'All MBA Exam Mocks',ok:false}] },
-    { featured:false, badge:'Complete',     badgeStyle:{background:'#e8f4e8',color:'#2d6a2d'}, name:'Live + All MBA Mocks + Books', price:'24,999', note:'Everything \u2014 live, all mocks, 500 area-wise, books', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'30 CAT Mocks + XAT + SNAP + NMAT + CMAT Mocks',ok:true},{t:'30 Sectional Mocks + 500 Area-wise Tests',ok:true},{t:'16 Printed Books \u2014 2,236 pages',ok:true},{t:'Post-test strategic analysis',ok:true}] },
+    { featured:true,  badge:'Most Popular', badgeStyle:{}, name:'Live + CAT Mocks',          price:'27,999', note:'Live sessions + 30 CAT mocks + 30 sectional + 140 area-wise', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'Doubt support every session',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional Mocks + 140 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'All MBA Exam Mocks',ok:false},{t:'16 Printed Books',ok:false}] },
+    { featured:false, badge:'Best Value',   badgeStyle:{}, name:'Live + All MBA Mocks',       price:'29,999', note:'CAT + XAT + SNAP + NMAT + CMAT \u2014 500 area-wise tests',     features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'Doubt support every session',ok:true},{t:'30 Full-Length CAT Mocks + XAT + SNAP + NMAT + CMAT',ok:true},{t:'30 Sectional Mocks + 500 Area-wise Tests',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'16 Printed Books',ok:false}] },
+    { featured:false, badge:'With Books',   badgeStyle:{background:'#e8f4e8',color:'#2d6a2d'}, name:'Live + CAT Mocks + Books', price:'31,999', note:'Live + 30 CAT mocks + 16 printed books', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional Mocks + 140 Area-wise Tests',ok:true},{t:'16 Printed Books \u2014 2,236 pages',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'All MBA Exam Mocks',ok:false}] },
+    { featured:false, badge:'Complete',     badgeStyle:{background:'#e8f4e8',color:'#2d6a2d'}, name:'Live + All MBA Mocks + Books', price:'34,999', note:'Everything \u2014 live, all mocks, 500 area-wise, books', features:[{t:'Live two-way CAT sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'30 CAT Mocks + XAT + SNAP + NMAT + CMAT Mocks',ok:true},{t:'30 Sectional Mocks + 500 Area-wise Tests',ok:true},{t:'16 Printed Books \u2014 2,236 pages',ok:true},{t:'Post-test strategic analysis',ok:true}] },
     { featured:false, badge:'Section Only', badgeStyle:{}, name:'VA RC Only',                 price:'7,999',  note:'VARC live sessions + mocks + 140 area-wise', features:[{t:'VARC live sessions with ALP',ok:true},{t:'Quizzes \u00b7 Micro Videos \u00b7 Cheat Sheets',ok:true},{t:'30 CAT Mocks + 30 Sectional',ok:true},{t:'140 Area-wise Tests',ok:true},{t:'DILR & QA sessions',ok:false},{t:'Books',ok:false}] },
     { featured:false, badge:'Section Only', badgeStyle:{}, name:'Mocks Only',                 price:'2,999',  note:'30 CAT mocks + 30 sectional + 140 area-wise. No live sessions', features:[{t:'30 Full-Length CAT Mocks',ok:true},{t:'30 Sectional Mocks',ok:true},{t:'140 Area-wise Tests',ok:true},{t:'Post-test data (self-guided)',ok:true},{t:'Live sessions',ok:false},{t:'Coaching & support',ok:false}] },
   ],
@@ -588,10 +588,10 @@ export default function ExamPage({ exam, plans, cohorts = [] }) {
               <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.68rem', fontWeight:'500', letterSpacing:'0.1em', textTransform:'uppercase', color:C.gray400, marginBottom:'0.5rem' }}>Live Cohort \u2014 Starting From</div>
               <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.62rem', fontWeight:'500', letterSpacing:'0.08em', textTransform:'uppercase', color:C.gray400, marginBottom:'0.3rem' }}>Starting from</div>
               <div style={{ fontFamily:'Georgia,serif', fontSize:'2.8rem', color:'#fff', fontWeight:'700', lineHeight:'1', marginBottom:'0.4rem' }}>
-                ₹17,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>+ GST</sub>
+                ₹27,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>+ GST</sub>
               </div>
               <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.78rem', color:'#555', lineHeight:'1.5' }}>
-                Live plans <span style={{ color:'#777' }}>₹17,999 – ₹24,999</span>
+                Live plans <span style={{ color:'#777' }}>₹27,999 – ₹34,999</span>
                 <span style={{ margin:'0 0.4rem', color:'#333' }}>·</span>
                 Mocks only <span style={{ color:'#777' }}>from ₹2,999</span>
               </div>
@@ -965,7 +965,7 @@ export default function ExamPage({ exam, plans, cohorts = [] }) {
         }
       `}</style>
 
-      <MobileStickyBar slug={slug} price="17,999" />
+      <MobileStickyBar slug={slug} price="27,999" />
     </>
   )
 }

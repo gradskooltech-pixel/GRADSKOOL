@@ -110,7 +110,7 @@ function CourseCard({ exam, isHero = false }) {
           <div style={{ display:'flex', alignItems:'center', gap:'2rem', flexWrap:'wrap' }}>
             <div style={{ fontFamily:'Georgia,serif', fontSize:'1rem', color:'#fff' }}>
               Starting from{' '}
-              <strong style={{ fontSize:'1.4rem', color:C.red }}>₹17,999</strong>
+              <strong style={{ fontSize:'1.4rem', color:C.red }}>₹27,999</strong>
               {' '}<span style={{ fontSize:'0.85rem', opacity:0.7 }}>+ GST · Mocks-only from ₹2,999</span>
             </div>
             <span style={{
