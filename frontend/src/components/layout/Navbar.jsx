@@ -1,7 +1,7 @@
 /**
  * GRADSKOOL — Navbar
  * Matches gradskool.in exactly:
- * Logo | Courses dropdown | Free Classes | FYQs | PDFs | About | Results | All Courses btn | Enrol Now btn
+ * Logo | Courses dropdown | Free Classes | FYQs | Downloads | About | Results | All Courses btn | Enrol Now btn
  * Mobile: hamburger → fullscreen overlay
  *
  * CHANGE (promotion shift): CAThlete is now the featured product — leads the
@@ -20,8 +20,8 @@ const COURSES_DROP = [
   { href:'/courses/cat/catalysis', label:'CATalysis 2027' },
   { href:'/courses/gmat',         label:'GMAT Focus Edition' },
   { href:'/courses/xat',          label:'XAT' },
-  { href:'/courses/snap',         label:'SNAP Mocks' },
-  { href:'/courses/nmat',         label:'NMAT Mocks' },
+  { href:'/courses/snap',         label:'SNAP' },
+  { href:'/courses/nmat',         label:'NMAT' },
   { href:'/courses/nmat-snap',    label:'SNAP + NMAT Bundle' },
   { href:'/courses/mhcet',        label:'MH CET' },
   { href:'/courses/pi-wat-gd',    label:'PI WAT GD' },
@@ -100,7 +100,7 @@ export function Navbar() {
             </div>
             <Link href="/free" className="gs-nav-link">Free Classes</Link>
             <Link href="/fyqs" className="gs-nav-link">FYQs</Link>
-            <Link href="/pdfs" className="gs-nav-link">PDFs</Link>
+            <Link href="/pdfs" className="gs-nav-link">Downloads</Link>
             <Link href="/about" className="gs-nav-link">About</Link>
             <Link href="/results"  className="gs-nav-link">Results</Link>
           </div>
@@ -129,7 +129,7 @@ export function Navbar() {
           <div className="gs-mob-label">More</div>
           <Link href="/free" className="gs-mob-link">Free Classes</Link>
           <Link href="/fyqs" className="gs-mob-link">FYQs</Link>
-          <Link href="/pdfs" className="gs-mob-link">PDFs</Link>
+          <Link href="/pdfs" className="gs-mob-link">Downloads</Link>
           <Link href="/about"  className="gs-mob-link">About ALP Sir</Link>
           <Link href="/results"   className="gs-mob-link">Results</Link>
         </div>

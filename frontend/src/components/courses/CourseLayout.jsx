@@ -57,6 +57,30 @@ export const S = `
   @media(max-width:600px){.stages{grid-template-columns:1fr}.section{padding:48px 0}}
 `
 
+export function CloudinaryVideo({ url, poster, title }) {
+  if (!url) {
+    return (
+      <div style={{ position:'relative', width:'100%', aspectRatio:'16/9', background:'var(--black)', borderRadius:4, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:10 }}>
+        <div style={{ width:56, height:56, borderRadius:'50%', border:'2px solid rgba(255,255,255,.25)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ width:0, height:0, borderTop:'10px solid transparent', borderBottom:'10px solid transparent', borderLeft:'16px solid rgba(255,255,255,.4)', marginLeft:4 }} />
+        </div>
+        <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'rgba(255,255,255,.4)', letterSpacing:'.05em' }}>Video coming soon</div>
+      </div>
+    )
+  }
+  return (
+    <video
+      src={url}
+      poster={poster}
+      controls
+      playsInline
+      preload="metadata"
+      title={title}
+      style={{ width:'100%', aspectRatio:'16/9', background:'#000', borderRadius:4, objectFit:'cover' }}
+    />
+  )
+}
+
 export function CourseFaqAccordion({ faqs }) {
   const [open, setOpen] = useState(null)
   return (
