@@ -27,6 +27,7 @@ const NAV = [
       { href:'/admin-panel/video-library', icon:'🎬', label:'Video Library',        sub:'Reusable videos across courses' },
       { href:'/admin-panel/question-bank', icon:'🗂', label:'Question Bank',        sub:'Create, edit, bulk-tag questions' },
       { href:'/admin-panel/foundations',   icon:'🆓', label:'Foundations',          sub:'Free classes — XAT starters + complete NMAT/SNAP' },
+      { href:'/admin-panel/foundation-sections', icon:'🗂️', label:'Foundation Sections', sub:'Topic tags classes can be filed under, e.g. "Decision Making"' },
       { href:'/admin-panel/fyq',           icon:'❓', label:'FYQs',                 sub:'CAT Future Year Questions — question bank with video solutions' },
       { href:'/admin-panel/fyq-categories', icon:'🗂️', label:'FYQ Categories',      sub:'Manage the Section → Category → Topic browse tree' },
       { href:'/admin-panel/pdfs',          icon:'📕', label:'PDF Library',          sub:'Cheat sheets, question banks, free + paid' },
