@@ -360,9 +360,43 @@ function DateNav({ classes, readBasePath, meta, selected, setSelected }) {
   )
 }
 
+function SectionNav({ sections, meta, selectedId, setSelectedId }) {
+  if (sections.length === 0) return null
+  return (
+    <div style={{ border:'1px solid var(--g200)', borderRadius:6, padding:'20px 24px', marginBottom:40, background:'#fff' }}>
+      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:14 }}>
+        Browse by section
+      </div>
+      <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+        {sections.map(sec => (
+          <button
+            key={sec.id}
+            onClick={() => setSelectedId(id => id === sec.id ? null : sec.id)}
+            style={{
+              fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'8px 16px', borderRadius:20, cursor:'pointer',
+              border: selectedId === sec.id ? `1px solid ${meta.color}` : '1px solid var(--g200)',
+              background: selectedId === sec.id ? meta.color : '#fff',
+              color: selectedId === sec.id ? '#fff' : 'var(--black)',
+            }}>
+            {sec.name} ({sec.class_count})
+          </button>
+        ))}
+        {selectedId && (
+          <button onClick={() => setSelectedId(null)}
+            style={{ fontFamily:'var(--font-sans)', fontSize:12, padding:'8px 14px', borderRadius:2, border:'1px solid var(--g200)', background:'#fff', color:'var(--g500)', cursor:'pointer' }}>
+            Clear ✕
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 
 export function FoundationsListing({ examSlug, meta, readBasePath }) {
   const [series, setSeries] = useState([])
+  const [sections, setSections] = useState([])
+  const [selectedSectionId, setSelectedSectionId] = useState(null)
   const [loading, setLoad]  = useState(true)
   const [selectedDate, setSelectedDate] = useState(null) // lifted from DateNav so "Upcoming Classes" below can respect it too
   const [search, setSearch] = useState('') // filters recorded classes by title/lesson number, across all series
@@ -375,14 +409,24 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
       .finally(() => setLoad(false))
   }, [examSlug])
 
+  useEffect(() => {
+    fetch(`${API}/foundations/sections/?exam=${examSlug}`)
+      .then(r => r.json())
+      .then(d => setSections(Array.isArray(d) ? d : []))
+      .catch(() => setSections([]))
+  }, [examSlug])
+
   const allClasses = series.flatMap(s => (s.classes || []).map(c => ({ ...c, series_title: s.title })))
   // A class can have a youtube_url set BEFORE it happens (a pre-scheduled
   // YouTube Live link has a real, stable URL from the moment it's created,
   // not just after the stream ends) — so "upcoming" is purely about the
   // scheduled time, not whether a URL exists yet.
-  const upcoming   = allClasses.filter(c =>
-    isUpcoming(c.scheduled_at) && (!selectedDate || isSameDay(new Date(c.scheduled_at), selectedDate))
-  )
+  const upcomingAll = allClasses
+    .filter(c => isUpcoming(c.scheduled_at) && (!selectedDate || isSameDay(new Date(c.scheduled_at), selectedDate)))
+    .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))
+  // Only cap to the next 3 in the default view — once a date filter is
+  // active (via DateNav), show everything that matches that specific date.
+  const upcoming = selectedDate ? upcomingAll : upcomingAll.slice(0, 3)
 
   return (
     <>
@@ -449,12 +493,20 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
           ) : (
             <>
               <DateNav classes={allClasses} readBasePath={readBasePath} meta={meta} selected={selectedDate} setSelected={setSelectedDate} />
+              <SectionNav sections={sections} meta={meta} selectedId={selectedSectionId} setSelectedId={setSelectedSectionId} />
 
               {/* ── UPCOMING ── */}
               {(upcoming.length > 0 || selectedDate) && (
                 <div style={{ marginBottom:48 }}>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:16 }}>
-                    Upcoming Classes{selectedDate && ` — ${selectedDate.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' })}`}
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', flexWrap:'wrap', gap:8, marginBottom:16 }}>
+                    <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color }}>
+                      Upcoming Classes{selectedDate && ` — ${selectedDate.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' })}`}
+                    </div>
+                    {!selectedDate && upcomingAll.length > upcoming.length && (
+                      <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>
+                        +{upcomingAll.length - upcoming.length} more — use "Browse by date" above to see them
+                      </div>
+                    )}
                   </div>
                   {upcoming.length === 0 ? (
                     <p style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>No upcoming classes on this date.</p>
@@ -496,26 +548,57 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                 </div>
               )}
 
-              {/* ── SERIES WITH RECORDINGS ── */}
-              {series.some(s => (s.classes || []).some(c => c.is_published)) && (
-                <div style={{ marginBottom:24 }}>
-                  <input
-                    type="text"
-                    placeholder="Search a class by title or lesson number…"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:14, padding:'11px 16px', border:'1px solid var(--g200)', borderRadius:4, outline:'none', boxSizing:'border-box' }}
-                  />
-                </div>
-              )}
-              {series.map(s => {
-                const allSeriesClasses = (s.classes || []).filter(c => c.is_published)
-                if (!allSeriesClasses.length) return null
+              {/* ── SECTION VIEW — replaces the normal per-series browsing
+                  when a section is selected, since a section can span
+                  multiple series and month-grouping still applies. ── */}
+              {selectedSectionId ? (() => {
+                const sectionMeta = sections.find(s => s.id === selectedSectionId)
+                const sectionClasses = allClasses.filter(c => c.section_id === selectedSectionId && c.is_published)
+                const now = new Date()
+                const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth()).padStart(2, '0')}`
+                const groups = groupByMonth(sectionClasses)
+                return (
+                  <div style={{ marginBottom:48 }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:20, flexWrap:'wrap', gap:8 }}>
+                      <div>
+                        <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:4 }}>Section</div>
+                        <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(20px,3vw,28px)', fontWeight:400, color:'var(--black)' }}>{sectionMeta?.name}</h2>
+                        {sectionMeta?.description && <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginTop:4, lineHeight:1.7 }}>{sectionMeta.description}</p>}
+                      </div>
+                      <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>{sectionClasses.length} classes</div>
+                    </div>
+                    {sectionClasses.length === 0 ? (
+                      <p style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>No classes tagged to this section yet.</p>
+                    ) : (
+                      groups.map(group => (
+                        <MonthGroup key={group.key} group={group} meta={meta} readBasePath={readBasePath}
+                          defaultOpen={group.key === currentMonthKey} forceOpen={false} />
+                      ))
+                    )}
+                  </div>
+                )
+              })() : (
+                <>
+                  {/* ── SERIES WITH RECORDINGS ── */}
+                  {series.some(s => (s.classes || []).some(c => c.is_published)) && (
+                    <div style={{ marginBottom:24 }}>
+                      <input
+                        type="text"
+                        placeholder="Search a class by title or lesson number…"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:14, padding:'11px 16px', border:'1px solid var(--g200)', borderRadius:4, outline:'none', boxSizing:'border-box' }}
+                      />
+                    </div>
+                  )}
+                  {series.map(s => {
+                    const allSeriesClasses = (s.classes || []).filter(c => c.is_published)
+                    if (!allSeriesClasses.length) return null
 
-                const q = search.trim().toLowerCase()
-                const classes = q
-                  ? allSeriesClasses.filter(c => c.title.toLowerCase().includes(q) || String(c.lesson_number) === q)
-                  : allSeriesClasses
+                    const q = search.trim().toLowerCase()
+                    const classes = q
+                      ? allSeriesClasses.filter(c => c.title.toLowerCase().includes(q) || String(c.lesson_number) === q)
+                      : allSeriesClasses
 
                 const now = new Date()
                 const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth()).padStart(2, '0')}`
@@ -568,6 +651,8 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                   </div>
                 )
               })}
+                </>
+              )}
             </>
           )}
         </div>

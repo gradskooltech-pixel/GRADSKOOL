@@ -86,6 +86,43 @@ class FoundationSeries(models.Model):
         super().save(*args, **kwargs)
 
 
+class FoundationSection(models.Model):
+    """
+    A topic-based tag classes can be filed under (e.g. "Decision Making",
+    "Quant Basics", "Reading Comprehension") — separate from FoundationSeries,
+    which groups classes into a taught sequence/playlist. A section lets
+    someone browse "every class about X" across series and dates, the way
+    FYQTopic works for the FYQ question bank.
+
+    Same multi-exam pattern as FoundationSeries: a section can apply to
+    several exams at once (e.g. "Quant Basics" is relevant to XAT, SNAP,
+    and NMAT simultaneously) rather than needing to be duplicated per exam.
+    """
+    exams = models.JSONField(
+        default=list,
+        help_text='List of exam codes this section applies to, e.g. ["xat","snap"]. Set via the admin checkboxes.'
+    )
+    name        = models.CharField(max_length=100)
+    slug        = models.SlugField(max_length=120, unique=True, blank=True)
+    description = models.TextField(blank=True)
+    order       = models.PositiveIntegerField(default=0, help_text='Display order when browsing sections')
+    is_active   = models.BooleanField(default=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'foundation_sections'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        exams_label = '+'.join(e.upper() for e in (self.exams or [])) or 'No exams'
+        return f'{exams_label} — {self.name}'
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
 class FoundationClass(models.Model):
     """
     A single class in a Foundation series.
@@ -95,6 +132,11 @@ class FoundationClass(models.Model):
     """
     series          = models.ForeignKey(
         FoundationSeries, on_delete=models.CASCADE, related_name='classes'
+    )
+    section         = models.ForeignKey(
+        FoundationSection, on_delete=models.SET_NULL, related_name='classes',
+        null=True, blank=True,
+        help_text='Optional topic tag (e.g. "Decision Making") — lets this class be found by browsing that topic, separate from which series it belongs to.'
     )
 
     # Optional override — a series can be tagged to multiple exams (e.g.

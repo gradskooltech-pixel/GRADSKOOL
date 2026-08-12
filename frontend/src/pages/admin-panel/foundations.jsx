@@ -82,6 +82,138 @@ function isUpcoming(iso) {
   return iso ? new Date(iso) > new Date() : false
 }
 
+/* ── Sections manager modal — separate from series/classes, lets admin
+   create topic tags (e.g. "Decision Making") and edit/delete them. ── */
+function SectionsModal({ examFilter, onClose, notify }) {
+  const [sections, setSections] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(null) // null | 'new' | section object
+  const [form, setForm] = useState({ name:'', description:'', exams:[examFilter], order:0, is_active:true })
+  const [saving, setSaving] = useState(false)
+
+  const load = () => {
+    setLoading(true)
+    api.get('/dashboard/foundations/sections/')
+      .then(({ data }) => setSections(data))
+      .catch(() => setSections([]))
+      .finally(() => setLoading(false))
+  }
+  useEffect(() => { load() }, [])
+
+  const openNew = () => { setForm({ name:'', description:'', exams:[examFilter], order:0, is_active:true }); setEditing('new') }
+  const openEdit = (sec) => { setForm({ name:sec.name, description:sec.description||'', exams:sec.exams||[], order:sec.order, is_active:sec.is_active }); setEditing(sec) }
+
+  const save = async () => {
+    if (!form.name.trim()) { notify('Name required', 'error'); return }
+    setSaving(true)
+    try {
+      if (editing === 'new') {
+        await api.post('/dashboard/foundations/sections/', form)
+        notify('Section created ✓')
+      } else {
+        await api.patch(`/dashboard/foundations/sections/${editing.id}/`, form)
+        notify('Section updated ✓')
+      }
+      setEditing(null)
+      load()
+    } catch (e) {
+      notify(errorText(e.response?.data?.error, 'Save failed'), 'error')
+    } finally { setSaving(false) }
+  }
+
+  const del = async (id) => {
+    if (!confirm('Delete this section? Classes tagged to it will just become untagged, not deleted.')) return
+    try {
+      await api.delete(`/dashboard/foundations/sections/${id}/`)
+      notify('Section deleted')
+      load()
+    } catch { notify('Failed to delete', 'error') }
+  }
+
+  return (
+    <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.3)', zIndex:300, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+      <div onClick={e => e.stopPropagation()} style={{ background:C.white, borderRadius:6, width:'100%', maxWidth:560, maxHeight:'85vh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+        <div style={{ padding:'16px 22px', borderBottom:`1px solid ${C.border}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div>
+            <span style={{ fontFamily:'var(--font-sans)', fontSize:15, fontWeight:600, color:C.black }}>Sections</span>
+            <span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:C.gray, marginLeft:8 }}>Topic tags classes can be filed under, e.g. "Decision Making"</span>
+          </div>
+          <button onClick={onClose} style={{ fontFamily:'var(--font-sans)', fontSize:18, color:C.gray, background:'none', border:'none', cursor:'pointer' }}>✕</button>
+        </div>
+
+        <div style={{ flex:1, overflow:'auto', padding:'16px 22px' }}>
+          {editing ? (
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              <div>
+                <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>Name</label>
+                <input value={form.name} onChange={e => setForm(f => ({ ...f, name:e.target.value }))} placeholder="e.g. Decision Making" style={inp()} />
+              </div>
+              <div>
+                <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>Description (optional)</label>
+                <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description:e.target.value }))} rows={2} style={{ ...inp(), resize:'vertical' }} />
+              </div>
+              <div>
+                <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>Exams</label>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:10, padding:'10px 12px', border:`1px solid ${C.border}`, borderRadius:2 }}>
+                  {EXAM_OPTS.map(e => (
+                    <label key={e.value} style={{ display:'flex', alignItems:'center', gap:6, cursor:'pointer', fontFamily:'var(--font-sans)', fontSize:13 }}>
+                      <input type="checkbox" checked={form.exams.includes(e.value)}
+                        onChange={ev => setForm(f => ({ ...f, exams: ev.target.checked ? [...f.exams, e.value] : f.exams.filter(x => x !== e.value) }))} />
+                      {e.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display:'flex', gap:12, alignItems:'center' }}>
+                <div>
+                  <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>Order</label>
+                  <input type="number" value={form.order} onChange={e => setForm(f => ({ ...f, order:e.target.value }))} min={0} style={inp({ width:70 })} />
+                </div>
+                <label style={{ display:'flex', alignItems:'center', gap:8, cursor:'pointer', fontFamily:'var(--font-sans)', fontSize:13, marginTop:20 }}>
+                  <input type="checkbox" checked={!!form.is_active} onChange={e => setForm(f => ({ ...f, is_active:e.target.checked }))} />
+                  Active
+                </label>
+              </div>
+              <div style={{ display:'flex', gap:8, justifyContent:'flex-end', marginTop:8 }}>
+                <button onClick={() => setEditing(null)} style={{ fontFamily:'var(--font-sans)', fontSize:13, padding:'8px 16px', border:`1px solid ${C.border}`, borderRadius:2, background:C.white, cursor:'pointer' }}>Cancel</button>
+                <button onClick={save} disabled={saving} style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 18px', background:C.red, color:C.white, border:'none', borderRadius:2, cursor:saving?'not-allowed':'pointer' }}>
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <button onClick={openNew} style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 16px', background:C.red, color:C.white, border:'none', borderRadius:2, cursor:'pointer', marginBottom:14 }}>
+                + New Section
+              </button>
+              {loading ? (
+                <p style={{ fontFamily:'var(--font-sans)', color:C.gray }}>Loading…</p>
+              ) : sections.length === 0 ? (
+                <p style={{ fontFamily:'var(--font-sans)', fontSize:13, color:C.gray }}>No sections yet.</p>
+              ) : (
+                sections.map(sec => (
+                  <div key={sec.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', border:`1px solid ${C.border}`, borderRadius:3, marginBottom:8 }}>
+                    <div>
+                      <div style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:C.black }}>{sec.name}</div>
+                      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:C.gray }}>
+                        {(sec.exams||[]).map(e=>e.toUpperCase()).join(', ') || 'No exams'} · {sec.class_count} classes · {sec.is_active ? 'Active' : 'Hidden'}
+                      </div>
+                    </div>
+                    <div style={{ display:'flex', gap:6 }}>
+                      <button onClick={() => openEdit(sec)} style={{ fontFamily:'var(--font-sans)', fontSize:11, padding:'5px 12px', border:`1px solid ${C.border}`, borderRadius:2, background:C.white, cursor:'pointer' }}>Edit</button>
+                      <button onClick={() => del(sec.id)} style={{ fontFamily:'var(--font-sans)', fontSize:11, padding:'5px 10px', border:'1px solid #fca5a5', borderRadius:2, background:C.white, cursor:'pointer', color:C.red }}>✕</button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════ */
@@ -90,6 +222,7 @@ export default function FoundationsAdmin() {
   const [series,     setSeries]     = useState([])
   const [loading,    setLoading]    = useState(true)
   const [msg,        setMsg]        = useState(null)
+  const [showSections, setShowSections] = useState(false)
 
   // Which panel is open: null | 'new-series' | 'new-class' | { series } | { class }
   const [panel, setPanel] = useState(null)
@@ -130,11 +263,19 @@ export default function FoundationsAdmin() {
           <span style={{ fontFamily:'var(--font-sans)', fontSize:14, fontWeight:600, color:C.black }}>Foundations</span>
           <span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:C.gray, background:C.g100, padding:'2px 8px', borderRadius:2 }}>Free classes</span>
         </div>
-        <button onClick={() => openPanel('new-series')}
-          style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 18px', background:C.red, color:C.white, border:'none', borderRadius:2, cursor:'pointer' }}>
-          + New Series
-        </button>
+        <div style={{ display:'flex', gap:8 }}>
+          <button onClick={() => setShowSections(true)}
+            style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 18px', background:C.white, color:C.black, border:`1px solid ${C.border}`, borderRadius:2, cursor:'pointer' }}>
+            Manage Sections
+          </button>
+          <button onClick={() => openPanel('new-series')}
+            style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 18px', background:C.red, color:C.white, border:'none', borderRadius:2, cursor:'pointer' }}>
+            + New Series
+          </button>
+        </div>
       </div>
+
+      {showSections && <SectionsModal examFilter={examFilter} onClose={() => setShowSections(false)} notify={notify} />}
 
       {/* ── exam filter tabs ── */}
       <div style={{ background:C.white, borderBottom:`1px solid ${C.border}`, display:'flex', gap:0 }}>
@@ -258,9 +399,14 @@ function SeriesBlock({ series, examColor, onAddClass, onEditSeries, onEditClass,
                     <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:C.gray, lineHeight:1 }}>L{cls.lesson_number}</div>
                     <div>
                       <div style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:500, color:C.black }}>{cls.title}</div>
-                      {cls.youtube_url && (
-                        <a href={cls.youtube_url} target="_blank" rel="noopener noreferrer" style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'#ff4444' }}>▶ Recording</a>
-                      )}
+                      <div style={{ display:'flex', gap:8, alignItems:'center', marginTop:2 }}>
+                        {cls.section_name && (
+                          <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, color:C.gray, background:C.g100, padding:'1px 7px', borderRadius:2 }}>{cls.section_name}</span>
+                        )}
+                        {cls.youtube_url && (
+                          <a href={cls.youtube_url} target="_blank" rel="noopener noreferrer" style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'#ff4444' }}>▶ Recording</a>
+                        )}
+                      </div>
                     </div>
                     <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:C.gray }}>{formatDT(cls.scheduled_at)}</div>
                     <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:C.gray }}>{cls.duration_mins} min</div>
@@ -430,6 +576,7 @@ function SidePanel({ panel, examFilter, onClose, onSave, notify }) {
       const localDT = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`
       return {
         series_id:     panel.series?.id || cls.series_id || '',
+        section_id:    cls.section_id || '',
         lesson_number: cls.lesson_number || ((panel.series?.classes?.length || 0) + 1),
         title:         cls.title || '',
         slug:          cls.slug || '',
@@ -449,6 +596,14 @@ function SidePanel({ panel, examFilter, onClose, onSave, notify }) {
 
   const [saving, setSaving] = useState(false)
   const thumb = ytThumb(form.youtube_url)
+
+  const [sections, setSections] = useState([])
+  useEffect(() => {
+    if (!isNewClass && !isEditClass) return
+    api.get(`/dashboard/foundations/sections/?exam=${examFilter}`)
+      .then(({ data }) => setSections(data))
+      .catch(() => setSections([]))
+  }, [isNewClass, isEditClass, examFilter])
 
   // Quill for notes
   useEffect(() => {
@@ -698,6 +853,21 @@ function SidePanel({ panel, examFilter, onClose, onSave, notify }) {
                   URL Slug <span style={{ fontWeight:400, textTransform:'none' }}>(optional — auto-generated from title if left blank; keep it short and readable for Google)</span>
                 </label>
                 <input value={form.slug || ''} onChange={set('slug')} placeholder="xat-1-analytical-reasoning-intro" style={inp()} />
+              </div>
+
+              <div>
+                <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>
+                  Section <span style={{ fontWeight:400, textTransform:'none' }}>(optional — topic tag so students can browse "every class about X")</span>
+                </label>
+                <select value={form.section_id || ''} onChange={set('section_id')} style={inp()}>
+                  <option value="">No section</option>
+                  {sections.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+                {sections.length === 0 && (
+                  <p style={{ fontFamily:'var(--font-sans)', fontSize:11, color:C.gray, marginTop:5 }}>
+                    No sections yet for {examFilter.toUpperCase()} — close this panel and use "Manage Sections" to create one.
+                  </p>
+                )}
               </div>
 
               <div>

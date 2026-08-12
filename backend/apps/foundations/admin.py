@@ -7,13 +7,13 @@ Classes were invisible in /admin/ — the custom admin panel at
 day to day, this is the fallback/bulk-edit view via Django admin itself.
 """
 from django.contrib import admin
-from .models import FoundationSeries, FoundationClass
+from .models import FoundationSeries, FoundationSection, FoundationClass
 
 
 class FoundationClassInline(admin.TabularInline):
     model = FoundationClass
     extra = 0
-    fields = ('lesson_number', 'title', 'scheduled_at', 'youtube_url', 'is_published')
+    fields = ('lesson_number', 'title', 'section', 'scheduled_at', 'youtube_url', 'is_published')
     ordering = ('lesson_number',)
     show_change_link = True
 
@@ -33,15 +33,33 @@ class FoundationSeriesAdmin(admin.ModelAdmin):
         return ', '.join(e.upper() for e in (obj.exams or [])) or '—'
 
 
+@admin.register(FoundationSection)
+class FoundationSectionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'exams_display', 'is_active', 'order', 'class_count')
+    list_filter = ('is_active',)
+    list_editable = ('order', 'is_active')
+    search_fields = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ('order', 'name')
+
+    @admin.display(description='Exams')
+    def exams_display(self, obj):
+        return ', '.join(e.upper() for e in (obj.exams or [])) or '—'
+
+    @admin.display(description='Classes')
+    def class_count(self, obj):
+        return obj.classes.count()
+
+
 @admin.register(FoundationClass)
 class FoundationClassAdmin(admin.ModelAdmin):
-    list_display = ('lesson_number', 'title', 'series', 'scheduled_at', 'is_upcoming', 'has_recording', 'is_published')
-    list_filter = ('series', 'is_published')
+    list_display = ('lesson_number', 'title', 'series', 'section', 'scheduled_at', 'is_upcoming', 'has_recording', 'is_published')
+    list_filter = ('series', 'section', 'is_published')
     list_editable = ('is_published',)
     search_fields = ('title', 'slug')
     prepopulated_fields = {'slug': ('title',)}
     ordering = ('series', 'lesson_number')
-    autocomplete_fields = ('series',)
+    autocomplete_fields = ('series', 'section')
 
     @admin.display(boolean=True, description='Upcoming')
     def is_upcoming(self, obj):

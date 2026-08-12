@@ -7,7 +7,7 @@ from django.utils.dateparse import parse_datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import FoundationSeries, FoundationClass
+from .models import FoundationSeries, FoundationSection, FoundationClass
 
 
 def is_admin(user):
@@ -42,7 +42,7 @@ def series_to_dict(s, include_classes=False, exam_filter=None):
     # both class_count and classes from it — this is what guarantees they
     # can never disagree, unlike computing count separately from a raw,
     # unfiltered DB query.
-    classes = list(s.classes.filter(is_published=True).order_by('lesson_number'))
+    classes = list(s.classes.select_related('section').filter(is_published=True).order_by('lesson_number'))
     if exam_filter:
         # A class's own `exams` override wins when set; an empty
         # override means it inherits every exam the series covers.
@@ -65,11 +65,27 @@ def series_to_dict(s, include_classes=False, exam_filter=None):
     return d
 
 
+def section_to_dict(sec, class_count=None):
+    return {
+        'id':          sec.id,
+        'exams':       sec.exams,
+        'name':        sec.name,
+        'slug':        sec.slug,
+        'description': sec.description,
+        'order':       sec.order,
+        'is_active':   sec.is_active,
+        'class_count': class_count if class_count is not None else sec.classes.filter(is_published=True).count(),
+    }
+
+
 def class_to_dict(c):
     return {
         'id':             c.id,
         'series_id':      c.series_id,
         'series_title':   c.series.title,
+        'section_id':     c.section_id,
+        'section_name':   c.section.name if c.section_id else None,
+        'section_slug':   c.section.slug if c.section_id else None,
         'exams':          c.exams or c.series.exams,  # effective — what this class actually shows under
         'exams_raw':      c.exams,                     # raw override; [] means "inherits the series"
         'series_exams':   c.series.exams,               # for reference, e.g. building the admin checkbox options
@@ -112,10 +128,37 @@ class PublicFoundationClassView(APIView):
 
     def get(self, request, slug):
         try:
-            cls = FoundationClass.objects.select_related('series').get(slug=slug, is_published=True)
+            cls = FoundationClass.objects.select_related('series', 'section').get(slug=slug, is_published=True)
             return Response(class_to_dict(cls))
         except FoundationClass.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
+
+
+class PublicFoundationSectionsView(APIView):
+    """GET /api/v1/foundations/sections/?exam=xat — active sections for this
+    exam, each with a live count of published classes tagged to it. Used to
+    build the "browse by topic" UI on the listing page."""
+    permission_classes = []
+
+    def get(self, request):
+        exam = request.query_params.get('exam', '').lower()
+        sections = list(FoundationSection.objects.filter(is_active=True))
+        if exam:
+            sections = [s for s in sections if exam in (s.exams or [])]
+        out = []
+        for s in sections:
+            qs = s.classes.select_related('series').filter(is_published=True)
+            if exam:
+                # Same effective-exam logic as class_to_dict: a class's own
+                # override wins, otherwise it inherits its series' exams.
+                qs = [c for c in qs if exam in (c.exams or c.series.exams or [])]
+                count = len(qs)
+            else:
+                count = qs.count()
+            if count == 0:
+                continue  # don't show empty sections on a given exam's page
+            out.append(section_to_dict(s, class_count=count))
+        return Response(out)
 
 
 # ── ADMIN VIEWS ───────────────────────────────────────────────────────────────
@@ -183,6 +226,66 @@ class AdminFoundationSeriesDetailView(APIView):
         return Response(status=204)
 
 
+class AdminFoundationSectionListView(APIView):
+    """GET/POST /api/v1/dashboard/foundations/sections/"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if not is_admin(request.user): return Response({'error': 'Forbidden'}, status=403)
+        exam = request.query_params.get('exam', '')
+        sections = list(FoundationSection.objects.all())
+        if exam:
+            sections = [s for s in sections if exam in (s.exams or [])]
+        return Response([section_to_dict(s) for s in sections])
+
+    def post(self, request):
+        if not is_admin(request.user): return Response({'error': 'Forbidden'}, status=403)
+        d = request.data
+        sec = FoundationSection.objects.create(
+            exams       = d.get('exams', []),
+            name        = d.get('name', ''),
+            slug        = d.get('slug', ''),
+            description = d.get('description', ''),
+            order       = d.get('order', 0),
+            is_active   = d.get('is_active', True),
+        )
+        return Response(section_to_dict(sec), status=201)
+
+
+class AdminFoundationSectionDetailView(APIView):
+    """GET/PATCH/DELETE /api/v1/dashboard/foundations/sections/<pk>/"""
+    permission_classes = [IsAuthenticated]
+
+    def _get(self, pk):
+        try:
+            return FoundationSection.objects.get(pk=pk)
+        except FoundationSection.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        if not is_admin(request.user): return Response({'error': 'Forbidden'}, status=403)
+        sec = self._get(pk)
+        if not sec: return Response({'error': 'Not found'}, status=404)
+        return Response(section_to_dict(sec))
+
+    def patch(self, request, pk):
+        if not is_admin(request.user): return Response({'error': 'Forbidden'}, status=403)
+        sec = self._get(pk)
+        if not sec: return Response({'error': 'Not found'}, status=404)
+        for field in ['name', 'slug', 'description', 'order', 'is_active', 'exams']:
+            if field in request.data:
+                setattr(sec, field, request.data[field])
+        sec.save()
+        return Response(section_to_dict(sec))
+
+    def delete(self, request, pk):
+        if not is_admin(request.user): return Response({'error': 'Forbidden'}, status=403)
+        sec = self._get(pk)
+        if not sec: return Response({'error': 'Not found'}, status=404)
+        sec.delete()  # SET_NULL on FoundationClass.section — classes stay, just untagged
+        return Response(status=204)
+
+
 class AdminFoundationClassListView(APIView):
     """GET/POST /api/v1/dashboard/foundations/classes/"""
     permission_classes = [IsAuthenticated]
@@ -191,7 +294,7 @@ class AdminFoundationClassListView(APIView):
         if not is_admin(request.user): return Response({'error':'Forbidden'}, status=403)
         exam   = request.query_params.get('exam', '')
         series = request.query_params.get('series', '')
-        qs     = FoundationClass.objects.select_related('series').all()
+        qs     = FoundationClass.objects.select_related('series', 'section').all()
         if series: qs = qs.filter(series_id=series)
         classes = list(qs)
         if exam:
@@ -205,6 +308,13 @@ class AdminFoundationClassListView(APIView):
             series = FoundationSeries.objects.get(pk=d.get('series_id'))
         except FoundationSeries.DoesNotExist:
             return Response({'error': 'Series not found'}, status=400)
+
+        section = None
+        if d.get('section_id'):
+            try:
+                section = FoundationSection.objects.get(pk=d['section_id'])
+            except FoundationSection.DoesNotExist:
+                return Response({'error': 'Section not found'}, status=400)
 
         scheduled_at = parse_datetime(d.get('scheduled_at', ''))
         if not scheduled_at:
@@ -220,6 +330,7 @@ class AdminFoundationClassListView(APIView):
         try:
             cls = FoundationClass.objects.create(
                 series         = series,
+                section        = section,
                 exams          = d.get('exams', []),
                 lesson_number  = d.get('lesson_number', 1),
                 title          = d.get('title', ''),
@@ -247,7 +358,7 @@ class AdminFoundationClassDetailView(APIView):
 
     def _get(self, pk):
         try:
-            return FoundationClass.objects.select_related('series').get(pk=pk)
+            return FoundationClass.objects.select_related('series', 'section').get(pk=pk)
         except FoundationClass.DoesNotExist:
             return None
 
@@ -264,6 +375,14 @@ class AdminFoundationClassDetailView(APIView):
         for field in ['title','slug','description','meta_description','long_description','duration_mins','youtube_url','notes','is_published','lesson_number','exams']:
             if field in d:
                 setattr(c, field, d[field])
+        if 'section_id' in d:
+            if d['section_id']:
+                try:
+                    c.section = FoundationSection.objects.get(pk=d['section_id'])
+                except FoundationSection.DoesNotExist:
+                    return Response({'error': 'Section not found'}, status=400)
+            else:
+                c.section = None  # explicit null/empty clears the tag
         if 'scheduled_at' in d:
             dt = parse_datetime(d['scheduled_at'])
             if dt:
