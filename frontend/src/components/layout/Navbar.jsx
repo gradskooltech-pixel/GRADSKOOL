@@ -1,7 +1,7 @@
 /**
  * GRADSKOOL — Navbar
  * Matches gradskool.in exactly:
- * Logo | Courses dropdown | Free Classes & Courses | Blog | About | Results | All Courses btn | Enrol Now btn
+ * Logo | Courses dropdown | Blog | Free Classes | FYQs | PDFs | About | Results | All Courses btn | Enrol Now btn
  * Mobile: hamburger → fullscreen overlay
  *
  * CHANGE (promotion shift): CAThlete is now the featured product — leads the
@@ -96,13 +96,12 @@ export function Navbar() {
                 {COURSES_DROP.map(c => (
                   <Link key={c.href} href={c.href} className="gs-drop-item">{c.label}</Link>
                 ))}
-                <div className="gs-drop-divider" />
-                <Link href="/pdfs" className="gs-drop-item">Digital PDFs — Notes &amp; Formula Sheets</Link>
               </div>
             </div>
             <Link href="/blog"  className="gs-nav-link">Blog</Link>
-            <Link href="/free" className="gs-nav-link">Free Classes &amp; Courses</Link>
+            <Link href="/free" className="gs-nav-link">Free Classes</Link>
             <Link href="/fyqs" className="gs-nav-link">FYQs</Link>
+            <Link href="/pdfs" className="gs-nav-link">PDFs</Link>
             <Link href="/about" className="gs-nav-link">About</Link>
             <Link href="/results"  className="gs-nav-link">Results</Link>
           </div>
@@ -126,13 +125,13 @@ export function Navbar() {
           {COURSES_DROP.map(c => (
             <Link key={c.href} href={c.href} className="gs-mob-link">{c.label}</Link>
           ))}
-          <Link href="/pdfs" className="gs-mob-link">Digital PDFs</Link>
         </div>
         <div className="gs-mob-section">
           <div className="gs-mob-label">More</div>
           <Link href="/blog"   className="gs-mob-link">Blog</Link>
-          <Link href="/free" className="gs-mob-link">Free Classes &amp; Courses</Link>
+          <Link href="/free" className="gs-mob-link">Free Classes</Link>
           <Link href="/fyqs" className="gs-mob-link">FYQs</Link>
+          <Link href="/pdfs" className="gs-mob-link">PDFs</Link>
           <Link href="/about"  className="gs-mob-link">About ALP Sir</Link>
           <Link href="/results"   className="gs-mob-link">Results</Link>
         </div>
