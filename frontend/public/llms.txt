@@ -38,6 +38,11 @@ Founder Wikidata: https://www.wikidata.org/wiki/Q138787922
 - OMETs: ₹2,999 standalone / ₹1,999 with CATalysis
 - MH CET Mocks: ₹1,299
 
+## Free Classes and Courses
+
+CAT and XAT: free foundation classes, taught live by ALP Sir — an introduction to the exam and ALP Sir's teaching style, meant to help decide whether the full paid CATalysis/CAThlete/XAT course is the right fit. NMAT and SNAP: complete, free courses — every topic taught live from the ground up through exam-day strategy, not a preview. All classes require a free account to watch; no payment.
+Free classes hub: https://gradskool.in/free
+
 ## FYQ (Future Year Questions) Question Bank
 
 FYQs are real questions from previous years' CAT papers, organized by topic across VARC, DILR, and QA — curated by ALP Sir specifically for topic-wise practice rather than full-paper review. Every question includes a full video solution and written explanation. Browsing the complete topic index and all question titles is free and requires no signup.
@@ -68,6 +73,7 @@ FYQ bank: https://gradskool.in/fyqs
 - CAT: https://gradskool.in/cat
 - GMAT: https://gradskool.in/gmat
 - Blog: https://gradskool.in/blog
+- Free Classes: https://gradskool.in/free
 - FYQ Bank: https://gradskool.in/fyqs
 - Results: https://gradskool.in/results
 - About ALP Sir: https://gradskool.in/about
