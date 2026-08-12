@@ -76,9 +76,128 @@ export function YTThumb({ url, clickable = true }) {
   )
 }
 
-// Same-day comparison ignoring time — used throughout DateNav.
+export function ClassCard({ cls, meta, readBasePath }) {
+  // A YouTube URL can exist BEFORE the class happens — a pre-scheduled
+  // Live link is a real, stable URL from the moment it's created, not
+  // just after the stream ends. So "has a video" and "is upcoming" are
+  // independent, not mutually exclusive.
+  const hasVideo    = !!cls.youtube_url
+  const isFuture    = isUpcoming(cls.scheduled_at)
+  const isLiveSoon  = hasVideo && isFuture       // thumbnail exists, hasn't aired yet
+  const isRecorded  = hasVideo && !isFuture      // thumbnail exists, already happened
+  const isBlankSoon = !hasVideo && isFuture      // no link yet, hasn't happened
+  return (
+    <div style={{ background:'#fff' }}>
+      {hasVideo && (
+        <div style={{ position:'relative' }}>
+          <YTThumb url={cls.youtube_url} clickable={!isLiveSoon} />
+          {isLiveSoon && (
+            <div style={{ position:'absolute', top:8, left:8, fontFamily:'var(--font-sans)', fontSize:9, fontWeight:700, letterSpacing:'.05em', textTransform:'uppercase', padding:'3px 8px', borderRadius:2, background:'rgba(0,0,0,.75)', color:'#fff' }}>
+              Upcoming
+            </div>
+          )}
+        </div>
+      )}
+      {!hasVideo && (
+        <div style={{ aspectRatio:'16/9', background: isBlankSoon ? 'var(--black)' : 'var(--g100)', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:6 }}>
+          {isBlankSoon ? (
+            <>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, color:'rgba(255,255,255,.4)', letterSpacing:'.1em', textTransform:'uppercase' }}>Upcoming</div>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'rgba(255,255,255,.6)', textAlign:'center', padding:'0 16px' }}>{formatDate(cls.scheduled_at)}</div>
+            </>
+          ) : (
+            <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>Recording coming soon</div>
+          )}
+        </div>
+      )}
+      <div style={{ padding:'16px 18px' }}>
+        <div style={{ display:'flex', gap:6, marginBottom:8, alignItems:'center' }}>
+          <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, color:meta.color }}>L{cls.lesson_number}</span>
+          <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, padding:'2px 7px', borderRadius:2,
+            background: isRecorded ? '#dcfce7' : (isLiveSoon || isBlankSoon) ? '#eff6ff' : '#fef3c7',
+            color:      isRecorded ? '#166534' : (isLiveSoon || isBlankSoon) ? '#1d4ed8' : '#92400e' }}>
+            {isRecorded ? 'Recording available' : isLiveSoon ? 'Upcoming — link ready' : isBlankSoon ? 'Live soon' : 'Recording soon'}
+          </span>
+        </div>
+        <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', lineHeight:1.3, marginBottom:6 }}>{cls.title}</div>
+        {cls.description && <p style={{ fontFamily:'var(--font-body)', fontSize:12, color:'var(--g700)', lineHeight:1.6, marginBottom:10 }}>{cls.description}</p>}
+        <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:12 }}>
+          {formatDate(cls.scheduled_at)} · {cls.duration_mins} min · Free
+        </div>
+        {hasVideo && (
+          <Link href={`${readBasePath}/${cls.slug}`}
+            style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:meta.color, borderBottom:`1px solid ${meta.color}44` }}>
+            {isLiveSoon ? 'View class →' : 'View class + notes →'}
+          </Link>
+        )}
+        {isBlankSoon && (
+          <Link href={`${readBasePath}/${cls.slug}`}
+            style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'#ff4444', borderBottom:'1px solid #ff444444' }}>
+            View class →
+          </Link>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// A single collapsible month section within a series. Defaults open only
+// if defaultOpen is true (the current month) or forceOpen is true (search
+// active and this month has a match) — every other month starts collapsed,
+// which is what actually keeps a 100+ class series scannable.
+function MonthGroup({ group, meta, readBasePath, defaultOpen, forceOpen }) {
+  const [open, setOpen] = useState(defaultOpen)
+  const isOpen = forceOpen || open
+
+  return (
+    <div style={{ marginBottom:16, border:'1px solid var(--g200)', borderRadius:4, overflow:'hidden' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width:'100%', display:'flex', justifyContent:'space-between', alignItems:'center',
+          padding:'14px 20px', background: isOpen ? 'var(--off)' : '#fff', border:'none', cursor:'pointer', textAlign:'left',
+        }}>
+        <span style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)' }}>{group.label}</span>
+        <span style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <span style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>{group.items.length} class{group.items.length === 1 ? '' : 'es'}</span>
+          <span style={{ fontFamily:'var(--font-sans)', fontSize:12, color:meta.color, transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform .15s', display:'inline-block' }}>▾</span>
+        </span>
+      </button>
+      {isOpen && (
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:1, background:'var(--g200)', borderTop:'1px solid var(--g200)' }}>
+          {group.items.map(cls => <ClassCard key={cls.id} cls={cls} meta={meta} readBasePath={readBasePath} />)}
+        </div>
+      )}
+    </div>
+  )
+}
 function isSameDay(a, b) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+}
+
+// Groups a flat class list into month buckets (newest month first), each
+// bucket's classes sorted by lesson number. Classes with no scheduled_at
+// land in an "Unscheduled" bucket at the end. Used to keep a 100+ class
+// series from rendering as one long, unscannable grid.
+function groupByMonth(classes) {
+  const buckets = new Map() // key: 'YYYY-MM' or 'unscheduled' -> { label, sortKey, items }
+  for (const c of classes) {
+    let key, label, sortKey
+    if (c.scheduled_at) {
+      const d = new Date(c.scheduled_at)
+      key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`
+      label = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+      sortKey = d.getFullYear() * 12 + d.getMonth()
+    } else {
+      key = 'unscheduled'; label = 'Unscheduled'; sortKey = -1
+    }
+    if (!buckets.has(key)) buckets.set(key, { key, label, sortKey, items: [] })
+    buckets.get(key).items.push(c)
+  }
+  const groups = Array.from(buckets.values())
+  groups.sort((a, b) => b.sortKey - a.sortKey)
+  for (const g of groups) g.items.sort((a, b) => (a.lesson_number || 0) - (b.lesson_number || 0))
+  return groups
 }
 
 function DateNav({ classes, readBasePath, meta, selected, setSelected }) {
@@ -246,6 +365,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
   const [series, setSeries] = useState([])
   const [loading, setLoad]  = useState(true)
   const [selectedDate, setSelectedDate] = useState(null) // lifted from DateNav so "Upcoming Classes" below can respect it too
+  const [search, setSearch] = useState('') // filters recorded classes by title/lesson number, across all series
 
   useEffect(() => {
     fetch(`${API}/foundations/?exam=${examSlug}`)
@@ -377,9 +497,30 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
               )}
 
               {/* ── SERIES WITH RECORDINGS ── */}
+              {series.some(s => (s.classes || []).some(c => c.is_published)) && (
+                <div style={{ marginBottom:24 }}>
+                  <input
+                    type="text"
+                    placeholder="Search a class by title or lesson number…"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:14, padding:'11px 16px', border:'1px solid var(--g200)', borderRadius:4, outline:'none', boxSizing:'border-box' }}
+                  />
+                </div>
+              )}
               {series.map(s => {
-                const classes = (s.classes || []).filter(c => c.is_published)
-                if (!classes.length) return null
+                const allSeriesClasses = (s.classes || []).filter(c => c.is_published)
+                if (!allSeriesClasses.length) return null
+
+                const q = search.trim().toLowerCase()
+                const classes = q
+                  ? allSeriesClasses.filter(c => c.title.toLowerCase().includes(q) || String(c.lesson_number) === q)
+                  : allSeriesClasses
+
+                const now = new Date()
+                const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth()).padStart(2, '0')}`
+                const groups = groupByMonth(classes)
+
                 return (
                   <div key={s.id} style={{ marginBottom:48 }}>
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:20, flexWrap:'wrap', gap:8 }}>
@@ -388,7 +529,9 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                         <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(20px,3vw,28px)', fontWeight:400, color:'var(--black)' }}>{s.title}</h2>
                         {s.description && <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginTop:4, lineHeight:1.7 }}>{s.description}</p>}
                       </div>
-                      <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>{classes.length} classes</div>
+                      <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>
+                        {q ? `${classes.length} of ${allSeriesClasses.length} classes match` : `${allSeriesClasses.length} classes`}
+                      </div>
                     </div>
                     {s.notes && (
                       <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px 28px', marginBottom:24 }}>
@@ -408,74 +551,20 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                         `}</style>
                       </div>
                     )}
-                    <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:1, background:'var(--g200)', border:'1px solid var(--g200)', borderRadius:4, overflow:'hidden' }}>
-                      {classes.map(cls => {
-                        // A YouTube URL can exist BEFORE the class happens —
-                        // a pre-scheduled Live link is a real, stable URL
-                        // from the moment it's created, not just after the
-                        // stream ends. So "has a video" and "is upcoming"
-                        // are independent, not mutually exclusive.
-                        const hasVideo    = !!cls.youtube_url
-                        const isFuture    = isUpcoming(cls.scheduled_at)
-                        const isLiveSoon  = hasVideo && isFuture       // thumbnail exists, hasn't aired yet
-                        const isRecorded  = hasVideo && !isFuture      // thumbnail exists, already happened
-                        const isBlankSoon = !hasVideo && isFuture      // no link yet, hasn't happened
-                        const isBlankLate = !hasVideo && !isFuture     // no link yet, should have a recording by now
-                        return (
-                          <div key={cls.id} style={{ background:'#fff' }}>
-                            {hasVideo && (
-                              <div style={{ position:'relative' }}>
-                                <YTThumb url={cls.youtube_url} clickable={!isLiveSoon} />
-                                {isLiveSoon && (
-                                  <div style={{ position:'absolute', top:8, left:8, fontFamily:'var(--font-sans)', fontSize:9, fontWeight:700, letterSpacing:'.05em', textTransform:'uppercase', padding:'3px 8px', borderRadius:2, background:'rgba(0,0,0,.75)', color:'#fff' }}>
-                                    Upcoming
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            {!hasVideo && (
-                              <div style={{ aspectRatio:'16/9', background: isBlankSoon ? 'var(--black)' : 'var(--g100)', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:6 }}>
-                                {isBlankSoon ? (
-                                  <>
-                                    <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, color:'rgba(255,255,255,.4)', letterSpacing:'.1em', textTransform:'uppercase' }}>Upcoming</div>
-                                    <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'rgba(255,255,255,.6)', textAlign:'center', padding:'0 16px' }}>{formatDate(cls.scheduled_at)}</div>
-                                  </>
-                                ) : (
-                                  <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>Recording coming soon</div>
-                                )}
-                              </div>
-                            )}
-                            <div style={{ padding:'16px 18px' }}>
-                              <div style={{ display:'flex', gap:6, marginBottom:8, alignItems:'center' }}>
-                                <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, color:meta.color }}>L{cls.lesson_number}</span>
-                                <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, padding:'2px 7px', borderRadius:2,
-                                  background: isRecorded ? '#dcfce7' : (isLiveSoon || isBlankSoon) ? '#eff6ff' : '#fef3c7',
-                                  color:      isRecorded ? '#166534' : (isLiveSoon || isBlankSoon) ? '#1d4ed8' : '#92400e' }}>
-                                  {isRecorded ? 'Recording available' : isLiveSoon ? 'Upcoming — link ready' : isBlankSoon ? 'Live soon' : 'Recording soon'}
-                                </span>
-                              </div>
-                              <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', lineHeight:1.3, marginBottom:6 }}>{cls.title}</div>
-                              {cls.description && <p style={{ fontFamily:'var(--font-body)', fontSize:12, color:'var(--g700)', lineHeight:1.6, marginBottom:10 }}>{cls.description}</p>}
-                              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:12 }}>
-                                {formatDate(cls.scheduled_at)} · {cls.duration_mins} min · Free
-                              </div>
-                              {hasVideo && (
-                                <Link href={`${readBasePath}/${cls.slug}`}
-                                  style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:meta.color, borderBottom:`1px solid ${meta.color}44` }}>
-                                  {isLiveSoon ? 'View class →' : 'View class + notes →'}
-                                </Link>
-                              )}
-                              {isBlankSoon && (
-                                <Link href={`${readBasePath}/${cls.slug}`}
-                                  style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'#ff4444', borderBottom:'1px solid #ff444444' }}>
-                                  View class →
-                                </Link>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
+                    {classes.length === 0 ? (
+                      <p style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>No classes in this series match "{search}".</p>
+                    ) : (
+                      groups.map(group => (
+                        <MonthGroup
+                          key={group.key}
+                          group={group}
+                          meta={meta}
+                          readBasePath={readBasePath}
+                          defaultOpen={group.key === currentMonthKey}
+                          forceOpen={!!q}
+                        />
+                      ))
+                    )}
                   </div>
                 )
               })}
