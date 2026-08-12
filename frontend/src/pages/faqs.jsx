@@ -116,7 +116,7 @@ Instead of memorising exam-specific tricks, students develop underlying thinking
 
   { cat:'GMAT & GRE', q:'Does GRADSKOOL offer GMAT Focus Edition preparation?', a:`Yes. The GRADSKOOL GMAT programme is fully updated for the GMAT Focus Edition — covering Quantitative Reasoning, Verbal Reasoning, and Data Insights. No AWA, no Sentence Correction.
 
-Plans start from ₹29,999 + GST.` },
+Plans start from ₹29,999 incl. GST.` },
 
   { cat:'GMAT & GRE', q:'Can I use GRE preparation for MBA programmes?', a:`Yes. Many top MBA programmes now accept GRE in lieu of GMAT — including Harvard, Wharton, Kellogg, and ISB. GRADSKOOL's GRE programme also provides guidance on which schools prefer GMAT vs GRE for MBA admissions.` },
 

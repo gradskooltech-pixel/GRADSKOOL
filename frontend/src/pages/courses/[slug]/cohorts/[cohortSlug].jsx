@@ -163,7 +163,7 @@ export default function CohortPage({ cohort }) {
                 {cohort.cohort_label || 'This Cohort'} — Starting From
               </div>
               <div style={{ fontFamily:'Georgia,serif', fontSize:'2.8rem', color:'#fff', fontWeight:'700', lineHeight:'1', marginBottom:'0.3rem' }}>
-                ₹27,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>+ GST</sub>
+                ₹27,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>incl. GST</sub>
               </div>
               {cohort.start_date && (
                 <div style={{ fontFamily:'Georgia,serif', fontSize:'0.82rem', color:C.gray400, fontStyle:'italic' }}>
@@ -341,7 +341,7 @@ function PricingCard({ plan, slug }) {
         <div style={{ fontFamily:'Georgia,serif', fontSize:'2.8rem', color: plan.is_featured ? '#fff' : C2.black, fontWeight:'700', lineHeight:'1' }}>
           <sup style={{ fontSize:'1.2rem', verticalAlign:'super' }}>₹</sup>
           {Number(plan.price_inr).toLocaleString('en-IN')}
-          <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.85rem', fontWeight:'300', color:C2.gray400, verticalAlign:'baseline', marginLeft:'0.2rem' }}>+ GST</sub>
+          <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.85rem', fontWeight:'300', color:C2.gray400, verticalAlign:'baseline', marginLeft:'0.2rem' }}>incl. GST</sub>
         </div>
       </div>
       <div style={{ padding:'1.75rem 2rem 2rem' }}>

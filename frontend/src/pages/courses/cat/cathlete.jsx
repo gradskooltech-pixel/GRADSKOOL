@@ -21,7 +21,7 @@ const FALLBACK = {
   cathleteBasePrice: 6999,
   cathleteMocksPrice: 9999,
   cathleteStart: '2026-08-18',
-  catalysisPrice: 17999,
+  catalysisPrice: 27999,
 }
 
 function fmtPrice(n) {
@@ -131,7 +131,7 @@ export default function CathletePage({ examData }) {
             ))}
             <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
               <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>{fmtPrice(activePrice)}</div>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
             </div>
             <Link href={activeHref} className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol in CAThlete →</Link>
           </div>

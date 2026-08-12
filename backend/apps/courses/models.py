@@ -178,24 +178,24 @@ class Course(models.Model):
     end_date     = models.DateField(null=True, blank=True)
     status       = models.CharField(max_length=20, choices=STATUS, default='upcoming')
     is_open      = models.BooleanField(default=False,
-        help_text='Only one cohort per exam should be open at a time. New enrolments auto-assign here.')
+                                       help_text='Only one cohort per exam should be open at a time. New enrolments auto-assign here.')
     description  = models.TextField(blank=True,
-        help_text='Short description shown on the cohort public page.')
+                                    help_text='Short description shown on the cohort public page.')
 
     # Course syllabus & learning outcomes (shown on course page)
     learning_outcomes = models.JSONField(default=list, blank=True,
-        help_text='["Master RC in 4 weeks", "Solve 90%+ QA section"]')
+                                         help_text='["Master RC in 4 weeks", "Solve 90%+ QA section"]')
     who_is_this_for   = models.TextField(blank=True)
     syllabus_summary  = models.TextField(blank=True)
 
     # Prerequisites
     prerequisites     = models.ManyToManyField('self', blank=True, symmetrical=False,
-        related_name='unlocks',
-        help_text='Complete these courses before enrolling here')
+                                               related_name='unlocks',
+                                               help_text='Complete these courses before enrolling here')
     prerequisite_note = models.CharField(max_length=300, blank=True,
-        help_text='e.g. "Complete Foundation before joining Live Cohort"')
+                                         help_text='e.g. "Complete Foundation before joining Live Cohort"')
     custom_page_slug = models.SlugField(max_length=120, blank=True,
-        help_text='Slug of a DynamicPage to use as the cohort landing page. Leave blank to use default.')
+                                        help_text='Slug of a DynamicPage to use as the cohort landing page. Leave blank to use default.')
     enrolled_students = models.ManyToManyField(
         'accounts.User',
         blank=True,
@@ -327,7 +327,7 @@ class CourseComponent(models.Model):
     is_enabled     = models.BooleanField(default=True)
     is_mandatory   = models.BooleanField(default=False)
     config         = models.JSONField(default=dict, blank=True,
-        help_text='''Component-specific config JSON. Examples:
+                                      help_text='''Component-specific config JSON. Examples:
           video:       {"show_cheatsheet": true, "show_quiz": true}
           mock_test:   {"provider": "testfunda", "redirect_url": "https://..."}
                        {"provider": "own", "exam_slug": "cat"}
@@ -400,11 +400,22 @@ class PricingPlan(models.Model):
 
     @property
     def gst_amount(self):
-        return round(self.price_inr * 18 / 100, 2)
+        # price_inr is already GST-inclusive (confirmed pricing policy) —
+        # this reverse-calculates the GST portion OUT of that total using
+        # the standard backward-GST formula, rather than adding 18% on top
+        # of what's meant to be the final price.
+        return round(self.price_inr * 18 / 118, 2)
+
+    @property
+    def base_price_excl_gst(self):
+        return round(self.price_inr - self.gst_amount, 2)
 
     @property
     def total_with_gst(self):
-        return self.price_inr + self.gst_amount
+        # price_inr already includes GST, so the "total" a customer pays is
+        # just price_inr itself — kept as its own property since the
+        # checkout page displays it explicitly as the breakdown's "Total" line.
+        return self.price_inr
 
 
 class PlanFeature(models.Model):
@@ -557,7 +568,7 @@ class SiteSettings(models.Model):
     # Payment
     razorpay_key_id   = models.CharField(max_length=80, blank=True)
     razorpay_secret   = models.CharField(max_length=80, blank=True,
-        help_text='Store in env var, not here. This is a reminder field only.')
+                                         help_text='Store in env var, not here. This is a reminder field only.')
 
     # CDN / Media
     bunny_cdn_url     = models.URLField(default='https://gradskool.b-cdn.net', blank=True)
@@ -596,7 +607,7 @@ class SiteSettings(models.Model):
 
     # Coupon codes (stored as JSON)
     coupons_json   = models.TextField(default='[]', blank=True,
-        help_text='JSON array of coupon objects. Managed via admin panel.')
+                                      help_text='JSON array of coupon objects. Managed via admin panel.')
 
     # Announcement banner
     announcement_text   = models.CharField(max_length=300, blank=True)
@@ -607,7 +618,7 @@ class SiteSettings(models.Model):
     # Meta
     site_name      = models.CharField(max_length=60, default='GRADSKOOL')
     site_tagline   = models.CharField(max_length=200,
-        default="India's Most Structured MBA Entrance Preparation")
+                                      default="India's Most Structured MBA Entrance Preparation")
     maintenance_mode = models.BooleanField(default=False)
     updated_at     = models.DateTimeField(auto_now=True)
 
@@ -677,14 +688,14 @@ class MockScheduleEntry(models.Model):
     entry_type  = models.CharField(max_length=20, choices=TYPE_CHOICES, default='full_length')
     name        = models.CharField(max_length=100)  # 'iCAT 30', 'Set 10'
     release_date= models.DateTimeField(null=True, blank=True,
-        help_text='Leave blank = available immediately (free/always-on)')
+                                       help_text='Leave blank = available immediately (free/always-on)')
     is_free     = models.BooleanField(default=False)
     duration_mins = models.IntegerField(default=120,
-        help_text='120 for full-length, 40 for sectional')
+                                        help_text='120 for full-length, 40 for sectional')
     sort_order  = models.IntegerField(default=0)
     is_active   = models.BooleanField(default=True)
     testfunda_url = models.URLField(blank=True,
-        help_text='Override testfunda URL for this specific test')
+                                    help_text='Override testfunda URL for this specific test')
 
     class Meta:
         db_table = 'mock_schedule'
@@ -763,13 +774,13 @@ class DynamicPage(models.Model):
       divider     → Visual separator
     """
     slug        = models.SlugField(max_length=80, unique=True,
-        help_text='URL path: /p/[slug]. Use lowercase, hyphens only.')
+                                   help_text='URL path: /p/[slug]. Use lowercase, hyphens only.')
     title       = models.CharField(max_length=200,
-        help_text='Internal title shown in admin panel (not on page unless hero block uses it)')
+                                   help_text='Internal title shown in admin panel (not on page unless hero block uses it)')
     is_active   = models.BooleanField(default=True,
-        help_text='Inactive pages show 404 to visitors')
+                                      help_text='Inactive pages show 404 to visitors')
     blocks      = models.JSONField(default=list,
-        help_text='Array of block objects. Each block has type + content fields.')
+                                   help_text='Array of block objects. Each block has type + content fields.')
 
     # SEO
     meta_title  = models.CharField(max_length=60, blank=True)
@@ -779,7 +790,7 @@ class DynamicPage(models.Model):
     created_at  = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
     created_by  = models.CharField(max_length=100, blank=True,
-        help_text='Admin username who created this page')
+                                   help_text='Admin username who created this page')
 
     class Meta:
         db_table = 'dynamic_pages'
@@ -806,16 +817,16 @@ class MockCredential(models.Model):
         help_text='Which exam these credentials are for (CAT, XAT, SNAP etc)'
     )
     username    = models.CharField(max_length=100,
-        help_text='Testfunda username / email for the student')
+                                   help_text='Testfunda username / email for the student')
     password    = models.CharField(max_length=100,
-        help_text='Testfunda password — stored in plain text for display to student')
+                                   help_text='Testfunda password — stored in plain text for display to student')
     platform_url= models.URLField(blank=True,
-        help_text='Direct URL to the testfunda mock portal for this exam')
+                                  help_text='Direct URL to the testfunda mock portal for this exam')
     note        = models.TextField(blank=True,
-        help_text='Any note to show the student — e.g. "Access all 30 CAT mocks here"')
+                                   help_text='Any note to show the student — e.g. "Access all 30 CAT mocks here"')
     sent_at     = models.DateTimeField(auto_now_add=True)
     sent_by     = models.CharField(max_length=100, blank=True,
-        help_text='Admin username who sent these credentials')
+                                   help_text='Admin username who sent these credentials')
 
     class Meta:
         db_table = 'mock_credentials'
@@ -824,4 +835,3 @@ class MockCredential(models.Model):
     def __str__(self):
         exam_name = self.exam.short_name if self.exam else 'General'
         return f'{self.user.email} — {exam_name} credentials'
-

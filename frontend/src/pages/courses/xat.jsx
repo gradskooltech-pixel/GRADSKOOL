@@ -105,7 +105,7 @@ export default function XATPage() {
             ))}
             <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
               <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹5,999</div>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
             </div>
             <Link href="/checkout?course=xat" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
           </div>
@@ -274,7 +274,7 @@ export default function XATPage() {
       <div className="mob-sticky">
         <div>
           <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>XAT 2026</div>
-          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹5,999 + GST</div>
+          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹5,999 incl. GST</div>
         </div>
         <div style={{ display:'flex', gap:8 }}>
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20XAT" target="_blank" rel="noopener noreferrer"

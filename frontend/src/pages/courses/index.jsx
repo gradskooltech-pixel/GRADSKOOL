@@ -132,7 +132,7 @@ function CourseCard({ c }) {
       </div>
       <div style={{ padding:'0.75rem 1.75rem', borderTop:`1px solid ${hov?'#f0e8e8':'#f0f0ee'}`, background: hov?'#fff8f8':'#fafaf9', display:'flex', alignItems:'center', justifyContent:'space-between', transition:'background 0.18s' }}>
         <span style={{ fontFamily:'Georgia,serif', fontSize:'0.95rem', fontWeight:'700', color: hov ? accent : '#999', transition:'color 0.18s' }}>
-          {c.price} <span style={{ fontFamily:'var(--font-sans)', fontSize:'0.7rem', fontWeight:'400' }}>+ GST</span>
+          {c.price} <span style={{ fontFamily:'var(--font-sans)', fontSize:'0.7rem', fontWeight:'400' }}>incl. GST</span>
         </span>
         <span style={{ fontFamily:'var(--font-sans)', fontSize:'0.78rem', fontWeight:'600', color: hov ? accent : '#ccc', transform: hov?'translateX(3px)':'none', transition:'all 0.18s', display:'inline-block' }}>
           View Course →

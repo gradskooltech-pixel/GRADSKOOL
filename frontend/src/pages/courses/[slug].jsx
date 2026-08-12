@@ -446,7 +446,7 @@ function MobileStickyBar({ slug, price }) {
           </div>
           <div style={{ fontFamily:'Georgia,serif', fontSize:'1.4rem', fontWeight:'700', color:'#ffffff', lineHeight:'1' }}>
             ₹{price}
-            <span style={{ fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'300', color:'#666', marginLeft:'0.3rem' }}>+ GST</span>
+            <span style={{ fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'300', color:'#666', marginLeft:'0.3rem' }}>incl. GST</span>
           </div>
         </div>
         <Link href={`/checkout/${slug}`} style={{
@@ -588,7 +588,7 @@ export default function ExamPage({ exam, plans, cohorts = [] }) {
               <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.68rem', fontWeight:'500', letterSpacing:'0.1em', textTransform:'uppercase', color:C.gray400, marginBottom:'0.5rem' }}>Live Cohort \u2014 Starting From</div>
               <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.62rem', fontWeight:'500', letterSpacing:'0.08em', textTransform:'uppercase', color:C.gray400, marginBottom:'0.3rem' }}>Starting from</div>
               <div style={{ fontFamily:'Georgia,serif', fontSize:'2.8rem', color:'#fff', fontWeight:'700', lineHeight:'1', marginBottom:'0.4rem' }}>
-                ₹27,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>+ GST</sub>
+                ₹27,999 <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.9rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.25rem' }}>incl. GST</sub>
               </div>
               <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.78rem', color:'#555', lineHeight:'1.5' }}>
                 Live plans <span style={{ color:'#777' }}>₹27,999 – ₹34,999</span>
@@ -1099,7 +1099,7 @@ function PricingCard({ plan, slug }) {
         <div style={{ fontFamily:'Georgia,serif', fontSize:'2.8rem', color: plan.featured ? '#fff' : C.black, fontWeight:'700', lineHeight:'1' }}>
           <sup style={{ fontSize:'1.2rem', verticalAlign:'super' }}>\u20b9</sup>
           {plan.price}
-          <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.85rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.2rem' }}>+ GST</sub>
+          <sub style={{ fontFamily:'var(--font-sans)', fontSize:'0.85rem', fontWeight:'300', color:C.gray400, verticalAlign:'baseline', marginLeft:'0.2rem' }}>incl. GST</sub>
         </div>
         <div style={{ fontFamily:'Georgia,serif', fontSize:'0.82rem', color:C.gray400, marginTop:'0.3rem' }}>{plan.note}</div>
       </div>

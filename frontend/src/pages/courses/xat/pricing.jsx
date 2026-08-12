@@ -47,7 +47,7 @@ export default function XatPricingPage() {
           {['100+ hours of live two-way sessions','6 full-length XAT tests','Post-test strategic analysis','Decision Making special sessions','Session PDFs + cheat sheets','Doubt resolution sessions','PI WAT GD prep for XLRI'].map(item => (
             <div key={item} className="pr-feature"><span style={{ color:'var(--red)' }}>—</span><span>{item}</span></div>
           ))}
-          <div className="pr-card-price">₹5,999<span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginLeft:8 }}>+ GST</span></div>
+          <div className="pr-card-price">₹5,999<span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginLeft:8 }}>incl. GST</span></div>
           <Link href="/checkout?course=xat" className="pr-card-cta">Enrol Now →</Link>
         </div>
 

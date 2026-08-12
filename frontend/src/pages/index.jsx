@@ -361,7 +361,7 @@ export default function Home() {
               <div style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:4 }}>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:2 }}>Base price</div>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:42, fontWeight:400, color:'var(--black)', lineHeight:1 }}>₹27,999</div>
-                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:12 }}>+ GST</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginBottom:12 }}>incl. GST</div>
                 <Link href="/checkout?course=cat&plan=live-mocks" className="btn btn-red">Enrol Now →</Link>
               </div>
             </div>

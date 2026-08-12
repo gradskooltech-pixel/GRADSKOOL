@@ -186,7 +186,7 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                   <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:24 }}>
                     <div style={{ display:'flex', justifyContent:'space-between', fontFamily:'var(--font-sans)', fontSize:13.5, color:'var(--g700)' }}>
                       <span>Base price</span>
-                      <span>₹{Number(selectedPlan.price_inr).toLocaleString('en-IN')}</span>
+                      <span>₹{Number(selectedPlan.base_price_excl_gst).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
                     </div>
                     <div style={{ display:'flex', justifyContent:'space-between', fontFamily:'var(--font-sans)', fontSize:13.5, color:'var(--g700)' }}>
                       <span>GST (18%)</span>
@@ -269,7 +269,7 @@ function PlanOption({ plan, isSelected, onSelect }) {
             <span style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g300)', textDecoration:'line-through' }}>₹{Number(plan.original_price).toLocaleString('en-IN')}</span>
           )}
           <span style={{ fontFamily:'var(--font-serif)', fontSize:19, fontWeight:600, color:'var(--black)' }}>₹{Number(plan.price_inr).toLocaleString('en-IN')}</span>
-          <span style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}> + GST</span>
+          <span style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}> incl. GST</span>
         </div>
       </div>
     </button>

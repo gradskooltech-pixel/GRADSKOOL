@@ -134,7 +134,7 @@ export default function SNAPPage() {
               ))}
               <div style={{ marginTop:16, display:'flex', alignItems:'baseline', gap:10, borderTop:'var(--border)', paddingTop:16, marginBottom:16 }}>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)' }}>₹1,499</div>
-                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
               </div>
               <Link href="/checkout?course=snap" className="btn btn-outline" style={{ width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
             </div>

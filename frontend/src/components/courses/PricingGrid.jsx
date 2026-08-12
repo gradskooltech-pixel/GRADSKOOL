@@ -63,7 +63,7 @@ function PlanCard({ plan, onEnrol }) {
 
         <div style={s.price}>
           ₹{Number(plan.price_inr).toLocaleString('en-IN')}
-          <span style={s.priceSub}> + GST</span>
+          <span style={s.priceSub}> incl. GST</span>
         </div>
 
         {plan.description && (

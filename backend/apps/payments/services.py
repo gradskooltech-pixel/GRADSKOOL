@@ -63,12 +63,17 @@ def create_razorpay_order(user, plan: PricingPlan) -> dict:
     """
     # Guard: already enrolled
     if Enrollment.objects.filter(
-        user=user, plan=plan, status='active'
+            user=user, plan=plan, status='active'
     ).exists():
         raise ValueError('You are already enrolled in this plan.')
 
-    gst  = (plan.price_inr * GST_RATE).quantize(Decimal('0.01'))
-    total = plan.price_inr + gst
+    # price_inr is already GST-inclusive (confirmed pricing policy) — the
+    # actual amount charged to the customer is price_inr itself. GST here
+    # is reverse-calculated OUT of that total (standard backward-GST
+    # formula) purely for the Order record's accounting/invoice breakdown —
+    # it must NOT be added on top, or customers get overcharged ~18%.
+    gst   = (plan.price_inr * GST_RATE / (1 + GST_RATE)).quantize(Decimal('0.01'))
+    total = plan.price_inr
     amount_paise = int(total * 100)
 
     rz_order = _razorpay_client().order.create({
@@ -87,7 +92,7 @@ def create_razorpay_order(user, plan: PricingPlan) -> dict:
         user=user,
         plan=plan,
         razorpay_order_id=rz_order['id'],
-        amount_inr=plan.price_inr,
+        amount_inr=plan.price_inr - gst,
         gst_amount=gst,
         total_amount=total,
     )
@@ -118,8 +123,8 @@ def create_razorpay_order(user, plan: PricingPlan) -> dict:
 # ── SIGNATURE VERIFICATION ────────────────────────────────────────────────────
 
 def verify_payment_signature(razorpay_order_id: str,
-                              razorpay_payment_id: str,
-                              razorpay_signature: str) -> bool:
+                             razorpay_payment_id: str,
+                             razorpay_signature: str) -> bool:
     """
     Verify the HMAC-SHA256 signature sent by Razorpay to the frontend
     after payment. This is a secondary client-side check.

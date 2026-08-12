@@ -157,7 +157,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
                       <div style={s.enrolPrice}>
                         <span style={s.enrolCurrency}>₹</span>
                         <span style={s.enrolAmount}>{enrolPrice}</span>
-                        <span style={s.enrolGst}>+ GST</span>
+                        <span style={s.enrolGst}>incl. GST</span>
                       </div>
                       {enrolNote && <p style={s.enrolNote}>{enrolNote}</p>}
                     </>
@@ -591,7 +591,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
                   <div style={s.planPriceRow}>
                     <span style={{ ...s.planCurrency, color: plan.featured?C.red:C.gray400 }}>₹</span>
                     <span style={{ ...s.planPrice, color: plan.featured?C.red:C.black }}>{plan.price}</span>
-                    <span style={s.planGst}>+ GST</span>
+                    <span style={s.planGst}>incl. GST</span>
                   </div>
                   {plan.note && <p style={s.planNote}>{plan.note}</p>}
                   <div style={s.planFeatures}>

@@ -94,7 +94,7 @@ export default function NMATSnapBundlePage() {
             <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
               <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹2,499</div>
               <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', textDecoration:'line-through' }}>₹2,999</div>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>+ GST</div>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
             </div>
             <Link href="/checkout?course=nmat-snap" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
           </div>
@@ -190,7 +190,7 @@ export default function NMATSnapBundlePage() {
       <div className="mob-sticky">
         <div>
           <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>SNAP + NMAT Bundle</div>
-          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹2,499 + GST</div>
+          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹2,499 incl. GST</div>
         </div>
         <div style={{ display:'flex', gap:8 }}>
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20the%20SNAP%20%2B%20NMAT%20bundle" target="_blank" rel="noopener noreferrer"

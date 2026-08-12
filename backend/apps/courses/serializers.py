@@ -70,6 +70,7 @@ class PricingPlanSerializer(serializers.ModelSerializer):
     features    = PlanFeatureSerializer(many=True, read_only=True)
     discount_pct = serializers.ReadOnlyField()
     gst_amount   = serializers.ReadOnlyField()
+    base_price_excl_gst = serializers.ReadOnlyField()
     total_with_gst = serializers.ReadOnlyField()
 
     class Meta:
@@ -83,7 +84,7 @@ class PricingPlanSerializer(serializers.ModelSerializer):
             'mock_exams_covered',
             'razorpay_sku',
             'features',
-            'discount_pct', 'gst_amount', 'total_with_gst',
+            'discount_pct', 'gst_amount', 'base_price_excl_gst', 'total_with_gst',
         ]
 
 
