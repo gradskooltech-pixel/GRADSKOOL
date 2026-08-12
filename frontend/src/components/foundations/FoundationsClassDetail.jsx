@@ -90,6 +90,28 @@ function PdfCard({ pdf, color }) {
   )
 }
 
+function StickyMocksCard({ meta }) {
+  if (!meta.mocksCheckoutUrl) return null
+  return (
+    <div style={{ border:`2px solid ${meta.color}`, borderRadius:8, overflow:'hidden', background:'#fff' }}>
+      <div style={{ padding:'18px 18px 14px' }}>
+        <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.08em', textTransform:'uppercase', color:meta.color, marginBottom:8 }}>
+          Ready to test yourself?
+        </div>
+        <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'var(--black)', marginBottom:6, lineHeight:1.3 }}>{meta.name} Mocks</div>
+        <p style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', lineHeight:1.6, marginBottom:14 }}>
+          Full-length mocks, sectionals, and detailed analysis — real exam format.
+        </p>
+        <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', marginBottom:12 }}>{meta.mocksPrice}</div>
+        <Link href={meta.mocksCheckoutUrl}
+          style={{ display:'block', textAlign:'center', fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'11px', background:meta.color, color:'#fff', borderRadius:4, textDecoration:'none' }}>
+          Buy Mocks →
+        </Link>
+      </div>
+    </div>
+  )
+}
+
 function PrevNext({ prevSlug, nextSlug, listBasePath }) {
   if (!prevSlug && !nextSlug) return null
   return (
@@ -290,21 +312,19 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath }) {
             <div className="lesson-body" dangerouslySetInnerHTML={{ __html: lesson.notes }} />
           )}
 
-          {/* PDFs also listed inline on mobile, since the sidebar collapses
-              below the main column there and would otherwise end up at the
-              very bottom of the page */}
-          {pdfs.length > 0 && (
-            <div className="mobile-only-pdfs" style={{ display:'none', flexDirection:'column', gap:16 }}>
-              {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} color={meta.color} />)}
-            </div>
-          )}
-        </div>
-
-        {pdfs.length > 0 && (
-          <div className="sidebar-sticky">
+          {/* Mocks + PDFs also listed inline on mobile, since the sidebar
+              collapses below the main column there and would otherwise end
+              up at the very bottom of the page */}
+          <div className="mobile-only-pdfs" style={{ display:'none', flexDirection:'column', gap:16 }}>
+            <StickyMocksCard meta={meta} />
             {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} color={meta.color} />)}
           </div>
-        )}
+        </div>
+
+        <div className="sidebar-sticky">
+          <StickyMocksCard meta={meta} />
+          {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} color={meta.color} />)}
+        </div>
       </div>
       <style>{`
         @media(max-width:960px){

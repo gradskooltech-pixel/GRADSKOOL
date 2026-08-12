@@ -13,8 +13,8 @@ import PageSEO from '../../components/seo/PageSEO'
 import { FoundationsListing } from '../../components/foundations/FoundationsListing'
 
 const EXAM_META = {
-  xat: { name:'XAT', full:'Xavier Aptitude Test', color:'#5b3fa0', course:'/courses/xat', courseLabel:'Full XAT Course', isFullCourse:false },
-  cat: { name:'CAT', full:'Common Admission Test', color:'#d94f50', course:'/courses/cat/cathlete', courseLabel:'CAThlete — Full CAT Course', isFullCourse:false },
+  xat: { name:'XAT', full:'Xavier Aptitude Test', color:'#5b3fa0', course:'/courses/xat', courseLabel:'Full XAT Course', isFullCourse:false, mocksCheckoutUrl:'/checkout?course=xat&plan=mocks', mocksPrice:'₹499' },
+  cat: { name:'CAT', full:'Common Admission Test', color:'#d94f50', course:'/courses/cat/cathlete', courseLabel:'CAThlete — Full CAT Course', isFullCourse:false, mocksCheckoutUrl:'/checkout?course=cat&plan=cat-mocks', mocksPrice:'₹2,999' },
 }
 
 export default function FoundationsPage({ exam }) {

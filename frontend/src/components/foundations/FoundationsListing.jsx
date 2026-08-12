@@ -535,11 +535,17 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                           </div>
                           <Countdown iso={cls.scheduled_at} />
                         </div>
-                        <div style={{ textAlign:'right', flexShrink:0 }}>
+                        <div style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', gap:8 }}>
                           <Link href={`${readBasePath}/${cls.slug}`}
                             style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'#ff4444', color:'#fff', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
                             View class →
                           </Link>
+                          {meta.mocksCheckoutUrl && (
+                            <Link href={meta.mocksCheckoutUrl}
+                              style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'transparent', color:'#fff', border:'1px solid rgba(255,255,255,.3)', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
+                              Buy Mocks →
+                            </Link>
+                          )}
                         </div>
                       </div>
                     ))}
