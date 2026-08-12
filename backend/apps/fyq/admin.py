@@ -1,52 +1,53 @@
 """
-GRADSKOOL — Foundations Django Admin
+GRADSKOOL — FYQ Django Admin
 
-Neither model was registered before, so Foundation Series and Foundation
-Classes were invisible in /admin/ — the custom admin panel at
-/admin-panel/foundations is still the primary way to manage this content
-day to day, this is the fallback/bulk-edit view via Django admin itself.
+None of these 4 models were registered before, so the whole FYQ hierarchy
+(Section → Category → Topic → Question) was invisible in /admin/ — the
+custom admin panel at /admin-panel/fyq is still the primary way to manage
+this content day to day, this is the fallback/bulk-edit view via Django
+admin itself.
 """
 from django.contrib import admin
-from .models import FoundationSeries, FoundationClass
+from .models import FYQSection, FYQCategory, FYQTopic, FYQQuestion
 
 
-class FoundationClassInline(admin.TabularInline):
-    model = FoundationClass
-    extra = 0
-    fields = ('lesson_number', 'title', 'scheduled_at', 'youtube_url', 'is_published')
-    ordering = ('lesson_number',)
-    show_change_link = True
+@admin.register(FYQSection)
+class FYQSectionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'order', 'has_categories')
+    list_editable = ('order', 'has_categories')
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ('order', 'name')
 
 
-@admin.register(FoundationSeries)
-class FoundationSeriesAdmin(admin.ModelAdmin):
-    list_display = ('title', 'exams_display', 'is_active', 'order', 'created_at')
-    list_filter = ('is_active',)
-    list_editable = ('order', 'is_active')
-    search_fields = ('title',)
-    prepopulated_fields = {'slug': ('title',)}
-    ordering = ('order', 'created_at')
-    inlines = [FoundationClassInline]
-
-    @admin.display(description='Exams')
-    def exams_display(self, obj):
-        return ', '.join(e.upper() for e in (obj.exams or [])) or '—'
+@admin.register(FYQCategory)
+class FYQCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'section', 'order')
+    list_filter = ('section',)
+    list_editable = ('order',)
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ('section', 'order', 'name')
 
 
-@admin.register(FoundationClass)
-class FoundationClassAdmin(admin.ModelAdmin):
-    list_display = ('lesson_number', 'title', 'series', 'scheduled_at', 'is_upcoming', 'has_recording', 'is_published')
-    list_filter = ('series', 'is_published')
+@admin.register(FYQTopic)
+class FYQTopicAdmin(admin.ModelAdmin):
+    list_display = ('name', 'section', 'category', 'order', 'question_count')
+    list_filter = ('section', 'category')
+    list_editable = ('order',)
+    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name',)
+    ordering = ('section', 'order', 'name')
+
+
+@admin.register(FYQQuestion)
+class FYQQuestionAdmin(admin.ModelAdmin):
+    list_display = ('question_number', 'title', 'topic', 'is_published', 'has_video', 'updated_at')
+    list_filter = ('is_published', 'topic__section')
     list_editable = ('is_published',)
-    search_fields = ('title', 'slug')
+    search_fields = ('title', 'slug', 'question_number')
     prepopulated_fields = {'slug': ('title',)}
-    ordering = ('series', 'lesson_number')
-    autocomplete_fields = ('series',)
+    ordering = ('-question_number',)
+    autocomplete_fields = ('topic',)
 
-    @admin.display(boolean=True, description='Upcoming')
-    def is_upcoming(self, obj):
-        return obj.is_upcoming
-
-    @admin.display(boolean=True, description='Has Recording')
-    def has_recording(self, obj):
-        return obj.has_recording
+    @admin.display(boolean=True, description='Video')
+    def has_video(self, obj):
+        return bool(obj.youtube_url)
