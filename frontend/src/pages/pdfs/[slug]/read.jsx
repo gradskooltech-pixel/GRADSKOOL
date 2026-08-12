@@ -28,7 +28,7 @@ export default function PdfReaderPage() {
   // Redirect unauthenticated users straight to login, preserving the reader as the return target
   useEffect(() => {
     if (!authLoading && !isLoggedIn) {
-      router.replace(`/auth/login?redirect=/pdfs/${slug}/read`)
+      router.replace(`/auth/login?redirect=${encodeURIComponent(`/pdfs/${slug}/read`)}`)
     }
   }, [authLoading, isLoggedIn, slug, router])
 

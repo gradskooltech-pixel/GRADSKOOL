@@ -57,12 +57,12 @@ export default function CheckoutPage() {
           || plansArr[0]
         if (preselect) setSelectedId(preselect.id)
       })
-      .catch(() => {})
+      .catch((err) => { console.error('Failed to load plans for', examSlug, err) })
       .finally(() => setIsLoading(false))
 
     api.get(`/courses/exams/${examSlug}/`)
       .then(({ data }) => setExamName(data.name))
-      .catch(() => {})
+      .catch((err) => { console.error('Failed to load exam details for', examSlug, err) })
   }, [examSlug, planIdParam])
 
   const selectedPlan = plans.find(p => p.id === selectedId)
@@ -201,13 +201,13 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                   {!isLoggedIn ? (
                     <div style={{ display:'flex', flexDirection:'column', gap:12, padding:20, background:'var(--off)', border:'1px solid var(--g200)', borderRadius:4 }}>
                       <p style={{ fontFamily:'var(--font-sans)', fontSize:13.5, color:'var(--g700)' }}>You'll need an account to complete your purchase.</p>
-                      <Link href={`/auth/register?redirect=/checkout/${examSlug}?plan=${selectedPlan.id}`}
+                      <Link href={`/auth/register?redirect=${encodeURIComponent(`/checkout/${examSlug}?plan=${selectedPlan.id}`)}`}
                         style={{ display:'block', textAlign:'center', padding:12, background:'var(--black)', color:'#fff', borderRadius:3, fontFamily:'var(--font-sans)', fontSize:14, fontWeight:600, textDecoration:'none' }}>
                         Create free account →
                       </Link>
                       <p style={{ textAlign:'center', fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)' }}>
                         Already have an account?{' '}
-                        <Link href={`/auth/login?redirect=/checkout/${examSlug}?plan=${selectedPlan.id}`} style={{ color:'var(--red)', borderBottom:'1px solid rgba(217,79,80,.3)' }}>Log in</Link>
+                        <Link href={`/auth/login?redirect=${encodeURIComponent(`/checkout/${examSlug}?plan=${selectedPlan.id}`)}`} style={{ color:'var(--red)', borderBottom:'1px solid rgba(217,79,80,.3)' }}>Log in</Link>
                       </p>
                     </div>
                   ) : (

@@ -14,22 +14,17 @@ export function ProtectedRoute({ children, requireRole = null }) {
   const router = useRouter()
 
   useEffect(() => {
-    if (isLoading) return
+    if (isLoading || !router.isReady) return
 
     if (!isLoggedIn) {
-      // Use router.asPath but only if it doesn't contain unresolved brackets
-      // (brackets = params not yet resolved = fallback to /dashboard after login)
-      const currentPath = router.asPath
-      const hasUnresolvedParams = currentPath.includes('[') || currentPath.includes(']')
-      const redirectTo = hasUnresolvedParams ? '/dashboard' : currentPath
-      router.replace(`/auth/login?redirect=${encodeURIComponent(redirectTo)}`)
+      router.replace(`/auth/login?redirect=${encodeURIComponent(router.asPath)}`)
       return
     }
 
     if (requireRole && user?.role !== requireRole) {
       router.replace('/dashboard')
     }
-  }, [isLoggedIn, isLoading, requireRole, user, router])
+  }, [isLoggedIn, isLoading, requireRole, user, router, router.isReady])
 
   if (isLoading || !isLoggedIn) {
     return (

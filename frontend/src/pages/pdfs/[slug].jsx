@@ -47,7 +47,7 @@ export default function PdfDetailPage() {
 
   const handleBuy = async () => {
     if (!isLoggedIn) {
-      router.push(`/auth/login?redirect=/pdfs/${slug}`)
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/pdfs/${slug}`)}`)
       return
     }
     setState('loading')
@@ -91,7 +91,7 @@ export default function PdfDetailPage() {
   // phone number — this is the one place that captures it.
   const startClaim = () => {
     if (!isLoggedIn) {
-      router.push(`/auth/login?redirect=/pdfs/${slug}`)
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/pdfs/${slug}`)}`)
       return
     }
     if (user?.phone) {
