@@ -101,7 +101,7 @@ export function Navbar() {
             <Link href="/blog"  className="gs-nav-link">Blog</Link>
             <Link href="/free" className="gs-nav-link">Free Classes</Link>
             <Link href="/fyqs" className="gs-nav-link">FYQs</Link>
-            <Link href="/pdfs" className="gs-nav-link">PDFs</Link>
+            <Link href="/downloads" className="gs-nav-link">Downloads</Link>
             <Link href="/about" className="gs-nav-link">About</Link>
             <Link href="/results"  className="gs-nav-link">Results</Link>
           </div>
@@ -131,7 +131,7 @@ export function Navbar() {
           <Link href="/blog"   className="gs-mob-link">Blog</Link>
           <Link href="/free" className="gs-mob-link">Free Classes</Link>
           <Link href="/fyqs" className="gs-mob-link">FYQs</Link>
-          <Link href="/pdfs" className="gs-mob-link">PDFs</Link>
+          <Link href="/downloads" className="gs-mob-link">Downloads</Link>
           <Link href="/about"  className="gs-mob-link">About ALP Sir</Link>
           <Link href="/results"   className="gs-mob-link">Results</Link>
         </div>

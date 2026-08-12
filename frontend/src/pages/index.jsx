@@ -94,34 +94,10 @@ const S = `
   /* Mobile sticky */
   .mob-sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:998;background:#fff;border-top:var(--border);padding:12px 20px;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,.1)}
   @media(max-width:960px){.mob-sticky{display:flex} .wa-float{bottom:86px;right:16px;padding:11px 18px;font-size:12px}}
-  /* Proof popup */
-  .proof-popup{position:fixed;bottom:28px;left:28px;z-index:997;background:#fff;border:var(--border);border-radius:6px;padding:14px 18px 14px 14px;box-shadow:var(--shadow);max-width:290px;display:none;align-items:center;gap:12px}
-  .proof-popup.visible{display:flex;animation:slideUp .4s ease}
-  @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  @media(max-width:960px){.proof-popup{bottom:86px;left:16px}}
   /* Countdown strip */
   .cd-strip{background:var(--black);padding:10px 0;text-align:center;border-bottom:var(--border)}
   .cd-block{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:4px 10px;min-width:50px}
 `
-
-const PROOFS = [
-  {name:'Kavya R.',detail:'enrolled in CAThlete',time:'2 min ago',city:'Mumbai'},
-  {name:'Arjun S.',detail:'enrolled in CAThlete',time:'11 min ago',city:'Delhi'},
-  {name:'Priya M.',detail:'started GMAT preparation',time:'24 min ago',city:'Bangalore'},
-  {name:'Rohan K.',detail:'enrolled in CATalysis 2027',time:'38 min ago',city:'Pune'},
-  {name:'Sneha T.',detail:'enrolled in CAThlete',time:'1 hr ago',city:'Hyderabad'},
-  {name:'Aditya V.',detail:'enrolled in CATalysis 2027',time:'6 min ago',city:'Chennai'},
-  {name:'Meera J.',detail:'started ALPgebra',time:'17 min ago',city:'Ahmedabad'},
-  {name:'Karan D.',detail:'enrolled in XAT Full Course',time:'29 min ago',city:'Kolkata'},
-  {name:'Ishita P.',detail:'started GMAT preparation',time:'44 min ago',city:'Jaipur'},
-  {name:'Varun N.',detail:'enrolled in CAThlete',time:'52 min ago',city:'Mumbai'},
-  {name:'Ananya B.',detail:'enrolled in SNAP Mocks',time:'8 min ago',city:'Pune'},
-  {name:'Siddharth L.',detail:'enrolled in NMAT Mocks',time:'19 min ago',city:'Delhi'},
-  {name:'Tanvi G.',detail:'started ALPgebra',time:'33 min ago',city:'Bangalore'},
-  {name:'Yash M.',detail:'enrolled in CATalysis 2027',time:'47 min ago',city:'Indore'},
-  {name:'Riya K.',detail:'enrolled in CAThlete',time:'1 hr ago',city:'Chandigarh'},
-  {name:'Nikhil T.',detail:'enrolled in XAT Full Course',time:'1 hr ago',city:'Lucknow'},
-]
 
 const TESTIMONIALS = [
   { text:"Being part of GRADSKOOL has been a completely different learning experience. Each class is structured so a topic feels truly completed. Learning from ALP Sir is something special — he explains every topic from multiple perspectives and builds the right way of thinking, not just the right answers.", name:'Keshav Mundra', detail:'GMAT Cohort' },
@@ -154,8 +130,6 @@ const BLOGS = [
 
 export default function Home() {
   const [countdown, setCountdown] = useState({ d:0, h:'00', m:'00', s:'00' })
-  const [proof, setProof] = useState(null)
-  const [proofVisible, setProofVisible] = useState(false)
 
   // Countdown to CAT 2026 — 29 Nov 2026 09:00 IST (the actual upcoming exam;
   // CAThlete crash-courses toward this. CATalysis is sold as the 2027 cohort
@@ -174,21 +148,6 @@ export default function Home() {
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
-  }, [])
-
-  // Social proof popup
-  useEffect(() => {
-    let lastIdx = -1
-    const show = () => {
-      let idx = Math.floor(Math.random() * PROOFS.length)
-      if (idx === lastIdx) idx = (idx + 1) % PROOFS.length
-      lastIdx = idx
-      setProof(PROOFS[idx])
-      setProofVisible(true)
-      setTimeout(() => { setProofVisible(false); setTimeout(show, 4000) }, 7000)
-    }
-    const t = setTimeout(show, 5000)
-    return () => clearTimeout(t)
   }, [])
 
   // Fade-in observer
@@ -776,21 +735,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-
-      {/* ── SOCIAL PROOF POPUP ── */}
-      {proof && (
-        <div className={`proof-popup${proofVisible ? ' visible' : ''}`}>
-          <div style={{ width:38, height:38, borderRadius:'50%', background:'var(--g100)', border:'var(--border)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-serif)', fontSize:16, color:'var(--g700)', flexShrink:0 }}>
-            {proof.name[0]}
-          </div>
-          <div style={{ flex:1 }}>
-            <div style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--black)', lineHeight:1.3 }}>{proof.name}</div>
-            <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginTop:2 }}>{proof.detail}</div>
-            <div style={{ fontFamily:'var(--font-sans)', fontSize:10, color:'var(--g300)', marginTop:4 }}>{proof.time} · {proof.city}</div>
-          </div>
-          <button onClick={() => setProofVisible(false)} style={{ position:'absolute', top:8, right:10, fontSize:14, color:'var(--g300)', cursor:'pointer', padding:2 }}>✕</button>
-        </div>
-      )}
     </>
   )
 }
