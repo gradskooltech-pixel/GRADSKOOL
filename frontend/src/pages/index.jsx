@@ -3,12 +3,14 @@
  * Matches gradskool.in exactly:
  * Countdown → Hero → Stats → Results Ticker → CATalysis → WhatsApp Results
  * → CAThlete Strip → Other Courses → Self-paced strip → Comparison
- * → Testimonials → Student Stories → Blog → Founder → Final CTA
+ * → Testimonials → Student Stories → Founder → Final CTA → Blog Strip
  */
 import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import PageSEO, { faqSchema, reviewsSchema } from '../components/seo/PageSEO'
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
 /* ─── shared styles injected once ─── */
 const S = `
@@ -120,12 +122,6 @@ const STORIES = [
   { href:'/stories/avivratta-krishna-nmims-mumbai', tag:'NMIMS Convert', tagColor:'#1a6e3c', name:'Avivratta Krishna', college:'NMIMS Mumbai Core', excerpt:'Constant guidance and belief from the GRADSKOOL team throughout the journey.' },
   { href:'/stories/shubhayu-das-nmims-imi-imt', tag:'Multiple Converts', tagColor:'#1a5c8a', name:'Shubhayu Das', college:'NMIMS · IMI · IMT', excerpt:'Working professional. Three converts. GDPI preparation made the difference.' },
   { href:'/stories/dhruv-jangid-imt-ghaziabad', tag:'IMT Convert', tagColor:'#6b3fa0', name:'Dhruv Jangid', college:'IMT Ghaziabad', excerpt:'Structure and clarity. Rigorous sessions and post-mock feedback that changed everything.' },
-]
-
-const BLOGS = [
-  { href:'/blog/cat-varc-rc-strategy', tag:'CAT Strategy', title:'CAT VARC — RC strategy that actually works', excerpt:'The RC section separates good scorers from great ones. A systematic approach to reading comprehension that compounds with every passage.' },
-  { href:'/blog/gmat-focus-edition', tag:'GMAT', title:'GMAT Focus Edition — what changed and how to prepare', excerpt:'Shorter format, no AWA, new Data Insights section. Here is exactly what the new GMAT means for your preparation strategy.' },
-  { href:'/blog/cat-percentile-vs-score', tag:'CAT Strategy', title:'CAT percentile vs score — normalisation explained', excerpt:'Why your raw score is not your percentile, and how the normalisation process works across CAT exam slots.' },
 ]
 
 export default function Home() {
@@ -619,33 +615,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── BLOG ── */}
-        <section className="section">
-          <div className="container">
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:36, flexWrap:'wrap', gap:12 }}>
-              <div>
-                <div className="eyebrow" style={{ marginBottom:12 }}><span className="dot" />From the Blog</div>
-                <h2 className="d-lg">Latest articles</h2>
-              </div>
-              <Link href="/blog" className="link-arr">All articles →</Link>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:36 }}
-              className="blog-grid">
-              <style>{`@media(max-width:960px){.blog-grid{grid-template-columns:1fr!important;gap:24px}}`}</style>
-              {BLOGS.map((b,i) => (
-                <Link key={i} href={b.href} style={{ borderBottom:'var(--border)', paddingBottom:28, display:'block', textDecoration:'none', transition:'opacity var(--t)' }}
-                  onMouseEnter={e=>e.currentTarget.style.opacity='.7'}
-                  onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)', marginBottom:10 }}>{b.tag}</div>
-                  <h3 style={{ fontFamily:'var(--font-serif)', fontSize:17, lineHeight:1.4, color:'var(--black)', marginBottom:10 }}>{b.title}</h3>
-                  <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.8, marginBottom:12 }}>{b.excerpt}</p>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>GRADSKOOL</div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ── FOUNDER ── */}
         <section className="founder-section">
           <div className="founder-l">
@@ -706,6 +675,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <BlogStrip />
       </main>
 
       {/* ── FLOATING WA ── */}
@@ -736,5 +707,124 @@ export default function Home() {
         </div>
       </div>
     </>
+  )
+}
+
+/**
+ * Auto-sliding, manually-controllable blog strip — homepage only, sits
+ * directly above the global Footer. Fetches real posts (not hardcoded)
+ * so it actually grows as new posts are published, and stays meaningful
+ * as a "moving" carousel rather than looping 3 static items forever.
+ */
+function BlogStrip() {
+  const [posts, setPosts] = useState([])
+  const trackRef = useRef(null)
+  const pausedRef = useRef(false)
+  const draggingRef = useRef(false)
+  const dragStartRef = useRef({ x: 0, scrollLeft: 0 })
+
+  useEffect(() => {
+    fetch(`${API}/blog/posts/?page_size=12`)
+      .then(r => r.json())
+      .then(d => setPosts(d.results || []))
+      .catch(() => setPosts([]))
+  }, [])
+
+  // Auto-slide — advances one card-width every 3.5s, loops back to start
+  // at the end. Pauses on hover/drag so it doesn't fight the user.
+  useEffect(() => {
+    if (posts.length === 0) return
+    const id = setInterval(() => {
+      const el = trackRef.current
+      if (!el || pausedRef.current) return
+      const cardWidth = el.firstChild ? el.firstChild.offsetWidth + 20 : 320
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 10
+      el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + cardWidth, behavior: 'smooth' })
+    }, 3500)
+    return () => clearInterval(id)
+  }, [posts])
+
+  const scrollByCard = (dir) => {
+    const el = trackRef.current
+    if (!el) return
+    const cardWidth = el.firstChild ? el.firstChild.offsetWidth + 20 : 320
+    el.scrollBy({ left: dir * cardWidth, behavior: 'smooth' })
+  }
+
+  // Desktop drag-to-scroll — native overflow-x already handles touch/trackpad.
+  const onMouseDown = (e) => {
+    draggingRef.current = true
+    pausedRef.current = true
+    dragStartRef.current = { x: e.pageX, scrollLeft: trackRef.current.scrollLeft }
+  }
+  const onMouseMove = (e) => {
+    if (!draggingRef.current) return
+    e.preventDefault()
+    const dx = e.pageX - dragStartRef.current.x
+    trackRef.current.scrollLeft = dragStartRef.current.scrollLeft - dx
+  }
+  const stopDrag = () => { draggingRef.current = false }
+
+  if (posts.length === 0) return null
+
+  return (
+    <section style={{ padding:'64px 0 80px', borderTop:'var(--border)' }}>
+      <style>{`
+        .blog-strip-track{ scrollbar-width:none; -ms-overflow-style:none; scroll-snap-type:x proximity; }
+        .blog-strip-track::-webkit-scrollbar{ display:none; }
+        .blog-strip-card{ scroll-snap-align:start; }
+        .blog-strip-arrow{ transition:background var(--t); }
+        .blog-strip-arrow:hover{ background:var(--black)!important; color:#fff!important; }
+      `}</style>
+      <div className="container">
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:28, flexWrap:'wrap', gap:12 }}>
+          <div>
+            <div className="eyebrow" style={{ marginBottom:12 }}><span className="dot" />From the Blog</div>
+            <h2 className="d-lg">Latest articles</h2>
+          </div>
+          <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+            <button onClick={() => scrollByCard(-1)} aria-label="Previous" className="blog-strip-arrow"
+              style={{ width:38, height:38, borderRadius:'50%', border:'var(--border)', background:'#fff', color:'var(--black)', cursor:'pointer', fontSize:16 }}>←</button>
+            <button onClick={() => scrollByCard(1)} aria-label="Next" className="blog-strip-arrow"
+              style={{ width:38, height:38, borderRadius:'50%', border:'var(--border)', background:'#fff', color:'var(--black)', cursor:'pointer', fontSize:16 }}>→</button>
+          </div>
+        </div>
+
+        <div
+          ref={trackRef}
+          className="blog-strip-track"
+          onMouseEnter={() => { pausedRef.current = true }}
+          onMouseLeave={() => { pausedRef.current = false; stopDrag() }}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={stopDrag}
+          style={{ display:'flex', gap:20, overflowX:'auto', paddingBottom:8, cursor:'grab' }}
+        >
+          {posts.map(post => (
+            <Link key={post.id} href={`/blog/${post.slug}`} className="blog-strip-card"
+              style={{
+                flex:'0 0 300px', border:'var(--border)', borderRadius:4, padding:24, textDecoration:'none',
+                background:'#fff', display:'flex', flexDirection:'column', gap:10, transition:'transform var(--t), box-shadow var(--t)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.08)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+            >
+              {post.tags?.[0] && (
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)' }}>{post.tags[0].name}</div>
+              )}
+              <h3 style={{ fontFamily:'var(--font-serif)', fontSize:16, lineHeight:1.4, color:'var(--black)' }}>{post.title}</h3>
+              {post.excerpt && <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.7 }}>{post.excerpt}</p>}
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginTop:'auto' }}>
+                {post.read_time_mins ? `${post.read_time_mins} min read` : 'GRADSKOOL'}
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div style={{ textAlign:'center', marginTop:32 }}>
+          <Link href="/blog" className="link-arr">All articles →</Link>
+        </div>
+      </div>
+    </section>
   )
 }
