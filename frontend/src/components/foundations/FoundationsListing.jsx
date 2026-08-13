@@ -485,11 +485,11 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
               : `Free live classes by ALP Sir covering ${meta.name} from the ground up. Attend live or watch the recording — your choice. Notes and resources added to each class page.`}
           </p>
           <div style={{ display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
-            <a href="https://www.youtube.com/@GRADSKOOLCAT" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px 20px', background:'#ff4444', color:'#fff', borderRadius:2, display:'inline-flex', alignItems:'center', gap:8, textDecoration:'none' }}>
-              <svg viewBox="0 0 24 24" fill="currentColor" style={{ width:16,height:16 }}><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              Subscribe on YouTube
-            </a>
+            <button
+              onClick={() => document.getElementById('series-section')?.scrollIntoView({ behavior: 'smooth' })}
+              style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px 20px', background:'#ff4444', color:'#fff', borderRadius:2, display:'inline-flex', alignItems:'center', gap:8, border:'none', cursor:'pointer' }}>
+              Watch Classes ↓
+            </button>
             <a href={`https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20join%20the%20free%20${meta.name}%20classes`}
               target="_blank" rel="noopener noreferrer"
               style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px 20px', background:'transparent', color:'#fff', border:'1px solid #444', borderRadius:2, textDecoration:'none', display:'inline-flex', alignItems:'center', gap:8 }}>
@@ -602,6 +602,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
               {/* ── SECTION VIEW — replaces the normal per-series browsing
                   when a section is selected, since a section can span
                   multiple series and month-grouping still applies. ── */}
+              <div id="series-section" style={{ scrollMarginTop: 80 }} />
               {selectedSectionId ? (() => {
                 const sectionMeta = sections.find(s => s.id === selectedSectionId)
                 const sectionClasses = allClasses.filter(c => c.section_id === selectedSectionId && c.is_published)
