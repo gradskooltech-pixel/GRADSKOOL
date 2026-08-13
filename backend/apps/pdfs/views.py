@@ -165,6 +165,16 @@ class CreatePdfOrderView(APIView):
         except Pdf.DoesNotExist:
             return Response({'error': {'message': 'PDF not found.'}}, status=404)
 
+        # Same requirement as the free-PDF claim flow — a phone number is
+        # captured before purchase, not left to Razorpay's own (often
+        # skipped) checkout form field.
+        phone = (request.data.get('phone') or getattr(request.user, 'phone', '') or '').strip()
+        if not phone or len(phone) < 10:
+            return Response({'error': {'message': 'A valid phone number is required.'}}, status=400)
+        if getattr(request.user, 'phone', '') != phone:
+            request.user.phone = phone
+            request.user.save(update_fields=['phone'])
+
         try:
             order_data = services.create_pdf_order(request.user, pdf)
         except ValueError as e:

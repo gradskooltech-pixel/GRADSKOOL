@@ -68,11 +68,11 @@ export function useCreatePdfOrder() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const createOrder = async (slug) => {
+  const createOrder = async (slug, phone) => {
     setIsLoading(true)
     setError(null)
     try {
-      const { data } = await api.post(`/pdfs/${slug}/create-order/`)
+      const { data } = await api.post(`/pdfs/${slug}/create-order/`, { phone })
       return { success: true, data }
     } catch (err) {
       const msg = err.response?.data?.error?.message || 'Failed to create order.'

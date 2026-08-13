@@ -44,16 +44,28 @@ export default function PdfDetailPage() {
   const [error, setError] = useState('')
   const [phone, setPhone] = useState('')
   const [showPhoneForm, setShowPhoneForm] = useState(false)
+  const [pendingAction, setPendingAction] = useState(null) // 'buy' | 'claim' — which flow the phone form continues
 
-  const handleBuy = async () => {
+  const handleBuy = () => {
     if (!isLoggedIn) {
       router.push(`/auth/login?redirect=${encodeURIComponent(`/pdfs/${slug}`)}`)
       return
     }
+    // Same phone requirement as free-PDF claims — captured up front rather
+    // than left to Razorpay's own checkout form, which often skips it.
+    if (user?.phone) {
+      proceedToPurchase(user.phone)
+    } else {
+      setPendingAction('buy')
+      setShowPhoneForm(true)
+    }
+  }
+
+  const proceedToPurchase = async (phoneValue) => {
     setState('loading')
     setError('')
 
-    const orderResult = await createOrder(slug)
+    const orderResult = await createOrder(slug, phoneValue)
     if (!orderResult.success) {
       setState('error')
       setError(orderResult.error)
@@ -97,6 +109,7 @@ export default function PdfDetailPage() {
     if (user?.phone) {
       handleClaim(user.phone)
     } else {
+      setPendingAction('claim')
       setShowPhoneForm(true)
     }
   }
@@ -112,6 +125,13 @@ export default function PdfDetailPage() {
     }
     setState('idle')
     router.push(`/pdfs/${slug}/read?claimed=1`)
+  }
+
+  // The phone form is shared between both flows — routes to whichever one
+  // triggered it (set in startClaim/handleBuy above).
+  const handlePhoneConfirm = () => {
+    if (pendingAction === 'buy') proceedToPurchase(phone)
+    else handleClaim(phone)
   }
 
   if (isLoading) return <div style={styles.loadingPage}>Loading…</div>
@@ -201,7 +221,9 @@ export default function PdfDetailPage() {
           {showPhoneForm && (
             <div className="pdfd-phone-box">
               <p className="pdfd-phone-label">
-                One quick thing — we'll text you when new {pdf.exam_slug ? pdf.exam_slug.toUpperCase() : ''} PDFs drop.
+                {pendingAction === 'buy'
+                  ? "One quick thing — we need a phone number before checkout, in case we need to reach you about your order."
+                  : `One quick thing — we'll text you when new ${pdf.exam_slug ? pdf.exam_slug.toUpperCase() : ''} PDFs drop.`}
               </p>
               <div className="pdfd-phone-row">
                 <input
@@ -215,10 +237,10 @@ export default function PdfDetailPage() {
                 />
                 <button
                   className="pdfd-btn"
-                  onClick={() => handleClaim(phone)}
+                  onClick={handlePhoneConfirm}
                   disabled={phone.length < 10 || claiming || state === 'loading'}
                 >
-                  {claiming || state === 'loading' ? 'Claiming…' : 'Confirm →'}
+                  {claiming || state === 'loading' ? (pendingAction === 'buy' ? 'Processing…' : 'Claiming…') : 'Confirm →'}
                 </button>
               </div>
             </div>
