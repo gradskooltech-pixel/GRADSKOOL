@@ -96,8 +96,24 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
         {meta?.canonical && <link rel="canonical" href={meta.canonical} />}
       </Head>
 
+      <style>{`
+        @media(max-width:900px) {
+          .ept-hero-row1, .ept-hero-row2 { grid-template-columns:1fr!important; gap:1.5rem!important; }
+          .ept-overview-grid { grid-template-columns:repeat(2,1fr)!important; }
+          .ept-sections-grid, .ept-how-grid, .ept-nine-grid, .ept-elig-grid, .ept-plans-grid, .ept-testimonials-grid, .ept-also-grid {
+            grid-template-columns:1fr!important;
+          }
+        }
+        @media(max-width:640px) {
+          .ept-pad-2rem { padding-left:1.1rem!important; padding-right:1.1rem!important; }
+          .ept-section-pad { padding-left:1.1rem!important; padding-right:1.1rem!important; padding-top:3rem!important; padding-bottom:3rem!important; }
+          .ept-stats-bar { flex-wrap:wrap!important; }
+          .ept-stats-bar > div { flex:1 1 50%!important; border-bottom:1px solid ${C.border}; }
+        }
+      `}</style>
+
       {/* ── BREADCRUMB ─────────────────────────────────────────────────────── */}
-      <div style={s.breadcrumbWrap}>
+      <div style={s.breadcrumbWrap} className="ept-pad-2rem">
         <div style={s.breadcrumbInner}>
           <Link href="/" style={s.breadLink}>Home</Link>
           <span style={s.breadSep}>/</span>
@@ -109,10 +125,10 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section style={s.heroSection}>
-        <div style={s.heroOuter}>
+        <div style={s.heroOuter} className="ept-pad-2rem">
 
           {/* ── ROW 1: Video (left) + Enrol Card (right) ── */}
-          <div style={s.heroRow1}>
+          <div style={s.heroRow1} className="ept-hero-row1">
 
             {/* Video */}
             <div style={s.heroVideoWrap}>
@@ -187,7 +203,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
           </div>
 
           {/* ── ROW 2: Headline (left) + Contact Form (right) ── */}
-          <div style={s.heroRow2}>
+          <div style={s.heroRow2} className="ept-hero-row2">
 
             {/* Left — headline + tagline + stats */}
             <div style={s.heroLeft}>
@@ -274,7 +290,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
       {/* ── STATS BAR ──────────────────────────────────────────────────────── */}
       {heroStats && (
-        <div style={s.statsBar}>
+        <div style={s.statsBar} className="ept-stats-bar">
           {(heroStats||[]).map(([val, lbl]) => (
             <div key={lbl} style={s.statItem}>
               <span style={s.statVal}>{val}</span>
@@ -285,14 +301,14 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
       )}
 
       {/* ── ABOVE THE FOLD — Quick facts shown before tabs ─────────────── */}
-      <div style={{ background:'#fff', borderBottom:`1px solid ${C.border}`, padding:'3rem 2rem' }}>
+      <div style={{ background:'#fff', borderBottom:`1px solid ${C.border}`, padding:'3rem 2rem' }} className="ept-section-pad">
         <div style={s.container}>
 
           {/* Overview cards — exam pattern at a glance */}
           {overview_cards?.length > 0 && (
             <div style={{ marginBottom:'2.5rem' }}>
               <p style={{ ...s.eyebrow, marginBottom:'1rem' }}>Exam at a Glance</p>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'1px', background:C.border, border:`1px solid ${C.border}`, borderRadius:'4px', overflow:'hidden' }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'1px', background:C.border, border:`1px solid ${C.border}`, borderRadius:'4px', overflow:'hidden' }} className="ept-overview-grid">
                 {(overview_cards||[]).slice(0,8).map((card, i) => (
                   <div key={i} style={{ background:'#fff', padding:'1rem 1.25rem' }}>
                     <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.65rem', fontWeight:'700', letterSpacing:'0.08em', textTransform:'uppercase', color:C.gray400, marginBottom:'0.2rem' }}>{card.label}</div>
@@ -326,7 +342,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
       </div>
 
       {/* ── STICKY TABS ──────────────────────────────────────────────────── */}
-      <div style={s.tabsBar}>
+      <div style={s.tabsBar} className="ept-pad-2rem">
         <div style={s.tabsInner}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
@@ -350,7 +366,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
       {tab === 'overview' && (
         <div>
           {/* ── WHAT IS [EXAM] ──────────────────────────────────────────────────── */}
-      <section style={s.section}>
+      <section style={s.section} className="ept-section-pad">
         <div style={s.container}>
           <p style={s.eyebrow}>About the Exam</p>
           <h2 style={s.sectionTitle}>What is {name.split(' ')[0]}?</h2>
@@ -360,7 +376,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
           {/* Section cards */}
           {sections?.length > 0 && (
-            <div style={s.sectionsGrid}>
+            <div style={s.sectionsGrid} className="ept-sections-grid">
               {(sections||[]).map((sec, i) => (
                 <div key={i} style={s.sectionCard}>
                   <p style={s.sectionCardNum}>{sec.num}</p>
@@ -389,7 +405,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
           {/* ── SCORE / PERCENTILE TABLE (optional) ────────────────────────────── */}
       {scoreTable && (
-        <section style={{ ...s.section, background: C.gray50, borderTop: `1px solid ${C.border}` }}>
+        <section style={{ ...s.section, background: C.gray50, borderTop: `1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>{scoreTable.label || 'Score to Percentile'}</p>
             <h2 style={s.sectionTitle}>{scoreTable.title}</h2>
@@ -425,14 +441,14 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
           {/* ── HOW COHORT WORKS ───────────────────────────────────────────────── */}
       {howSteps?.length > 0 && (
-        <section style={{ ...s.section, background:C.black, borderTop:`1px solid #1a1a1a` }}>
+        <section style={{ ...s.section, background:C.black, borderTop:`1px solid #1a1a1a` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={{ ...s.eyebrow, color:C.red }}>The Process</p>
             <h2 style={{ ...s.sectionTitle, color:'#fff' }}>How a GRADSKOOL Cohort Works</h2>
             <p style={{ fontFamily:'Georgia,serif', fontSize:'1rem', color:C.gray400, maxWidth:'560px', marginBottom:'3rem', lineHeight:'1.75' }}>
               Every week follows the same proven rhythm — so nothing falls through the cracks.
             </p>
-            <div style={s.howGrid}>
+            <div style={s.howGrid} className="ept-how-grid">
               {(howSteps||[]).map((step, i) => (
                 <div key={i} style={s.howCard}>
                   <span style={s.howNum}>{step.num}</span>
@@ -446,14 +462,14 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
       )}
 
           {/* ── 9-STAGE FRAMEWORK ──────────────────────────────────────────────── */}
-      <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }}>
+      <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
         <div style={s.container}>
           <p style={s.eyebrow}>How We Teach</p>
           <h2 style={s.sectionTitle}>The 9-Stage Learning Framework</h2>
           <p style={s.sectionDesc}>
             At GRADSKOOL, every topic follows a structured 9-stage loop — from first introduction to zero-doubt mastery. No step is skipped. No concept is left half-understood.
           </p>
-          <div style={s.nineGrid}>
+          <div style={s.nineGrid} className="ept-nine-grid">
             {NINE_STAGES.map((st, i) => (
               <div key={i} style={{ ...s.nineCard, borderColor: st.type==='live' ? C.red : C.border }}>
                 <span style={{ ...s.nineNum, color: st.type==='live' ? C.red : C.gray400 }}>{st.num}</span>
@@ -475,7 +491,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
         <div>
           {/* ── CURRICULUM ─────────────────────────────────────────────────────── */}
       {curriculum?.length > 0 && (
-        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }} id="curriculum">
+        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }} className="ept-section-pad" id="curriculum">
           <div style={s.container}>
             <p style={s.eyebrow}>What You'll Learn</p>
             <h2 style={s.sectionTitle}>Course Curriculum</h2>
@@ -516,11 +532,11 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
         <div>
           {/* ── ELIGIBILITY ────────────────────────────────────────────────────── */}
       {eligibility?.length > 0 && (
-        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }}>
+        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>Who Can Apply</p>
             <h2 style={s.sectionTitle}>{name.split(' ')[0]} Eligibility Criteria</h2>
-            <div style={s.eligGrid}>
+            <div style={s.eligGrid} className="ept-elig-grid">
               {(eligibility||[]).map((item, i) => (
                 <div key={i} style={s.eligCard}>
                   <span style={s.eligIcon}>{item.icon || '✓'}</span>
@@ -537,7 +553,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
           {/* ── KEY DATES ──────────────────────────────────────────────────────── */}
       {key_dates?.length > 0 && (
-        <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }}>
+        <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>Plan Your Prep</p>
             <h2 style={s.sectionTitle}>{name.split(' ')[0]} Important Dates</h2>
@@ -567,7 +583,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
         <div>
           {/* ── PLANS & PRICING ────────────────────────────────────────────────── */}
       {plans?.length > 0 && (
-        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }}>
+        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>Plans & Pricing</p>
             <h2 style={s.sectionTitle}>{name.split(' ')[0]} — Plans & Pricing</h2>
@@ -579,7 +595,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
                 </Link>
               </p>
             )}
-            <div style={{ ...s.plansGrid, gridTemplateColumns: `repeat(${Math.min(plans.length,3)},1fr)` }}>
+            <div style={{ ...s.plansGrid, gridTemplateColumns: `repeat(${Math.min(plans.length,3)},1fr)` }} className="ept-plans-grid">
               {(plans||[]).map((plan, i) => (
                 <div key={i} style={{ ...s.planCard, ...(plan.featured ? s.planFeatured : {}) }}>
                   {plan.badge && (
@@ -620,11 +636,11 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
         <div>
           {/* ── TESTIMONIALS ───────────────────────────────────────────────────── */}
       {testimonials?.length > 0 && (
-        <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }}>
+        <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>Student Voices</p>
             <h2 style={s.sectionTitle}>What Students Say</h2>
-            <div style={s.testimonialsGrid}>
+            <div style={s.testimonialsGrid} className="ept-testimonials-grid">
               {(testimonials||[]).map((t, i) => (
                 <div key={i} style={s.testimonialCard}>
                   <p style={s.testimonialQuote}>&ldquo;{t.text}&rdquo;</p>
@@ -641,8 +657,8 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
 
           {/* ── FAQS ───────────────────────────────────────────────────────────── */}
       {faqs?.length > 0 && (
-        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }}>
-          <div style={{ maxWidth:'860px', margin:'0 auto', padding:'0 2rem' }}>
+        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
+          <div style={{ maxWidth:'860px', margin:'0 auto', padding:'0 2rem' }} className="ept-pad-2rem">
             <p style={s.eyebrow}>Common Questions</p>
             <h2 style={s.sectionTitle}>{name.split(' ')[0]} Course — FAQs</h2>
             <div style={{ border:`1px solid ${C.border}`, borderRadius:'4px', overflow:'hidden', marginTop:'2rem' }}>
@@ -674,7 +690,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
         <div>
           {/* ── COLLEGES ───────────────────────────────────────────────────────── */}
       {colleges?.length > 0 && (
-        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }}>
+        <section style={{ ...s.section, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>Where {name.split(' ')[0]} Takes You</p>
             <h2 style={s.sectionTitle}>Top Colleges — Cutoff & Placements</h2>
@@ -716,11 +732,11 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
       {/* ── ALWAYS VISIBLE BOTTOM ────────────────────────────────────────── */}
       {/* ── ALSO PREPARING FOR ─────────────────────────────────────────────── */}
       {alsoExams?.length > 0 && (
-        <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }}>
+        <section style={{ ...s.section, background:C.gray50, borderTop:`1px solid ${C.border}` }} className="ept-section-pad">
           <div style={s.container}>
             <p style={s.eyebrow}>Also Preparing For?</p>
             <h2 style={s.sectionTitle}>More Courses by GRADSKOOL</h2>
-            <div style={s.alsoGrid}>
+            <div style={s.alsoGrid} className="ept-also-grid">
               {(alsoExams||[]).map((ex, i) => (
                 <Link key={i} href={`/courses/${ex.slug}`} style={s.alsoCard}>
                   <p style={s.alsoCat}>{ex.cat}</p>
@@ -741,7 +757,7 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
       )}
 
       {/* ── FINAL CTA ──────────────────────────────────────────────────────── */}
-      <section style={{ background:C.red, padding:'5rem 2rem', textAlign:'center' }}>
+      <section style={{ background:C.red, padding:'5rem 2rem', textAlign:'center' }} className="ept-section-pad">
         <div style={{ maxWidth:'640px', margin:'0 auto' }}>
           <h2 style={{ fontFamily:'Georgia,serif', fontSize:'clamp(1.8rem,3vw,2.5rem)', color:'#fff', fontWeight:'700', lineHeight:'1.15', marginBottom:'0.875rem' }}>
             Only a handful of seats remaining.

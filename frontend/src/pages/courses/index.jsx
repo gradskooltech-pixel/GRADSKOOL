@@ -51,8 +51,18 @@ export default function CoursesPage() {
         <meta name="description" content="Live two-way MBA and UG entrance preparation. CAT, XAT, SNAP, NMAT, CMAT, MH CET, IPMAT, CLAT, CUET and PI WAT GD. 27 students per cohort." />
       </Head>
 
+      <style>{`
+        @media(max-width:800px) { .ci-course-grid { grid-template-columns:1fr!important; } }
+        @media(max-width:600px) {
+          .ci-hero-pad { padding-left:1.1rem!important; padding-right:1.1rem!important; }
+          .ci-tabs-pad { padding-left:1.1rem!important; padding-right:1.1rem!important; }
+          .ci-grid-pad { padding-left:1.1rem!important; padding-right:1.1rem!important; }
+          .ci-cta { padding:1.75rem!important; flex-direction:column!important; align-items:flex-start!important; }
+        }
+      `}</style>
+
       {/* Hero */}
-      <div style={{ padding:'4.5rem 2rem 3.5rem', background:'#fff', borderBottom:'1px solid #e8e8e6' }}>
+      <div style={{ padding:'4.5rem 2rem 3.5rem', background:'#fff', borderBottom:'1px solid #e8e8e6' }} className="ci-hero-pad">
         <div style={{ maxWidth:'860px', margin:'0 auto' }}>
           <p style={{ fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'700', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--red)', marginBottom:'0.875rem' }}>
             All Programmes
@@ -69,7 +79,7 @@ export default function CoursesPage() {
 
       {/* Filter tabs */}
       <div style={{ borderBottom:'1px solid #e8e8e6', background:'#fff', position:'sticky', top:0, zIndex:50 }}>
-        <div style={{ maxWidth:'1160px', margin:'0 auto', padding:'0 2rem', display:'flex', gap:0 }}>
+        <div style={{ maxWidth:'1160px', margin:'0 auto', padding:'0 2rem', display:'flex', gap:0, overflowX:'auto' }} className="ci-tabs-pad">
           {FILTERS.map(f => (
             <button key={f.key} onClick={() => setActive(f.key)}
               style={{ fontFamily:'var(--font-sans)', fontSize:'0.85rem', fontWeight: active===f.key?'600':'500', color: active===f.key?'#0f0f0f':'#999', background:'none', border:'none', borderBottom: active===f.key?'2px solid var(--red)':'2px solid transparent', padding:'0.875rem 1.25rem', cursor:'pointer', marginBottom:'-1px', transition:'all 0.15s', whiteSpace:'nowrap' }}>
@@ -80,13 +90,13 @@ export default function CoursesPage() {
       </div>
 
       {/* Grid */}
-      <div style={{ maxWidth:'1160px', margin:'0 auto', padding:'3rem 2rem 5rem' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'1.25rem', marginBottom:'4rem' }}>
+      <div style={{ maxWidth:'1160px', margin:'0 auto', padding:'3rem 2rem 5rem' }} className="ci-grid-pad">
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'1.25rem', marginBottom:'4rem' }} className="ci-course-grid">
           {list.map(c => <CourseCard key={c.slug} c={c} />)}
         </div>
 
         {/* Bottom CTA */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'2rem', padding:'2.5rem 3rem', background:'#0f0f0f', borderRadius:'4px', flexWrap:'wrap' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'2rem', padding:'2.5rem 3rem', background:'#0f0f0f', borderRadius:'4px', flexWrap:'wrap' }} className="ci-cta">
           <div>
             <p style={{ fontFamily:'Georgia,serif', fontSize:'1.2rem', fontWeight:'700', color:'#fff', marginBottom:'0.375rem' }}>Not sure which exam to target?</p>
             <p style={{ fontFamily:'Georgia,serif', fontSize:'0.875rem', color:'#888', lineHeight:'1.65', maxWidth:'500px' }}>Tell us your background and target college — ALP Sir will recommend the right exam and programme for you.</p>

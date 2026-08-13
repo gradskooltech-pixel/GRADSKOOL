@@ -175,12 +175,19 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
         .co-radio.selected { border-color:var(--red); }
         .co-radio-dot { width:8px; height:8px; border-radius:50%; background:var(--red); }
         .co-summary-right { position:sticky; top:24px; }
+        .co-left-pad { padding:48px!important; }
+        .co-right-pad { padding:48px 40px!important; }
+        @media(max-width:640px) {
+          .co-left-pad { padding:32px 20px!important; }
+          .co-right-pad { padding:32px 20px!important; }
+          .co-summary-right { position:static!important; top:auto!important; }
+        }
       `}</style>
 
       <div className="co-page">
         {/* ── LEFT: Plan selector ── */}
         <div style={{ borderRight:'1px solid var(--g200)' }}>
-          <div style={{ padding:'48px', maxWidth:640, width:'100%', margin:'0 auto' }} className="co-left-pad">
+          <div style={{ maxWidth:640, width:'100%', margin:'0 auto' }} className="co-left-pad">
           <Link href={`/courses/${examSlug}`} style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', textDecoration:'none' }}>
             ← Back to {displayExamName || examSlug?.toUpperCase()}
           </Link>
@@ -267,7 +274,7 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
         </div>
 
         {/* ── RIGHT: Order summary + CTA ── */}
-        <div style={{ padding:'48px 40px', background:'var(--off)', display:'flex', flexDirection:'column', gap:20 }}>
+        <div style={{ background:'var(--off)', display:'flex', flexDirection:'column', gap:20 }} className="co-right-pad">
           <div className="co-summary-right">
             <div style={{ background:'#fff', border:'1px solid var(--g200)', borderRadius:4, padding:28, width:'100%', boxSizing:'border-box' }}>
               {selectedPlan ? (

@@ -86,9 +86,17 @@ export default function CatalysisPage({ examData }) {
 
       {/* hero */}
       <section style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr' }} className="catalysis-hero">
-        <style>{`@media(max-width:960px){.catalysis-hero{grid-template-columns:1fr!important}}`}</style>
+        <style>{`
+          @media(max-width:960px){.catalysis-hero{grid-template-columns:1fr!important}}
+          .catalysis-hero-pad { padding:72px 48px 56px; }
+          .catalysis-hero-pad-r { padding:40px 48px; }
+          @media(max-width:600px){
+            .catalysis-hero-pad { padding:48px 20px 40px!important; }
+            .catalysis-hero-pad-r { padding:32px 20px!important; }
+          }
+        `}</style>
         <style>{S}</style>
-        <div style={{ padding:'72px 48px 56px' }}>
+        <div className="catalysis-hero-pad">
           <Link href="/courses/cat" style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', textDecoration:'none' }}>← Back to CAT</Link>
           <div className="eyebrow" style={{ marginTop:20, marginBottom:14 }}><span className="dot" />CAT {catalysisYear} Preparation</div>
           <h1 className="d-xl" style={{ marginBottom:20, maxWidth:520 }}>CAT<em style={R}>alysis.</em></h1>
@@ -113,7 +121,7 @@ export default function CatalysisPage({ examData }) {
           </div>
         </div>
 
-        <div style={{ background:'var(--off)', display:'flex', flexDirection:'column', justifyContent:'center', padding:'40px 48px' }}>
+        <div className="catalysis-hero-pad-r" style={{ background:'var(--off)', display:'flex', flexDirection:'column', justifyContent:'center' }}>
           <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
             {TIERS.map(t => (
               <button key={t.slug} onClick={() => setSelectedTier(t.slug)}

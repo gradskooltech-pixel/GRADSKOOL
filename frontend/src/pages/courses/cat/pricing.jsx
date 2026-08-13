@@ -90,6 +90,10 @@ export default function CatPricingPage({ examData }) {
         .pr-sub { font-family:var(--font-body); font-size:15px; color:var(--g700); }
         .pr-back { font-family:var(--font-sans); font-size:13px; color:var(--g500); text-decoration:none; }
         .pr-body { max-width:1100px; margin:0 auto; padding:32px 40px 80px; }
+        @media(max-width:600px) {
+          .pr-hero { padding:40px 20px 12px!important; }
+          .pr-body { padding:24px 20px 60px!important; }
+        }
         .pr-section-label { font-family:var(--font-sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--red); margin-bottom:16px; }
         .pr-section-sub { font-family:var(--font-sans); font-size:13px; color:var(--g500); margin:-12px 0 16px; }
         .pr-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-bottom:56px; }
