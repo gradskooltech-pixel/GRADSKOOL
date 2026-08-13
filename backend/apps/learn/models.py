@@ -669,6 +669,22 @@ class StudentResult(models.Model):
     meta_title  = models.CharField(max_length=70, blank=True)
     meta_description = models.CharField(max_length=300, blank=True)
 
+    # ── Rich story-page fields ───────────────────────────────────────
+    tag         = models.CharField(max_length=60, blank=True,
+                                   help_text='Short badge shown above the headline, e.g. "NMIMS Convert", "Multiple Converts"')
+    subtitle    = models.CharField(max_length=300, blank=True,
+                                   help_text='One-line summary shown under the headline')
+    pull_quote  = models.CharField(max_length=400, blank=True,
+                                   help_text='A short standout quote, styled larger and italic on the detail page')
+    whatsapp_message = models.TextField(blank=True,
+                                        help_text='The student\'s original message, rendered as a WhatsApp-style chat bubble. One line per paragraph.')
+    outcome_label = models.CharField(max_length=40, blank=True, default='Outcome',
+                                     help_text='Small label above the outcome box, e.g. "Outcome"')
+    outcome_value = models.CharField(max_length=150, blank=True,
+                                     help_text='The headline result shown in the outcome box, e.g. "NMIMS Mumbai — Core MBA"')
+    outcome_description = models.TextField(blank=True,
+                                           help_text='One or two sentences of context shown inside the outcome box')
+
     class Meta:
         db_table = 'student_results'
         ordering = ['-percentile', '-year']

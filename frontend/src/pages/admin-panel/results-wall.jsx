@@ -128,6 +128,37 @@ export default function ResultsWallAdmin() {
                 <input type="text" value={form.slug||""} onChange={e=>setForm(f=>({...f,slug:e.target.value}))} style={s.inp} placeholder="auto-generated from name if left blank" />
               </div>
 
+              <div style={{ borderTop:"1px solid "+C.border, marginTop:"0.5rem", paddingTop:"1rem" }}>
+                <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.72rem", fontWeight:"700", color:C.gray, textTransform:"uppercase", letterSpacing:"0.04em", marginBottom:"0.75rem" }}>Rich story (optional — makes this a full featured story instead of a plain result)</p>
+              </div>
+
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.75rem" }}>
+                <div>
+                  <label style={s.lbl}>Tag / badge</label>
+                  <input type="text" value={form.tag||""} onChange={e=>setForm(f=>({...f,tag:e.target.value}))} style={s.inp} placeholder="e.g. NMIMS Convert" />
+                </div>
+                <div>
+                  <label style={s.lbl}>Outcome (headline result)</label>
+                  <input type="text" value={form.outcome_value||""} onChange={e=>setForm(f=>({...f,outcome_value:e.target.value}))} style={s.inp} placeholder="e.g. NMIMS Mumbai — Core MBA" />
+                </div>
+              </div>
+              <div>
+                <label style={s.lbl}>Subtitle</label>
+                <input type="text" value={form.subtitle||""} onChange={e=>setForm(f=>({...f,subtitle:e.target.value}))} style={s.inp} placeholder="One line under the headline" />
+              </div>
+              <div>
+                <label style={s.lbl}>Pull quote</label>
+                <textarea value={form.pull_quote||""} onChange={e=>setForm(f=>({...f,pull_quote:e.target.value}))} style={{...s.inp,height:"50px",resize:"vertical"}} placeholder="A short standout line, shown larger and italic" />
+              </div>
+              <div>
+                <label style={s.lbl}>WhatsApp message (shown as a chat bubble — one line per paragraph)</label>
+                <textarea value={form.whatsapp_message||""} onChange={e=>setForm(f=>({...f,whatsapp_message:e.target.value}))} style={{...s.inp,height:"80px",resize:"vertical"}} placeholder={"Grateful to share that I converted...\nThis would not have been possible without..."} />
+              </div>
+              <div>
+                <label style={s.lbl}>Outcome description</label>
+                <textarea value={form.outcome_description||""} onChange={e=>setForm(f=>({...f,outcome_description:e.target.value}))} style={{...s.inp,height:"50px",resize:"vertical"}} placeholder="A sentence or two of context, shown inside the outcome box" />
+              </div>
+
               <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:"0.75rem" }}>
                 <div>
                   <label style={s.lbl}>Video</label>
