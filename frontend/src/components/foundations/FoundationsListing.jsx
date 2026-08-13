@@ -20,6 +20,19 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
 export function isUpcoming(iso) { return iso ? new Date(iso) > new Date() : false }
 
+// True only during the class's actual scheduled window (start time through
+// start + duration) — not just "today" or "recently". Used to show a
+// "Live Now" section that appears exactly when a class is happening and
+// disappears the moment it ends, without needing a page refresh (the
+// component re-checks this on a timer — see the useEffect below).
+export function isLiveNow(cls) {
+  if (!cls.scheduled_at) return false
+  const start = new Date(cls.scheduled_at).getTime()
+  const end = start + (cls.duration_mins || 60) * 60000
+  const now = Date.now()
+  return now >= start && now <= end
+}
+
 export function formatDate(iso) {
   if (!iso) return ''
   return new Date(iso).toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
@@ -404,6 +417,12 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
   const [loading, setLoad]  = useState(true)
   const [selectedDate, setSelectedDate] = useState(null) // lifted from DateNav so "Upcoming Classes" below can respect it too
   const [search, setSearch] = useState('') // filters recorded classes by title/lesson number, across all series
+  const [, setNowTick] = useState(0) // forces a re-check of isLiveNow every 30s so the section auto-updates as classes start/end
+
+  useEffect(() => {
+    const id = setInterval(() => setNowTick(t => t + 1), 30000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     fetch(`${API}/foundations/?exam=${examSlug}`)
@@ -421,6 +440,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
   }, [examSlug])
 
   const allClasses = series.flatMap(s => (s.classes || []).map(c => ({ ...c, series_title: s.title })))
+  const liveNow = allClasses.filter(c => c.is_published && isLiveNow(c))
   // A class can have a youtube_url set BEFORE it happens (a pre-scheduled
   // YouTube Live link has a real, stable URL from the moment it's created,
   // not just after the stream ends) — so "upcoming" is purely about the
@@ -537,6 +557,32 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
             </div>
           ) : (
             <>
+              {liveNow.length > 0 && (
+                <div style={{ marginBottom:32 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
+                    <span style={{ position:'relative', width:9, height:9, flexShrink:0 }}>
+                      <span style={{ position:'absolute', inset:0, borderRadius:'50%', background:'#ff4444' }} />
+                      <span className="live-now-ping" style={{ position:'absolute', inset:0, borderRadius:'50%', background:'#ff4444' }} />
+                    </span>
+                    <span style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#ff4444' }}>Live Now</span>
+                  </div>
+                  <style>{`
+                    @keyframes live-now-ping { 0% { transform:scale(1); opacity:.7 } 100% { transform:scale(2.4); opacity:0 } }
+                    .live-now-ping { animation:live-now-ping 1.6s cubic-bezier(0,0,.2,1) infinite; }
+                  `}</style>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16 }}>
+                    {liveNow.map(cls => (
+                      <Link key={cls.id} href={`${readBasePath}/${cls.slug}`}
+                        style={{ display:'block', background:'var(--black)', borderRadius:6, padding:'20px 22px', border:'1px solid #ff4444', textDecoration:'none' }}>
+                        <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, color:'#ff4444', marginBottom:8 }}>L{cls.lesson_number} · LIVE</div>
+                        <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'#fff', lineHeight:1.35, marginBottom:10 }}>{cls.title}</div>
+                        <span style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'#fff' }}>Join now →</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <DateNav classes={allClasses} readBasePath={readBasePath} meta={meta} selected={selectedDate} setSelected={setSelectedDate} />
               <SectionNav sections={sections} meta={meta} selectedId={selectedSectionId} setSelectedId={setSelectedSectionId} />
 
