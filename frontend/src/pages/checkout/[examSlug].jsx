@@ -38,12 +38,17 @@ const EXAMS = [
 // for "CAT prep". Other exams have only 1-2 plans each, so they don't need
 // this and keep the simple flat list below.
 const CAT_PLAN_GROUPS = [
-  { title: 'CATalysis', subtitle: 'The complete, flagship CAT cohort', slugs: ['live-mocks', 'live-all-mba-mocks', 'live-cat-mocks-books'] },
+  { title: 'CATalysis', subtitle: 'The complete, flagship CAT cohort', slugs: ['live-mocks', 'live-all-mba-mocks', 'live-cat-mocks-books', 'live-all-mba-mocks-books'] },
   { title: 'CAThlete', subtitle: 'Intensive crash course for the final stretch', slugs: ['base', 'with-mocks'] },
   { title: 'ALPgebra', subtitle: '99 theorems covering the full Algebra syllabus', slugs: ['alpgebra'] },
   { title: 'CAT Mocks', subtitle: 'Full-length mocks and sectional tests', slugs: ['cat-mocks'] },
   { title: 'CAT Books', subtitle: "Curated physical books with ALP Sir's notes", slugs: ['cat-books'] },
+  { title: 'All MBA Mocks + Books', subtitle: 'Self-paced mocks across CAT and every OMET, plus printed books', slugs: ['all-mba-mocks-books'] },
 ]
+
+function findGroupForSlug(slug) {
+  return CAT_PLAN_GROUPS.find(g => g.slugs.includes(slug)) || null
+}
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -53,6 +58,7 @@ export default function CheckoutPage() {
   const [plans, setPlans]           = useState([])
   const [examName, setExamName]     = useState('')
   const [selectedId, setSelectedId] = useState(null)
+  const [groupId, setGroupId]       = useState(null) // CAT only — which product group's dropdown is active
   const [isLoading, setIsLoading]   = useState(true)
 
   // Load exam plans
@@ -69,7 +75,15 @@ export default function CheckoutPage() {
           || plansArr.find(p => p.slug === planIdParam)
           || plansArr.find(p => p.is_featured)
           || plansArr[0]
-        if (preselect) setSelectedId(preselect.id)
+        if (preselect) {
+          setSelectedId(preselect.id)
+          // Whichever group the pre-selected plan belongs to (from a
+          // course page's own "Enrol Now" link, e.g. CATalysis's own page
+          // linking with ?plan=live-mocks) becomes the active dropdown
+          // group, so checkout opens already showing the right product.
+          const group = findGroupForSlug(preselect.slug)
+          if (group) setGroupId(group.title)
+        }
       })
       .catch((err) => { console.error('Failed to load plans for', examSlug, err) })
       .finally(() => setIsLoading(false))
@@ -111,13 +125,14 @@ export default function CheckoutPage() {
       {isLoading ? <LoadingShell /> : <CheckoutContent
         examSlug={examSlug} examName={examName} plans={plans}
         selectedId={selectedId} setSelectedId={setSelectedId} selectedPlan={selectedPlan}
+        groupId={groupId} setGroupId={setGroupId}
         isLoggedIn={isLoggedIn} user={user}
       />}
     </>
   )
 }
 
-function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId, selectedPlan, isLoggedIn, user }) {
+function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId, selectedPlan, groupId, setGroupId, isLoggedIn, user }) {
   return (
     <>
       <style>{`
@@ -143,30 +158,49 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
           <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)', marginTop:28, marginBottom:8 }}>Choose your plan</div>
           <h1 style={{ fontFamily:'var(--font-serif)', fontSize:36, fontWeight:400, color:'var(--black)', lineHeight:1.1, marginBottom:32 }}>{examName}</h1>
 
+          {examSlug === 'cat' && (
+            <div style={{ marginBottom:20 }}>
+              <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)', display:'block', marginBottom:8 }}>
+                Which product?
+              </label>
+              <select
+                value={groupId || ''}
+                onChange={e => {
+                  const newGroup = CAT_PLAN_GROUPS.find(g => g.title === e.target.value)
+                  setGroupId(newGroup.title)
+                  const firstPlan = newGroup.slugs.map(slug => plans.find(p => p.slug === slug)).find(Boolean)
+                  if (firstPlan) setSelectedId(firstPlan.id)
+                }}
+                style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:15, fontWeight:500, padding:'12px 14px', border:'1px solid var(--g300)', borderRadius:4, background:'#fff', color:'var(--black)', cursor:'pointer' }}
+              >
+                {CAT_PLAN_GROUPS.filter(group => group.slugs.some(slug => plans.some(p => p.slug === slug))).map(group => (
+                  <option key={group.title} value={group.title}>{group.title}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:40 }}>
             {examSlug === 'cat' ? (
-              CAT_PLAN_GROUPS.map(group => {
-                const groupPlans = group.slugs
+              (() => {
+                const activeGroup = CAT_PLAN_GROUPS.find(g => g.title === groupId) || CAT_PLAN_GROUPS[0]
+                const groupPlans = activeGroup.slugs
                   .map(slug => plans.find(p => p.slug === slug))
                   .filter(Boolean)
-                if (groupPlans.length === 0) return null
                 return (
-                  <div key={group.title} style={{ marginBottom:8 }}>
-                    <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'var(--black)', marginBottom:2 }}>{group.title}</div>
-                    <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', marginBottom:12 }}>{group.subtitle}</div>
-                    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                      {groupPlans.map(plan => (
-                        <PlanOption
-                          key={plan.id}
-                          plan={plan}
-                          isSelected={plan.id === selectedId}
-                          onSelect={() => setSelectedId(plan.id)}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  <>
+                    <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', marginTop:-4, marginBottom:4 }}>{activeGroup.subtitle}</div>
+                    {groupPlans.map(plan => (
+                      <PlanOption
+                        key={plan.id}
+                        plan={plan}
+                        isSelected={plan.id === selectedId}
+                        onSelect={() => setSelectedId(plan.id)}
+                      />
+                    ))}
+                  </>
                 )
-              })
+              })()
             ) : (
               plans.map((plan) => (
                 <PlanOption
