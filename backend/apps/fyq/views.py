@@ -18,7 +18,7 @@ def _pdfs_for_question(q):
             {
                 'id': p.id, 'title': p.title, 'slug': p.slug,
                 'is_free': p.is_free, 'price_inr': str(p.price_inr),
-                'cover_image_url': p.cover_image_url,
+                'cover_image_url': p.cover_image_url, 'card_label': p.card_label,
             }
             for p in q.pdfs.filter(is_published=True)
         ]

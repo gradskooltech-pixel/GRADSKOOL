@@ -30,7 +30,7 @@ class AdminPdfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pdf
         fields = [
-            'id', 'title', 'slug', 'description', 'cover_image_url',
+            'id', 'title', 'slug', 'description', 'cover_image_url', 'card_label',
             'price_inr', 'is_free', 'page_count', 'status', 'is_published',
             'sort_order', 'exam', 'exam_slug', 'foundation_class', 'fyq_question', 'created_at',
         ]

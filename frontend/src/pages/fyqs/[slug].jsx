@@ -45,7 +45,7 @@ function PdfCard({ pdf }) {
   return (
     <div style={{ border:'1px solid var(--g200)', borderRadius:8, overflow:'hidden', background:'#fff' }}>
       <div style={{ padding:'22px 18px', background:'#d94f50', textAlign:'center' }}>
-        <div style={{ fontFamily:'var(--font-sans)', fontSize:22, fontWeight:800, letterSpacing:'.04em', color:'#fff' }}>PDF</div>
+        <div style={{ fontFamily:'var(--font-sans)', fontSize:22, fontWeight:800, letterSpacing:'.04em', color:'#fff' }}>{pdf.card_label || 'PDF'}</div>
       </div>
       <div style={{ padding:'16px 18px' }}>
         <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', marginBottom:6, lineHeight:1.3 }}>{pdf.title}</div>

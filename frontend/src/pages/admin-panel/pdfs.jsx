@@ -6,11 +6,9 @@
  * /admin-panel/pdfs/new (the upload flow), then show up here.
  */
 import { useState, useEffect } from 'react'
-import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import api from '../../lib/api'
-import { useAuth } from '../../hooks/useAuth'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red: '#d94f50', black: '#0f0f0f', white: '#fff', bg: '#f7f6f3',
@@ -19,15 +17,24 @@ const C = {
 
 const STATUS_COLOR = { draft: C.gray, processing: C.amber, ready: C.green, failed: C.red }
 
+function CardLabelCell({ pdf, onSave }) {
+  const [value, setValue] = useState(pdf.card_label || '')
+  return (
+    <input
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => onSave(pdf, value)}
+      onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur() }}
+      placeholder="PDF"
+      maxLength={30}
+      style={{ width: 110, fontFamily: 'var(--font-sans)', fontSize: 12, padding: '4px 8px', border: `1px solid ${C.border}`, borderRadius: 3, color: C.black }}
+    />
+  )
+}
+
 export default function AdminPdfsPage() {
-  const router = useRouter()
-  const { isAdmin, isLoading: authLoading } = useAuth()
   const [pdfs, setPdfs] = useState([])
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!authLoading && !isAdmin) router.replace('/auth/login?redirect=/admin-panel/pdfs')
-  }, [authLoading, isAdmin, router])
 
   const load = () => {
     setLoading(true)
@@ -46,6 +53,14 @@ export default function AdminPdfsPage() {
     } catch { /* noop — surface via toast if the project has one */ }
   }
 
+  const saveCardLabel = async (pdf, value) => {
+    if (value === (pdf.card_label || '')) return // no change, skip the request
+    try {
+      await api.patch(`/pdfs/admin/pdfs/${pdf.id}/`, { card_label: value })
+      load()
+    } catch { /* noop */ }
+  }
+
   const remove = async (pdf) => {
     if (!confirm(`Delete "${pdf.title}"? This removes all uploaded pages too.`)) return
     try {
@@ -55,60 +70,54 @@ export default function AdminPdfsPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg }}>
-      <Head><title>PDF Library — Admin — GRADSKOOL</title></Head>
-
-      <div style={{ background: C.black, padding: '0 1.5rem', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Link href="/admin-panel" style={{ color: '#fff', fontFamily: 'var(--font-sans)', fontSize: '0.8rem', textDecoration: 'none' }}>← Admin</Link>
-          <span style={{ fontFamily: 'Georgia,serif', fontSize: '1rem', fontWeight: 700, color: '#fff' }}>PDF Library</span>
-        </div>
+    <AdminLayout title="PDF Library">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: C.black }}>PDF Library</h1>
         <Link href="/admin-panel/pdfs/new" style={{ background: C.red, color: '#fff', fontFamily: 'var(--font-sans)', fontSize: '0.78rem', fontWeight: 600, padding: '0.5rem 1rem', borderRadius: 4, textDecoration: 'none' }}>
           + Upload New PDF
         </Link>
       </div>
 
-      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '2rem 1.5rem' }}>
-        {loading ? (
-          <p style={{ fontFamily: 'var(--font-sans)', color: C.gray }}>Loading…</p>
-        ) : pdfs.length === 0 ? (
-          <p style={{ fontFamily: 'var(--font-sans)', color: C.gray }}>No PDFs yet — upload your first one.</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: `1px solid ${C.border}`, borderRadius: 6, overflow: 'hidden' }}>
-            <thead>
-              <tr style={{ background: C.bg, textAlign: 'left' }}>
-                {['Title', 'Exam', 'Price', 'Pages', 'Status', 'Published', ''].map((h) => (
-                  <th key={h} style={th}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {pdfs.map((pdf) => (
-                <tr key={pdf.id} style={{ borderTop: `1px solid ${C.border}` }}>
-                  <td style={td}>{pdf.title}</td>
-                  <td style={td}>{pdf.exam_slug ? pdf.exam_slug.toUpperCase() : '—'}</td>
-                  <td style={td}>{pdf.is_free ? 'Free' : `₹${Number(pdf.price_inr).toLocaleString('en-IN')}`}</td>
-                  <td style={td}>{pdf.page_count}</td>
-                  <td style={td}>
-                    <span style={{ color: STATUS_COLOR[pdf.status] || C.gray, fontWeight: 600, textTransform: 'capitalize' }}>
-                      {pdf.status}
-                    </span>
-                  </td>
-                  <td style={td}>
-                    <button onClick={() => togglePublish(pdf)} disabled={pdf.status !== 'ready'} style={pillBtn(pdf.is_published)}>
-                      {pdf.is_published ? 'Live' : 'Hidden'}
-                    </button>
-                  </td>
-                  <td style={{ ...td, textAlign: 'right' }}>
-                    <button onClick={() => remove(pdf)} style={dangerBtn}>Delete</button>
-                  </td>
-                </tr>
+      {loading ? (
+        <p style={{ fontFamily: 'var(--font-sans)', color: C.gray }}>Loading…</p>
+      ) : pdfs.length === 0 ? (
+        <p style={{ fontFamily: 'var(--font-sans)', color: C.gray }}>No PDFs yet — upload your first one.</p>
+      ) : (
+        <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: `1px solid ${C.border}`, borderRadius: 6, overflow: 'hidden' }}>
+          <thead>
+            <tr style={{ background: C.bg, textAlign: 'left' }}>
+              {['Title', 'Exam', 'Card Label', 'Price', 'Pages', 'Status', 'Published', ''].map((h) => (
+                <th key={h} style={th}>{h}</th>
               ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
+            </tr>
+          </thead>
+          <tbody>
+            {pdfs.map((pdf) => (
+              <tr key={pdf.id} style={{ borderTop: `1px solid ${C.border}` }}>
+                <td style={td}>{pdf.title}</td>
+                <td style={td}>{pdf.exam_slug ? pdf.exam_slug.toUpperCase() : '—'}</td>
+                <td style={td}><CardLabelCell pdf={pdf} onSave={saveCardLabel} /></td>
+                <td style={td}>{pdf.is_free ? 'Free' : `₹${Number(pdf.price_inr).toLocaleString('en-IN')}`}</td>
+                <td style={td}>{pdf.page_count}</td>
+                <td style={td}>
+                  <span style={{ color: STATUS_COLOR[pdf.status] || C.gray, fontWeight: 600, textTransform: 'capitalize' }}>
+                    {pdf.status}
+                  </span>
+                </td>
+                <td style={td}>
+                  <button onClick={() => togglePublish(pdf)} disabled={pdf.status !== 'ready'} style={pillBtn(pdf.is_published)}>
+                    {pdf.is_published ? 'Live' : 'Hidden'}
+                  </button>
+                </td>
+                <td style={{ ...td, textAlign: 'right' }}>
+                  <button onClick={() => remove(pdf)} style={dangerBtn}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </AdminLayout>
   )
 }
 

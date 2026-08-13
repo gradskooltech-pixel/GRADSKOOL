@@ -56,6 +56,8 @@ class Pdf(models.Model):
     slug             = models.SlugField(max_length=220, unique=True, blank=True)
     description      = models.TextField(blank=True)
     cover_image_url  = models.URLField(blank=True)
+    card_label       = models.CharField(max_length=30, blank=True,
+                                        help_text='Overrides the default "PDF" badge shown on the card (e.g. class detail sidebar). Leave blank to show "PDF".')
 
     price_inr        = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     is_free          = models.BooleanField(default=False)

@@ -55,7 +55,7 @@ export default function AdminPdfNewPage() {
 
   const [exams, setExams] = useState([])
   const [form, setForm] = useState({
-    title: '', description: '', exam: '', price_inr: '', is_free: false, cover_image_url: '',
+    title: '', description: '', exam: '', price_inr: '', is_free: false, cover_image_url: '', card_label: '',
   })
   const [file, setFile] = useState(null)
   const [pdfId, setPdfId] = useState(null)
@@ -106,6 +106,7 @@ export default function AdminPdfNewPage() {
         price_inr: form.is_free ? 0 : Number(form.price_inr || 0),
         is_free: form.is_free,
         cover_image_url: form.cover_image_url,
+        card_label: form.card_label,
         foundation_class: fromClassId || null,
       })
       setPdfId(created.id)
@@ -192,6 +193,9 @@ export default function AdminPdfNewPage() {
             </Field>
             <Field label="Cover image URL (optional)">
               <input style={input} value={form.cover_image_url} onChange={(e) => setField('cover_image_url', e.target.value)} disabled={status === 'uploading'} />
+            </Field>
+            <Field label='Card label (optional — overrides the default "PDF" badge, e.g. "Notes", "Cheat Sheet", "Formula Sheet")'>
+              <input style={input} value={form.card_label} onChange={(e) => setField('card_label', e.target.value)} placeholder="PDF" maxLength={30} disabled={status === 'uploading'} />
             </Field>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 13 }}>
               <input type="checkbox" checked={form.is_free} onChange={(e) => setField('is_free', e.target.checked)} disabled={status === 'uploading'} />

@@ -30,6 +30,7 @@ def _pdfs_for_class(c):
                 'is_free': p.is_free,
                 'price_inr': str(p.price_inr),
                 'cover_image_url': p.cover_image_url,
+                'card_label': p.card_label,
             }
             for p in c.pdfs.filter(is_published=True)
         ]
