@@ -9,7 +9,7 @@
 import Head from 'next/head'
 import { FoundationsListing } from '../../../components/foundations/FoundationsListing'
 
-const META = { name:'SNAP', full:'Symbiosis National Aptitude Test', color:'#1a5c8a', course:'/courses/snap', courseLabel:'SNAP Mocks', isFullCourse:true, mocksCheckoutUrl:'/checkout?course=snap', mocksPrice:'₹1,499' }
+const META = { name:'SNAP', full:'Symbiosis National Aptitude Test', color:'#1a5c8a', course:'/courses/snap', courseLabel:'SNAP Mocks', isFullCourse:true, requireLogin:true, mocksCheckoutUrl:'/checkout?course=snap', mocksPrice:'₹1,499' }
 
 export default function SNAPLivePage() {
   return (

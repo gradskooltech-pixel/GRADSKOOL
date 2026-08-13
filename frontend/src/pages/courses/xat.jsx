@@ -2,10 +2,13 @@
  * GRADSKOOL — XAT 2026 Course Page
  * Route: /courses/xat (also /xat)
  *
- * Restyled to match CAT's design language (light 2-column hero with
- * pricing card) instead of its earlier dark single-column hero — for
- * visual consistency across every course page. All content and pricing
- * preserved exactly as reviewed and confirmed.
+ * Redesigned to match the NMAT/SNAP pattern — leads with XAT Foundation
+ * Classes (free, live, taught by ALP Sir at /foundations/xat, which
+ * already has its own login gate) as the primary "start here" option,
+ * with the paid Full Course kept as a clear secondary option in the
+ * same section rather than the main hero CTA. No video column in the
+ * hero (single-column, text-only) per explicit instruction — unlike
+ * NMAT/SNAP, no video is set up for XAT yet.
  */
 import Link from 'next/link'
 import PageSEO, { courseSchema, faqSchema } from '../../components/seo/PageSEO'
@@ -45,10 +48,10 @@ const TESTIS = [
 
 const FAQS = [
   { q:'What is XAT and who conducts it?', a:'XAT is the Xavier Aptitude Test, conducted annually by XLRI Jamshedpur. It is accepted by over 150 B-schools across India, including XLRI, XIM University, IMT Ghaziabad, and SP Jain.' },
-  { q:'What is the XAT fee at GRADSKOOL?', a:'The XAT course is priced at ₹5,999. Bundle with CATalysis and save ₹500 — the add-on price is ₹5,499.' },
+  { q:'Are the XAT Foundation Classes actually free?', a:"Yes — every topic taught live by ALP Sir, at no cost. Create a free account and start watching at /foundations/xat." },
+  { q:'What is the XAT fee at GRADSKOOL?', a:'The XAT Full Course is priced at ₹5,999. Bundle with CATalysis and save ₹500 — the add-on price is ₹5,499.' },
   { q:'What makes XAT different from CAT?', a:'XAT has a unique Decision Making section not found in CAT. It also includes a General Knowledge section (unscored but required for XLRI BM), and the VALR section has poem-based questions which CAT does not.' },
   { q:'Can I take XAT with CATalysis?', a:'Yes. You can add the XAT course as an add-on with CATalysis at ₹5,499 (save ₹500). Since most CAT aspirants also appear for XAT, the bundle is very popular.' },
-  { q:'Which is the best college to target through XAT?', a:'XLRI Jamshedpur is the premier XAT-accepting institution, offering BM (Business Management) and HRM (Human Resource Management). XLRI consistently ranks among the top 5 B-schools in India.' },
   { q:'Are XAT mock tests available separately?', a:'Yes. XAT mocks are available separately for ₹1,499 if you do not need the full course and only want timed practice tests.' },
 ]
 
@@ -56,37 +59,35 @@ export default function XATPage() {
   return (
     <>
       <PageSEO
-        title="XAT 2026 Preparation — GRADSKOOL | XLRI Coaching by ALP Sir | ₹5,999"
-        description="XAT 2026 preparation by ALP Sir. 100+ hours live, 6 full-length XAT tests, Decision Making mastery. XLRI Jamshedpur, XIM University, IMT Ghaziabad and top XAT colleges."
-        keywords="XAT 2026 preparation, XAT coaching India, XLRI coaching, XAT Decision Making, ALP Sir XAT, GRADSKOOL XAT, XAT 2026 course"
+        title="XAT Foundation Classes — Free Live Sessions by ALP Sir | GRADSKOOL"
+        description="Free XAT Foundation Classes, taught live by ALP Sir — every topic, no cost. Plus the XAT Full Course (₹5,999): 100+ hours live, 6 full-length tests, Decision Making mastery."
+        keywords="XAT foundation classes, XAT free classes, XAT 2026 preparation, XAT coaching India, XLRI coaching, XAT Decision Making, ALP Sir XAT, GRADSKOOL XAT"
         canonical="https://gradskool.in/xat"
         ogImage="/assets/og-xat.jpg"
         breadcrumbs={[{name:'Home',url:'/'},{name:'OMETs',url:'/omets'},{name:'XAT',url:'/xat'}]}
         schema={[
-          courseSchema({name:'XAT 2026 Preparation',description:'XAT 2026 preparation by ALP Sir. 100+ hours live, 6 full-length tests, Decision Making mastery. XLRI Jamshedpur and top XAT colleges.',url:'/courses/xat',price:'5999'}),
+          courseSchema({name:'XAT Foundation Classes',description:'Free XAT Foundation Classes taught live by ALP Sir, plus the XAT Full Course: 100+ hours live, 6 full-length tests, Decision Making mastery.',url:'/courses/xat',price:'0',mode:['online','live']}),
           faqSchema(FAQS),
         ]}
       />
 
-      {/* hero */}
-      <section style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr' }} className="xat-hero">
-        <style>{`@media(max-width:960px){.xat-hero{grid-template-columns:1fr!important}}`}</style>
+      {/* hero — single column, text only, no video space per instruction */}
+      <section style={{ padding:'72px 0 56px', borderBottom:'var(--border)' }}>
         <style>{S}</style>
-        <div style={{ padding:'72px 48px 56px' }}>
-          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />XAT 2026 · XLRI & Top XAT Colleges</div>
-          <h1 className="d-xl" style={{ marginBottom:20, maxWidth:520 }}>XAT 2026.<br /><em style={R}>The XLRI Route.</em></h1>
-          <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.85, maxWidth:520, marginBottom:32 }}>
-            100+ hours of live two-way sessions. Full XAT syllabus — VALR, Decision Making, QA. 6 full-length XAT tests with post-test analysis. Taught by ALP Sir.
+        <div className="container" style={{ maxWidth:640 }}>
+          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />XAT · Free Foundation Classes · Full Course</div>
+          <h1 className="d-xl" style={{ marginBottom:20 }}>XAT, <em style={R}>taught live.</em></h1>
+          <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.85, marginBottom:32 }}>
+            Every topic, taught live by ALP Sir, entirely free — including Decision Making, which has no equivalent in CAT. Then go deeper with the Full Course: 100+ hours live, 6 full-length XAT tests, complete syllabus coverage.
           </p>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-            <Link href="/checkout?course=xat" className="btn btn-red">Enrol Now — ₹5,999 →</Link>
+            <Link href="/foundations/xat" className="btn btn-red">Watch Free Classes →</Link>
             <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20about%20the%20XAT%20course" target="_blank" rel="noopener noreferrer" className="btn btn-wa">
               <span className="wa-dot" />WhatsApp ALP Sir
             </a>
           </div>
-          <Link href="/courses/xat/pricing" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', display:'inline-block', marginTop:14 }}>View full pricing page →</Link>
-          <div style={{ display:'flex', gap:28, marginTop:32, paddingTop:24, borderTop:'var(--border)', flexWrap:'wrap' }}>
-            {[['100+ hrs','Live sessions'],['6','Full XAT mocks'],['DM','Full coverage'],['150+','Colleges accept XAT']].map(([v,l]) => (
+          <div style={{ display:'flex', gap:28, marginTop:44, paddingTop:24, borderTop:'var(--border)', flexWrap:'wrap' }}>
+            {[['Free','Foundation classes'],['100+ hrs','Full course, live'],['6','Full XAT mocks'],['150+','Colleges accept XAT']].map(([v,l]) => (
               <div key={l}>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', lineHeight:1 }}>{v}</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', marginTop:3 }}>{l}</div>
@@ -94,45 +95,46 @@ export default function XATPage() {
             ))}
           </div>
         </div>
-
-        <div style={{ background:'var(--off)', display:'flex', flexDirection:'column', justifyContent:'center', padding:'40px 48px', gap:16 }}>
-          <div style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'28px 32px' }}>
-            <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>XAT Full Course</div>
-            {['100+ hours of live two-way sessions','6 full-length XAT tests','Post-test strategic analysis','Decision Making special sessions','Session PDFs + cheat sheets','PI WAT GD prep for XLRI'].map(item => (
-              <div key={item} style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:6, display:'flex', gap:8 }}>
-                <span style={R}>—</span><span>{item}</span>
-              </div>
-            ))}
-            <div style={{ marginTop:20, display:'flex', alignItems:'baseline', gap:12, borderTop:'var(--border)', paddingTop:16 }}>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>₹5,999</div>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
-            </div>
-            <Link href="/checkout?course=xat" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
-          </div>
-          <div style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'16px 20px', fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g700)' }}>
-            <strong style={{ color:'var(--red)' }}>Bundle with CATalysis?</strong> Add XAT at ₹5,499 (save ₹500).
-          </div>
-        </div>
       </section>
 
-      {/* also available */}
-      <section className="section">
+      {/* enrol — two clear options */}
+      <section style={{ padding:'56px 0', borderBottom:'var(--border)', background:'var(--off)' }}>
         <div className="container">
-          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Also available</div>
-          <h2 className="d-lg" style={{ marginBottom:28 }}>Not ready for<br /><em style={R}>the full course?</em></h2>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:16 }} className="also-grid-2">
-            <style>{`@media(max-width:700px){.also-grid-2{grid-template-columns:1fr!important}}`}</style>
-            <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px' }}>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>XAT Mocks Only</div>
-              <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>Already studying? Just want timed full-length XAT tests with analysis?</p>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)', marginBottom:12 }}>₹1,499</div>
-              <Link href="/checkout?course=xat&plan=mocks" className="btn btn-outline" style={{ fontSize:12, padding:'9px 18px' }}>Get XAT Mocks →</Link>
+          <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Get started</div>
+          <h2 className="d-lg" style={{ marginBottom:32 }}>Two ways to <em style={R}>prepare.</em></h2>
+          <div style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr', gap:20 }} className="enrol-grid-2">
+            <style>{`@media(max-width:800px){.enrol-grid-2{grid-template-columns:1fr!important}}`}</style>
+
+            <div style={{ background:'#fff', border:`2px solid var(--red)`, borderRadius:6, padding:'32px 36px', position:'relative' }}>
+              <div style={{ position:'absolute', top:-13, left:32, background:'var(--red)', color:'#fff', fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.08em', textTransform:'uppercase', padding:'4px 12px', borderRadius:2 }}>Start here</div>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', marginTop:8, marginBottom:6 }}>XAT Foundation Classes</div>
+              <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.7, marginBottom:18 }}>Every topic taught live by ALP Sir, including Decision Making. Entirely free — no payment step anywhere.</p>
+              <div style={{ display:'flex', alignItems:'baseline', gap:10, marginBottom:20 }}>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:32, color:'var(--black)' }}>₹0</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>Free, forever</div>
+              </div>
+              <Link href="/foundations/xat" className="btn btn-red" style={{ width:'100%', justifyContent:'center' }}>Watch Free Classes →</Link>
             </div>
-            <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px' }}>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>Not sure yet?</div>
-              <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>Free XAT Foundations classes, taught live by ALP Sir — no cost, no signup fee.</p>
-              <Link href="/foundations/xat" className="btn btn-red" style={{ fontSize:12, padding:'9px 18px' }}>Watch free classes →</Link>
+
+            <div style={{ background:'#fff', border:'var(--border)', borderRadius:6, padding:'32px 36px' }}>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>XAT Full Course</div>
+              {['100+ hours of live two-way sessions','6 full-length XAT tests','Post-test strategic analysis','Decision Making special sessions','Session PDFs + cheat sheets','PI WAT GD prep for XLRI'].map(item => (
+                <div key={item} style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:6, display:'flex', gap:8 }}>
+                  <span style={R}>—</span><span>{item}</span>
+                </div>
+              ))}
+              <div style={{ marginTop:16, display:'flex', alignItems:'baseline', gap:10, borderTop:'var(--border)', paddingTop:16, marginBottom:16 }}>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)' }}>₹5,999</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
+              </div>
+              <Link href="/checkout?course=xat" className="btn btn-outline" style={{ width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
+              <div style={{ marginTop:12, fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>
+                Just want mocks? <Link href="/checkout?course=xat&plan=mocks" style={{ color:'var(--red)' }}>XAT Mocks Only — ₹1,499 →</Link>
+              </div>
             </div>
+          </div>
+          <div style={{ marginTop:16, fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g700)' }}>
+            <strong style={{ color:'var(--red)' }}>Bundle with CATalysis?</strong> Add XAT at ₹5,499 (save ₹500).
           </div>
         </div>
       </section>
@@ -259,13 +261,13 @@ export default function XATPage() {
       <section style={{ padding:'72px 0', textAlign:'center' }}>
         <div className="container">
           <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(26px,4vw,44px)', fontWeight:400, color:'var(--black)', marginBottom:14 }}>
-            Ready for XLRI? <em style={R}>Start here.</em>
+            Start free. <em style={R}>Today.</em>
           </h2>
           <p style={{ fontFamily:'var(--font-body)', fontSize:14, color:'var(--g700)', lineHeight:1.8, maxWidth:380, margin:'0 auto 32px' }}>
-            The XAT Decision Making section cannot be cracked without structured preparation. Start with GRADSKOOL.
+            No payment, no risk — every XAT topic taught live by ALP Sir. Add the Full Course whenever you're ready to go deeper.
           </p>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-            <Link href="/checkout?course=xat" className="btn btn-red">Enrol Now — ₹5,999 →</Link>
+            <Link href="/foundations/xat" className="btn btn-red">Watch Free Classes →</Link>
             <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20question%20about%20XAT" target="_blank" rel="noopener noreferrer" className="btn btn-wa"><span className="wa-dot" />WhatsApp first</a>
           </div>
         </div>
@@ -273,13 +275,13 @@ export default function XATPage() {
 
       <div className="mob-sticky">
         <div>
-          <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>XAT 2026</div>
-          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>₹5,999 incl. GST</div>
+          <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>XAT Foundation Classes</div>
+          <div style={{ fontFamily:'var(--font-serif)', fontSize:19, color:'var(--black)' }}>Free</div>
         </div>
         <div style={{ display:'flex', gap:8 }}>
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20about%20XAT" target="_blank" rel="noopener noreferrer"
             style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'#25D366', border:'2px solid #25D366', padding:'8px 14px', borderRadius:2, textDecoration:'none' }}>WhatsApp</a>
-          <Link href="/checkout?course=xat" style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, background:'var(--red)', color:'#fff', padding:'8px 18px', borderRadius:2, textDecoration:'none' }}>Enrol →</Link>
+          <Link href="/foundations/xat" style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, background:'var(--red)', color:'#fff', padding:'8px 18px', borderRadius:2, textDecoration:'none' }}>Enrol →</Link>
         </div>
       </div>
 

@@ -64,8 +64,6 @@ export default function CathletePage({ examData }) {
   const cathleteMocksPrice = cathleteMocks?.price_inr ? Number(cathleteMocks.price_inr) : FALLBACK.cathleteMocksPrice
   const cathleteStartFormatted = formatDate(cathleteCourse?.start_date) || formatDate(FALLBACK.cathleteStart)
   const examYear = new Date(examData?.exam_date || FALLBACK.examDate).getFullYear()
-  const catalysisYear = examYear + 1
-  const catalysisPrice = FALLBACK.catalysisPrice
 
   const activePrice = withMocks ? cathleteMocksPrice : cathleteBasePrice
   const activeHref = withMocks ? '/checkout?course=cathlete&plan=with-mocks' : '/checkout?course=cathlete&plan=base'
@@ -140,30 +138,6 @@ export default function CathletePage({ examData }) {
             <span>{withMocks ? 'Switch to without mocks' : `Add 31 CAT mocks (+${fmtPrice(cathleteMocksPrice - cathleteBasePrice)})`}</span>
             <span>↓</span>
           </button>
-        </div>
-      </section>
-
-      {/* comparison: cathlete vs catalysis */}
-      <section className="section">
-        <div className="container">
-          <div style={{ marginBottom:36 }}>
-            <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Which one is right for you?</div>
-            <h2 className="d-lg">CAThlete <em style={R}>or CATalysis?</em></h2>
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:1, background:'var(--g200)', border:'var(--border)', borderRadius:4, overflow:'hidden' }} className="syl-grid">
-            <div style={{ background:'var(--black)', padding:'28px 32px', color:'#fff' }}>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)', marginBottom:8 }}>CAThlete</div>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'#fff', marginBottom:10, lineHeight:1.3 }}>Starting from scratch or short on time</div>
-              <p style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', lineHeight:1.7, marginBottom:16 }}>Starting {cathleteStartFormatted}. {fmtPrice(cathleteBasePrice)} without mocks or {fmtPrice(cathleteMocksPrice)} with mocks.</p>
-              <Link href="/checkout?course=cathlete&plan=with-mocks" className="btn btn-red" style={{ fontSize:12, padding:'10px 18px' }}>Enrol in CAThlete →</Link>
-            </div>
-            <div style={{ background:'#fff', padding:'28px 32px' }}>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)', marginBottom:8 }}>{`CATalysis ${catalysisYear}`}</div>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'var(--black)', marginBottom:10, lineHeight:1.3 }}>Full-year structured preparation</div>
-              <p style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g700)', lineHeight:1.7, marginBottom:16 }}>From first principles to exam day. 400+ hours live, 30 mocks. The complete IIM preparation route.</p>
-              <Link href="/courses/cat/catalysis" className="btn btn-outline" style={{ fontSize:12, padding:'10px 18px' }}>See CATalysis →</Link>
-            </div>
-          </div>
         </div>
       </section>
 

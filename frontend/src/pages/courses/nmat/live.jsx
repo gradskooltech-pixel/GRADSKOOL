@@ -10,7 +10,7 @@
 import Head from 'next/head'
 import { FoundationsListing } from '../../../components/foundations/FoundationsListing'
 
-const META = { name:'NMAT', full:'NMAT by GMAC', color:'#1a6e3c', course:'/courses/nmat', courseLabel:'NMAT Mocks', isFullCourse:true, mocksCheckoutUrl:'/checkout?course=nmat', mocksPrice:'₹1,499' }
+const META = { name:'NMAT', full:'NMAT by GMAC', color:'#1a6e3c', course:'/courses/nmat', courseLabel:'NMAT Mocks', isFullCourse:true, requireLogin:true, mocksCheckoutUrl:'/checkout?course=nmat', mocksPrice:'₹1,499' }
 
 export default function NMATLivePage() {
   return (

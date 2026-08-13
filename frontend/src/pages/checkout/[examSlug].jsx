@@ -31,6 +31,17 @@ const EXAMS = [
   { slug:'mhcet', label:'MH CET' },
 ]
 
+// Free classes aren't a real purchasable PricingPlan — no payment, no
+// Razorpay involved at all. This synthetic "plan" only exists so it can
+// sit in the same plan-selector list as the paid options; selecting it
+// swaps the checkout CTA for a direct link to the /live page instead of
+// EnrolButton (handled where selectedPlan is rendered, further down).
+const FREE_CLASSES_CONFIG = {
+  snap: { name: 'SNAP Free Sessions', url: '/courses/snap/live' },
+  nmat: { name: 'NMAT Free Sessions', url: '/courses/nmat/live' },
+  xat:  { name: 'XAT Foundation Classes', url: '/foundations/xat' },
+}
+
 // CAT has enough distinct products (CATalysis, CAThlete, ALPgebra, CAT
 // Mocks, CAT Books) that a flat list of plans reads as one undifferentiated
 // pile. Grouping by product, with each product's own tiers nested inside,
@@ -69,11 +80,22 @@ export default function CheckoutPage() {
         // The endpoint is paginated ({results, count, ...}), not a raw
         // array — this fallback also tolerates the endpoint one day
         // returning a plain array without breaking again.
-        const plansArr = Array.isArray(data) ? data : (data.results || [])
+        let plansArr = Array.isArray(data) ? data : (data.results || [])
+
+        const freeConfig = FREE_CLASSES_CONFIG[examSlug]
+        if (freeConfig) {
+          plansArr = [{
+            id: 'free-classes', slug: 'free-classes', name: freeConfig.name,
+            price_inr: 0, base_price_excl_gst: 0, gst_amount: 0, total_with_gst: 0,
+            features: [], is_featured: false, isFreeClasses: true, freeClassesUrl: freeConfig.url,
+          }, ...plansArr]
+        }
+
         setPlans(plansArr)
         const preselect = plansArr.find(p => String(p.id) === String(planIdParam))
           || plansArr.find(p => p.slug === planIdParam)
           || plansArr.find(p => p.is_featured)
+          || plansArr.find(p => !p.isFreeClasses) // default to a real plan, not the free option, when nothing else matched
           || plansArr[0]
         if (preselect) {
           setSelectedId(preselect.id)
@@ -133,6 +155,14 @@ export default function CheckoutPage() {
 }
 
 function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId, selectedPlan, groupId, setGroupId, isLoggedIn, user }) {
+  // CATalysis is the flagship cohort for next year's exam (the 2027
+  // intake), while every other CAT product (CAThlete, ALPgebra, mocks,
+  // books) targets the upcoming 2026 exam — so the displayed exam label
+  // needs to flip specifically when CATalysis is the active group.
+  const displayExamName = (examSlug === 'cat' && groupId === 'CATalysis')
+    ? examName.replace(/\b(20\d{2})\b/, (m, year) => String(Number(year) + 1))
+    : examName
+
   return (
     <>
       <style>{`
@@ -152,11 +182,11 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
         <div style={{ borderRight:'1px solid var(--g200)' }}>
           <div style={{ padding:'48px', maxWidth:640, width:'100%', margin:'0 auto' }} className="co-left-pad">
           <Link href={`/courses/${examSlug}`} style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', textDecoration:'none' }}>
-            ← Back to {examName || examSlug?.toUpperCase()}
+            ← Back to {displayExamName || examSlug?.toUpperCase()}
           </Link>
 
           <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--red)', marginTop:28, marginBottom:8 }}>Choose your plan</div>
-          <h1 style={{ fontFamily:'var(--font-serif)', fontSize:36, fontWeight:400, color:'var(--black)', lineHeight:1.1, marginBottom:32 }}>{examName}</h1>
+          <h1 style={{ fontFamily:'var(--font-serif)', fontSize:36, fontWeight:400, color:'var(--black)', lineHeight:1.1, marginBottom:32 }}>{displayExamName}</h1>
 
           {examSlug === 'cat' && (
             <div style={{ marginBottom:20 }}>
@@ -244,7 +274,7 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                 <>
                   <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--g500)', marginBottom:10 }}>Order Summary</div>
                   <div style={{ fontFamily:'var(--font-serif)', fontSize:21, color:'var(--black)', marginBottom:4 }}>{selectedPlan.name}</div>
-                  <div style={{ fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)', marginBottom:20 }}>{examName}</div>
+                  <div style={{ fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)', marginBottom:20 }}>{displayExamName}</div>
 
                   <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:8, marginBottom:20, padding:0 }}>
                     {selectedPlan.features?.filter(f => f.is_included).map((f, i) => (
@@ -271,7 +301,11 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                     </div>
                   </div>
 
-                  {!isLoggedIn ? (
+                  {selectedPlan.isFreeClasses ? (
+                    <Link href={selectedPlan.freeClassesUrl} className="btn btn-red" style={{ width:'100%', justifyContent:'center', textAlign:'center', display:'block' }}>
+                      Start Free Classes →
+                    </Link>
+                  ) : !isLoggedIn ? (
                     <div style={{ display:'flex', flexDirection:'column', gap:12, padding:20, background:'var(--off)', border:'1px solid var(--g200)', borderRadius:4 }}>
                       <p style={{ fontFamily:'var(--font-sans)', fontSize:13.5, color:'var(--g700)' }}>You'll need an account to complete your purchase.</p>
                       <Link href={`/auth/register?redirect=${encodeURIComponent(`/checkout/${examSlug}?plan=${selectedPlan.id}`)}`}

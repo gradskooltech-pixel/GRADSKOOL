@@ -233,7 +233,11 @@ export default function Home() {
           <div className="hero-l">
             <div>
               <div className="eyebrow" style={{ marginBottom:22 }}><span className="dot" /><span>CAThlete — Crash Course Now Open</span></div>
-              <h1 className="d-xl" style={{ margin:'0 0 22px' }}>India's most<br /><em style={R}>structured</em><br />CAT &amp; GMAT prep.</h1>
+              <h1 className="d-xl" style={{ margin:'0 0 12px' }}>India's most<br /><em style={R}>structured</em><br />CAT &amp; GMAT prep.</h1>
+              <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:24 }}>
+                <span style={{ width:6, height:6, borderRadius:'50%', background:'var(--red)', flexShrink:0 }} />
+                <span style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--black)' }}>CAT Crash Course 2026 is Live</span>
+              </div>
               <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.85, maxWidth:440, marginBottom:36 }}>
                 Founded by Abhishek Leela Pandey — 99.93 percentile CAT, 770 GMAT. Live two-way teaching, not recorded lectures. Every cohort capped at 27 students. No exceptions.
               </p>
@@ -284,37 +288,6 @@ export default function Home() {
                   'Sreeja Biswas — IIM Kozhikode','Prathamesh Mulay — NMIMS Mumbai Core MBA','Avivratta Krishna — NMIMS Mumbai Core','Devang — IIM Amritsar'].map((name,i) => (
                   <span key={i} style={{ padding:'12px 32px', fontFamily:'var(--font-serif)', fontSize:15, color:'var(--black)', borderRight:'var(--border)' }}>{name}</span>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── CATHLETE STRIP ── */}
-        <div style={{ background:'linear-gradient(135deg,#1a1a18 55%,#2a2927)', borderTop:'var(--border)', borderBottom:'var(--border)', padding:'40px 0', position:'relative', overflow:'hidden' }}>
-          <div className="container">
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:32, flexWrap:'wrap' }}>
-              <div>
-                <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--red)', marginBottom:8 }}>CAT 2026 · Crash Course · Featured</div>
-                <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(22px,3vw,30px)', fontWeight:400, color:'#fff', lineHeight:1.15, marginBottom:6 }}>CAThlete — <em style={{ fontStyle:'italic', color:'var(--red)' }}>Sprint to CAT 2026.</em></h2>
-                <p style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)', lineHeight:1.6 }}>Intensive structured preparation for the final 3 months before CAT 2026.</p>
-                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', display:'flex', alignItems:'center', gap:6, marginTop:10 }}>
-                  <span style={{ width:5, height:5, borderRadius:'50%', background:'var(--red)', flexShrink:0 }} />
-                  Starts September 2026 · Limited seats
-                </div>
-              </div>
-              <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                {[['Without Mocks','₹6,999'],['With Mocks','₹9,999']].map(([label,price]) => (
-                  <div key={label} style={{ background:'rgba(255,255,255,.06)', border:'1px solid rgba(255,255,255,.12)', borderRadius:3, padding:'14px 20px', textAlign:'center', minWidth:140 }}>
-                    <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:500, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)', marginBottom:6 }}>{label}</div>
-                    <div style={{ fontFamily:'var(--font-serif)', fontSize:26, color:'#fff', lineHeight:1 }}>{price}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display:'flex', flexDirection:'column', gap:10, alignItems:'flex-start' }}>
-                <Link href="/checkout?course=cathlete" className="btn btn-red">Enrol in CAThlete →</Link>
-                <Link href="/courses/cat/cathlete" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>Learn more →</Link>
-                <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20more%20about%20CAThlete"
-                  target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><span className="wa-dot" />Ask about CAThlete</a>
               </div>
             </div>
           </div>
