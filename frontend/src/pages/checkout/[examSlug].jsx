@@ -31,6 +31,20 @@ const EXAMS = [
   { slug:'mhcet', label:'MH CET' },
 ]
 
+// CAT has enough distinct products (CATalysis, CAThlete, ALPgebra, CAT
+// Mocks, CAT Books) that a flat list of plans reads as one undifferentiated
+// pile. Grouping by product, with each product's own tiers nested inside,
+// makes it clear these are different things rather than 6 competing options
+// for "CAT prep". Other exams have only 1-2 plans each, so they don't need
+// this and keep the simple flat list below.
+const CAT_PLAN_GROUPS = [
+  { title: 'CATalysis', subtitle: 'The complete, flagship CAT cohort', slugs: ['live-mocks', 'live-all-mba-mocks', 'live-cat-mocks-books'] },
+  { title: 'CAThlete', subtitle: 'Intensive crash course for the final stretch', slugs: ['base', 'with-mocks'] },
+  { title: 'ALPgebra', subtitle: '99 theorems covering the full Algebra syllabus', slugs: ['alpgebra'] },
+  { title: 'CAT Mocks', subtitle: 'Full-length mocks and sectional tests', slugs: ['cat-mocks'] },
+  { title: 'CAT Books', subtitle: "Curated physical books with ALP Sir's notes", slugs: ['cat-books'] },
+]
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { examSlug, plan: planIdParam } = router.query
@@ -130,21 +144,46 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
           <h1 style={{ fontFamily:'var(--font-serif)', fontSize:36, fontWeight:400, color:'var(--black)', lineHeight:1.1, marginBottom:32 }}>{examName}</h1>
 
           <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:40 }}>
-            {plans.map((plan) => (
-              <PlanOption
-                key={plan.id}
-                plan={plan}
-                isSelected={plan.id === selectedId}
-                onSelect={() => setSelectedId(plan.id)}
-              />
-            ))}
+            {examSlug === 'cat' ? (
+              CAT_PLAN_GROUPS.map(group => {
+                const groupPlans = group.slugs
+                  .map(slug => plans.find(p => p.slug === slug))
+                  .filter(Boolean)
+                if (groupPlans.length === 0) return null
+                return (
+                  <div key={group.title} style={{ marginBottom:8 }}>
+                    <div style={{ fontFamily:'var(--font-serif)', fontSize:17, color:'var(--black)', marginBottom:2 }}>{group.title}</div>
+                    <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', marginBottom:12 }}>{group.subtitle}</div>
+                    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                      {groupPlans.map(plan => (
+                        <PlanOption
+                          key={plan.id}
+                          plan={plan}
+                          isSelected={plan.id === selectedId}
+                          onSelect={() => setSelectedId(plan.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )
+              })
+            ) : (
+              plans.map((plan) => (
+                <PlanOption
+                  key={plan.id}
+                  plan={plan}
+                  isSelected={plan.id === selectedId}
+                  onSelect={() => setSelectedId(plan.id)}
+                />
+              ))
+            )}
           </div>
 
           {(examSlug === 'nmat' || examSlug === 'snap') && (
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap', padding:'16px 20px', background:'#fff8ee', border:'1px solid #f0dfb8', borderRadius:4, marginBottom:40 }}>
               <div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.06em', textTransform:'uppercase', color:'#a3730f', marginBottom:4 }}>Better deal</div>
-                <div style={{ fontFamily:'var(--font-body)', fontSize:13.5, color:'var(--g700)' }}>Get {examSlug === 'nmat' ? 'SNAP' : 'NMAT'} mocks too — the bundle is ₹4,499 for both instead of ₹5,998 separately.</div>
+                <div style={{ fontFamily:'var(--font-body)', fontSize:13.5, color:'var(--g700)' }}>Get {examSlug === 'nmat' ? 'SNAP' : 'NMAT'} mocks too — the bundle is ₹2,499 for both instead of ₹2,999 separately.</div>
               </div>
               <Link href="/checkout/nmat-snap" style={{ flexShrink:0, fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'#a3730f', border:'1px solid #f0dfb8', borderRadius:3, padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' }}>
                 See the bundle →
