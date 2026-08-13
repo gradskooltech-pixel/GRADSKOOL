@@ -1,7 +1,7 @@
 /**
  * GRADSKOOL — App Root
  */
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuthStore } from '../store/authStore'
 import { Navbar } from '../components/layout/Navbar'
@@ -22,12 +22,24 @@ export default function App({ Component, pageProps }) {
   const user           = useAuthStore(s => s.user)
   const router         = useRouter()
   const bare           = useBareLayout(router.pathname)
+  const [hydrated, setHydrated] = useState(false)
 
   // Init Sentry once
   useEffect(() => { initSentry() }, [])
 
-  // Hydrate auth session on mount
-  useEffect(() => { hydrateSession() }, []) // eslint-disable-line
+  // Hydrate auth session on mount. Bare pages (admin-panel, dashboard,
+  // watch, learn, test) wait for this to finish before rendering — those
+  // pages' own child components fire authenticated API calls immediately
+  // on mount, and doing that before the access token is restored from the
+  // refresh token means the api.js interceptor kicks off its own,
+  // independent refresh attempt using the same refresh token hydrateSession
+  // is already using. With ROTATE_REFRESH_TOKENS on, whichever one loses
+  // that race gets an already-used, invalid token back and force-logs-out
+  // the user — even though the session itself was perfectly valid. Public
+  // pages don't wait, since they don't make authenticated calls on mount.
+  useEffect(() => {
+    hydrateSession().finally(() => setHydrated(true))
+  }, []) // eslint-disable-line
 
   // Identify user in Sentry + Analytics after login
   useEffect(() => {
@@ -48,8 +60,9 @@ export default function App({ Component, pageProps }) {
   const getLayout = Component.getLayout
   if (getLayout) return getLayout(<Component {...pageProps} />)
 
-  // Auth / admin / watch pages manage their own chrome
-  if (bare) return <Component {...pageProps} />
+  // Auth / admin / watch pages manage their own chrome — and wait for
+  // session hydration before rendering, per the comment above.
+  if (bare) return hydrated ? <Component {...pageProps} /> : null
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
