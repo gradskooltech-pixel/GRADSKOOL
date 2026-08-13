@@ -54,28 +54,41 @@ export default function RegisterPage() {
     setFieldErrors({})
     setGlobalError('')
 
-    const result = await register(form)
-    if (result.success) {
-      // Auto-login after registration (works in dev since email is auto-verified)
-      const loginResult = await login(form.email, form.password)
-      if (loginResult.success) {
-        const redirect = router.query.redirect || '/dashboard'
-        router.push(redirect)
-      } else {
-        // Email verification required (production) — show success screen
-        setSuccess(true)
-      }
-    } else {
-      if (typeof result.error === 'object') {
-        // Field-level errors from DRF
-        const mapped = {}
-        for (const [key, val] of Object.entries(result.error)) {
-          mapped[snakeToCamel(key)] = Array.isArray(val) ? val[0] : val
+    try {
+      const result = await register(form)
+      console.log('[REGISTER DEBUG] register() result:', result)
+      if (result.success) {
+        // Auto-login after registration (works in dev since email is auto-verified)
+        const loginResult = await login(form.email, form.password)
+        console.log('[REGISTER DEBUG] login() result:', loginResult)
+        if (loginResult.success) {
+          const redirect = router.query.redirect || '/dashboard'
+          console.log('[REGISTER DEBUG] Auto-login succeeded, redirecting to:', redirect)
+          router.push(redirect)
+        } else {
+          // Email verification required (production) — show success screen
+          console.log('[REGISTER DEBUG] Auto-login failed (expected if unverified) — showing success screen')
+          setSuccess(true)
         }
-        setFieldErrors(mapped)
       } else {
-        setGlobalError(result.error)
+        console.log('[REGISTER DEBUG] register() failed:', result.error)
+        if (typeof result.error === 'object') {
+          // Field-level errors from DRF
+          const mapped = {}
+          for (const [key, val] of Object.entries(result.error)) {
+            mapped[snakeToCamel(key)] = Array.isArray(val) ? val[0] : val
+          }
+          setFieldErrors(mapped)
+        } else {
+          setGlobalError(result.error)
+        }
       }
+    } catch (err) {
+      // Defensive: if anything above throws unexpectedly, surface it
+      // instead of silently leaving the user stuck on the form with no
+      // feedback at all.
+      console.error('[REGISTER DEBUG] Unexpected error in handleSubmit:', err)
+      setGlobalError('Something went wrong creating your account. Please try again, or contact us if this keeps happening.')
     }
   }
 

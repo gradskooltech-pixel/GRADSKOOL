@@ -4,6 +4,7 @@ GRADSKOOL — Accounts Serializers
 Covers: registration, login (JWT), profile read/update,
 email verification, password reset, Google OAuth token exchange.
 """
+import logging
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -11,6 +12,8 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User, EmailVerificationToken, PasswordResetToken
+
+logger = logging.getLogger(__name__)
 
 
 # ── JWT ───────────────────────────────────────────────────────────────────────
@@ -74,7 +77,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
     def validate_email(self, value):
-        if User.objects.filter(email__iexact=value).exists():
+        matching = User.objects.filter(email__iexact=value)
+        logger.warning(
+            f'[REGISTER DEBUG] Checking email={value!r} (len={len(value)}) — '
+            f'matches={matching.count()} — matched_emails={list(matching.values_list("email", flat=True))} — '
+            f'total_users_in_db={User.objects.count()}'
+        )
+        if matching.exists():
             raise serializers.ValidationError(
                 'An account with this email already exists.'
             )
