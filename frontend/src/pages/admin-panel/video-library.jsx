@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:'#ff5e5f',black:'#0f0f0f',white:'#fff',bg:'#f7f6f3',border:'#e8e8e6',gray50:'#fafaf9',gray400:'#999',gray500:'#666',green:'#22c55e',amber:'#f59e0b',blue:'#3b82f6' }
 const EXAMS = ['','cat','xat','snap','nmat','gmat','gre','ipmat','cmat','mhcet','clat','cuet']
@@ -97,6 +98,7 @@ export default function VideoLibraryPage() {
     : videos
 
   return (
+    <AdminLayout title="Video Library">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Video Library — Admin — GRADSKOOL</title></Head>
 
@@ -331,6 +333,7 @@ export default function VideoLibraryPage() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 

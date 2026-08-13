@@ -12,6 +12,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red:'#d94f50', black:'#1a1a18', white:'#fff',
@@ -176,6 +177,7 @@ export default function FoundationSectionsAdmin() {
   }
 
   return (
+    <AdminLayout title="Foundation Sections">
     <div style={{ minHeight:'100vh', background:C.off }}>
       <Head><title>Foundation Sections — Admin — GRADSKOOL</title></Head>
       <Toast msg={msg} />
@@ -216,5 +218,6 @@ export default function FoundationSectionsAdmin() {
         )}
       </div>
     </div>
+  </AdminLayout>
   )
 }

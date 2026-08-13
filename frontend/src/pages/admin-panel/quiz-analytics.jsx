@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:'#ff5e5f', black:'#0f0f0f', white:'#fff', bg:'#f7f6f3', border:'#e8e8e6', gray:'#999', green:'#22c55e', amber:'#f59e0b', blue:'#3b82f6', muted:'#f4f3f0', purple:'#7b2d8b' }
 const EXAMS = ['cat','xat','snap','nmat','gmat','gre']
@@ -104,6 +105,7 @@ export default function QuizAnalytics() {
   }
 
   return (
+    <AdminLayout title="Quiz Analytics">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Quiz Analytics — Admin — GRADSKOOL</title></Head>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" async />
@@ -265,6 +267,7 @@ export default function QuizAnalytics() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 

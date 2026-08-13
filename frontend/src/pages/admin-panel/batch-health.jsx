@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:'#ff5e5f', black:'#0f0f0f', white:'#fff', bg:'#f7f6f3', border:'#e8e8e6', gray:'#999', green:'#22c55e', amber:'#f59e0b', blue:'#3b82f6', muted:'#f4f3f0' }
 
@@ -75,6 +76,7 @@ export default function BatchHealth() {
   }
 
   return (
+    <AdminLayout title="Batch Health">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Batch Health — Admin — GRADSKOOL</title></Head>
       {msg && <div style={{ position:'fixed', top:'64px', right:'1.5rem', zIndex:999, padding:'0.75rem 1.25rem', borderRadius:'4px', fontFamily:'var(--font-sans)', fontSize:'0.82rem', background:msg.type==='error'?'#fee2e2':'#dcfce7', border:'1px solid '+(msg.type==='error'?'#fca5a5':'#86efac'), color:msg.type==='error'?'#991b1b':'#166534' }}>{msg.text}</div>}
@@ -204,6 +206,7 @@ export default function BatchHealth() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 

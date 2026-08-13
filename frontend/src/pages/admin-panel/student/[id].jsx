@@ -10,6 +10,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import api from '../../../lib/api'
+import { AdminLayout } from '../../../components/admin/AdminLayout'
 
 const C = {
   red:'#ff5e5f', black:'#0f0f0f', white:'#fff', bg:'#f7f6f3',
@@ -112,6 +113,7 @@ export default function StudentDetail() {
   if (!data)   return <Shell id={null}><p style={{ padding:'3rem', textAlign:'center', color:C.red }}>Student not found</p></Shell>
 
   return (
+    <AdminLayout title="Student">
     <Shell id={id}>
       <Head><title>{data.first_name} {data.last_name} — Admin — GRADSKOOL</title></Head>
 
@@ -472,6 +474,7 @@ export default function StudentDetail() {
         </div>
       )}
     </Shell>
+  </AdminLayout>
   )
 }
 

@@ -11,6 +11,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Script from 'next/script'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red:'#d94f50', black:'#1a1a18', white:'#fff',
@@ -62,16 +63,23 @@ export default function FYQAdmin() {
   const notify = (text, type='success') => { setMsg({ text, type }); setTimeout(() => setMsg(null), 3500) }
   const openPanel = (next) => { setPanelKey(k => k + 1); setPanel(next) }
 
-  useEffect(() => { const t = setTimeout(() => setDebouncedSearch(search), 350); return () => clearTimeout(t) }, [search])
+  useEffect(() => { const t = setTimeout(() => setDebouncedSearch(search), 350); return (
+    <AdminLayout title="FYQs"></AdminLayout>
+  ) => clearTimeout(t) }, [search])
   useEffect(() => { setPage(1) }, [debouncedSearch])
 
   const load = useCallback(() => {
     setLoading(true)
     const params = new URLSearchParams({ exam:'cat', page:String(page), page_size:'50' })
     if (debouncedSearch) params.set('search', debouncedSearch)
-    api.get(`/dashboard/fyq/questions/?${params.toString()}`)
-      .then(({ data }) => setData(data))
-      .catch(() => setData({ results:[], count:0, page:1, num_pages:1 }))
+    const url = `/dashboard/fyq/questions/?${params.toString()}`
+    console.log('[FYQ ADMIN DEBUG] Requesting:', url)
+    api.get(url)
+      .then(({ data }) => { console.log('[FYQ ADMIN DEBUG] Success:', data); setData(data) })
+      .catch((err) => {
+        console.error('[FYQ ADMIN DEBUG] Failed:', err.response?.status, err.response?.data || err.message)
+        setData({ results:[], count:0, page:1, num_pages:1 })
+      })
       .finally(() => setLoading(false))
   }, [debouncedSearch, page])
 

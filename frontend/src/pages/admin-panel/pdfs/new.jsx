@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import api from '../../../lib/api'
 import { useAuth } from '../../../hooks/useAuth'
+import { AdminLayout } from '../../../components/admin/AdminLayout'
 
 const C = { red: '#d94f50', black: '#0f0f0f', bg: '#f7f6f3', border: '#e8e8e6', gray: '#999' }
 
@@ -151,6 +152,7 @@ export default function AdminPdfNewPage() {
   }, [form, file, fromClassId])
 
   return (
+    <AdminLayout title="Upload PDF">
     <div style={{ minHeight: '100vh', background: C.bg }}>
       <Head><title>Upload PDF — Admin — GRADSKOOL</title></Head>
 
@@ -242,6 +244,7 @@ export default function AdminPdfNewPage() {
         )}
       </div>
     </div>
+  </AdminLayout>
   )
 }
 

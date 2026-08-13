@@ -11,6 +11,7 @@ import { useState, useEffect } from "react"
 import Head from "next/head"
 import Link from "next/link"
 import api from "../../lib/api"
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:"#ff5e5f",black:"#0f0f0f",white:"#fff",bg:"#f7f6f3",border:"#e8e8e6",gray:"#999",green:"#22c55e" }
 const EMPTY_FORM = { exam_id:"", name:"", slug:"", price_inr:"", is_featured:false, is_active:true, sort_order:0 }
@@ -59,6 +60,7 @@ export default function PricingPlansAdmin() {
   const filtered = filterExam === "all" ? plans : plans.filter(p => p.exam_slug === filterExam)
 
   return (
+    <AdminLayout title="Pricing Plans">
     <div style={{ minHeight:"100vh", background:C.bg }}>
       <Head><title>Pricing Plans — Admin — GRADSKOOL</title></Head>
       <div style={{ height:"56px", background:C.white, borderBottom:"1px solid "+C.border, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 1.5rem" }}>
@@ -153,6 +155,7 @@ export default function PricingPlansAdmin() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 const s = { lbl:{ fontFamily:"var(--font-sans)",fontSize:"0.7rem",fontWeight:"700",color:"#666",display:"block",marginBottom:"0.25rem" }, inp:{ width:"100%",padding:"0.5rem 0.625rem",fontFamily:"var(--font-sans)",fontSize:"0.82rem",border:"1px solid #e8e8e6",borderRadius:"4px",outline:"none",color:"#0f0f0f",boxSizing:"border-box",background:"#fff" } }

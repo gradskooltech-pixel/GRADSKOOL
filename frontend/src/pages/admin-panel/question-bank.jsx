@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"
 import Head from "next/head"
 import Link from "next/link"
 import api from "../../lib/api"
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:"#ff5e5f",black:"#0f0f0f",white:"#fff",bg:"#f7f6f3",border:"#e8e8e6",gray:"#999",green:"#22c55e",amber:"#f59e0b",blue:"#3b82f6",muted:"#f4f3f0" }
 const DIFFICULTIES = ["","easy","medium","hard"]
@@ -80,6 +81,7 @@ export default function QuestionBank() {
   }
 
   return (
+    <AdminLayout title="Question Bank">
     <div style={{ minHeight:"100vh", background:C.bg }}>
       <Head><title>Question Bank — Admin — GRADSKOOL</title></Head>
       <div style={{ height:"56px", background:C.white, borderBottom:"1px solid "+C.border, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 1.5rem", position:"sticky", top:0, zIndex:100 }}>
@@ -216,6 +218,7 @@ export default function QuestionBank() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 const s = {

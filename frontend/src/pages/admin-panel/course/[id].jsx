@@ -15,6 +15,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import api from '../../../lib/api'
+import { AdminLayout } from '../../../components/admin/AdminLayout'
 
 const C = {
   red:'#ff5e5f', black:'#0f0f0f', white:'#fff',
@@ -218,9 +219,11 @@ export default function CourseBuilder() {
   const videos   = activeTopic   ? (topics.find(t => t.id === activeTopic.id)?.videos || [])   : []
 
   if (loading) return (
+    <AdminLayout title="Course">
     <div style={{ minHeight:'100vh', background:C.bg, display:'flex', alignItems:'center', justifyContent:'center' }}>
       <p style={{ fontFamily:'Georgia,serif', color:C.gray400 }}>Loading course builder…</p>
     </div>
+  </AdminLayout>
   )
 
   if (!course) return (

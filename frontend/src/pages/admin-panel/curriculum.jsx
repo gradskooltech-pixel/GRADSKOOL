@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuth } from '../../hooks/useAuth'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red:'#ff5e5f', black:'#0f0f0f', white:'#fff',
@@ -146,6 +147,7 @@ export default function CurriculumPage() {
   const videos   = activeTopic   ? (topics.find(t => t.id === activeTopic.id)?.videos || [])   : []
 
   return (
+    <AdminLayout title="Curriculum">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Curriculum — Admin — GRADSKOOL</title></Head>
 
@@ -474,6 +476,7 @@ export default function CurriculumPage() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 

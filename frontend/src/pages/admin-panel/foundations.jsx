@@ -11,6 +11,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Script from 'next/script'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red:'#d94f50', black:'#1a1a18', white:'#fff',
@@ -109,15 +110,21 @@ export default function FoundationsAdmin() {
 
   const load = useCallback(() => {
     setLoading(true)
-    api.get(`/dashboard/foundations/series/?exam=${examFilter}`)
-      .then(({ data }) => setSeries(data))
-      .catch(() => setSeries([]))
+    const url = `/dashboard/foundations/series/?exam=${examFilter}`
+    console.log('[FOUNDATIONS ADMIN DEBUG] Requesting:', url)
+    api.get(url)
+      .then(({ data }) => { console.log('[FOUNDATIONS ADMIN DEBUG] Success:', data); setSeries(data) })
+      .catch((err) => {
+        console.error('[FOUNDATIONS ADMIN DEBUG] Failed:', err.response?.status, err.response?.data || err.message)
+        setSeries([])
+      })
       .finally(() => setLoading(false))
   }, [examFilter])
 
   useEffect(() => { load() }, [load])
 
   return (
+    <AdminLayout title="Foundations">
     <div style={{ minHeight:'100vh', background:C.off }}>
       <Head><title>Foundations — Admin — GRADSKOOL</title></Head>
       <Toast msg={msg} />
@@ -213,6 +220,7 @@ export default function FoundationsAdmin() {
         />
       )}
     </div>
+  </AdminLayout>
   )
 }
 

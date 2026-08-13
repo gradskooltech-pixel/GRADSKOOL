@@ -7,6 +7,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import api from '../../../../lib/api'
+import { AdminLayout } from '../../../../components/admin/AdminLayout'
 
 const C = {
   red:'#ff5e5f', black:'#0f0f0f', white:'#fff',
@@ -96,6 +97,7 @@ export default function CohortPageDesigner() {
   const updateBlock = (idx, data) => setBlocks(b => b.map((bl,i)=>i===idx?{...bl,data}:bl))
 
   return (
+    <AdminLayout title="Cohort">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Page Designer — {cohort?.title||slug}</title></Head>
 
@@ -234,6 +236,7 @@ export default function CohortPageDesigner() {
         </div>
       )}
     </div>
+  </AdminLayout>
   )
 }
 

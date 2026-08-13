@@ -13,6 +13,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 /* ── design tokens ── */
 const C = {
@@ -120,7 +121,9 @@ export default function BlogManage() {
     init()
 
     // Destroy Quill when leaving editor view
-    return () => {
+    return (
+    <AdminLayout title="Blog CMS"></AdminLayout>
+  ) => {
       if (quillRef.current) {
         quillRef.current = null
       }

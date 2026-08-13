@@ -8,6 +8,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red:'#ff5e5f', black:'#0f0f0f', white:'#fff', bg:'#f7f6f3',
@@ -126,7 +127,9 @@ export default function AdminIndex() {
       if (v >= 1000)   return '₹' + (v / 1000).toFixed(1) + 'k'
       return '₹' + v
     }
-    if (v >= 1000) return (v / 1000).toFixed(1) + 'k'
+    if (v >= 1000) return (
+    <AdminLayout title="Overview">v / 1000</AdminLayout>
+  ).toFixed(1) + 'k'
     return String(v)
   }
 

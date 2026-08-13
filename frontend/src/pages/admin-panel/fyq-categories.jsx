@@ -12,6 +12,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import api from '../../lib/api'
+import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = {
   red:'#d94f50', black:'#1a1a18', white:'#fff',
@@ -127,9 +128,13 @@ export default function FYQCategoriesAdmin() {
 
   const load = useCallback(() => {
     setLoading(true)
+    console.log('[FYQ CATEGORIES DEBUG] Requesting: /dashboard/fyq/sections/')
     api.get('/dashboard/fyq/sections/')
-      .then(({ data }) => setSections(data))
-      .catch(() => setSections([]))
+      .then(({ data }) => { console.log('[FYQ CATEGORIES DEBUG] Success:', data); setSections(data) })
+      .catch((err) => {
+        console.error('[FYQ CATEGORIES DEBUG] Failed:', err.response?.status, err.response?.data || err.message)
+        setSections([])
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -196,6 +201,7 @@ export default function FYQCategoriesAdmin() {
   }
 
   return (
+    <AdminLayout title="FYQ Categories">
     <div style={{ minHeight:'100vh', background:C.off }}>
       <Head><title>FYQ Categories — Admin — GRADSKOOL</title></Head>
       <Toast msg={msg} />
@@ -296,5 +302,6 @@ export default function FYQCategoriesAdmin() {
         )}
       </div>
     </div>
+  </AdminLayout>
   )
 }
