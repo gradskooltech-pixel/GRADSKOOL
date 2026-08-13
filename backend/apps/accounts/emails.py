@@ -44,9 +44,16 @@ def _send(to: str, subject: str, html: str) -> bool:
         return False
 
 
-def send_verification_email(user, token: str) -> bool:
+def send_verification_email(user, token: str, redirect_path: str = '') -> bool:
     """Send email verification link."""
     verify_url = f"{settings.EMAIL_VERIFICATION_URL}?token={token}"
+    # Only accept a genuine relative path — rejects absolute URLs and
+    # protocol-relative ones like '//evil.com' that browsers still treat
+    # as external, which would otherwise let this become an open redirect
+    # embedded in a real, trusted-looking GRADSKOOL email.
+    if redirect_path and redirect_path.startswith('/') and not redirect_path.startswith('//'):
+        from urllib.parse import quote
+        verify_url += f"&redirect={quote(redirect_path, safe='')}"
 
     html = f"""
     <!DOCTYPE html>

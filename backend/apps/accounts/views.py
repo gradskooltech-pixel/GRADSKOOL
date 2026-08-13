@@ -111,10 +111,11 @@ class RegisterView(APIView):
             }, status=status.HTTP_201_CREATED)
         else:
             # Production: send verification email via Resend
+            redirect_path = request.data.get('redirect', '')
             email_sent = False
             try:
                 token = EmailVerificationToken.objects.create(user=user)
-                email_sent = send_verification_email(user, str(token.token))
+                email_sent = send_verification_email(user, str(token.token), redirect_path)
                 if not email_sent:
                     logger.error(f'Verification email failed for {user.email}')
             except Exception as e:

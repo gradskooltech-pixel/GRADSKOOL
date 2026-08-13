@@ -3,7 +3,8 @@
  * Route: /auth/verify-email?token=<uuid>
  *
  * Automatically submits the token on mount.
- * On success: redirects to dashboard (user is logged in).
+ * On success: redirects back to wherever the user started (preserved via
+ * ?redirect=), falling back to home — not /dashboard.
  * On failure: shows error + resend option.
  */
 import { useEffect, useState } from 'react'
@@ -31,8 +32,13 @@ export default function VerifyEmailPage() {
       const result = await verifyEmail(token)
       if (result.success) {
         setState(STATE.success)
-        // Redirect after brief success flash
-        setTimeout(() => router.push('/dashboard'), 1800)
+        // Redirect after brief success flash — back to wherever the user
+        // originally started (e.g. the NMAT/SNAP live page that prompted
+        // signup), preserved end-to-end from the register form through
+        // the verification email link. Falls back to home, not /dashboard,
+        // since the dashboard isn't a real destination for most users yet.
+        const { redirect } = router.query
+        setTimeout(() => router.push(redirect || '/'), 1800)
       } else {
         setState(STATE.error)
         setErrorMessage(typeof result.error === 'string' ? result.error : 'Verification failed.')
@@ -62,7 +68,7 @@ export default function VerifyEmailPage() {
             <div style={styles.iconSuccess}>✓</div>
             <h2 style={styles.heading}>Email verified!</h2>
             <p style={styles.sub}>
-              Your account is now active. Redirecting you to your dashboard…
+              Your account is now active. Redirecting you now…
             </p>
           </>
         )}

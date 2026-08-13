@@ -55,14 +55,14 @@ export default function RegisterPage() {
     setGlobalError('')
 
     try {
-      const result = await register(form)
+      const result = await register({ ...form, redirect: router.query.redirect })
       console.log('[REGISTER DEBUG] register() result:', result)
       if (result.success) {
         // Auto-login after registration (works in dev since email is auto-verified)
         const loginResult = await login(form.email, form.password)
         console.log('[REGISTER DEBUG] login() result:', loginResult)
         if (loginResult.success) {
-          const redirect = router.query.redirect || '/dashboard'
+          const redirect = router.query.redirect || '/'
           console.log('[REGISTER DEBUG] Auto-login succeeded, redirecting to:', redirect)
           router.push(redirect)
         } else {
@@ -95,7 +95,7 @@ export default function RegisterPage() {
   const handleGoogle = async (credential) => {
     const result = await googleAuth(credential)
     if (result.success) {
-      const redirect = router.query.redirect || '/dashboard'
+      const redirect = router.query.redirect || '/'
       router.push(redirect)
     } else {
       setGlobalError(typeof result.error === 'string' ? result.error : 'Google sign-in failed.')

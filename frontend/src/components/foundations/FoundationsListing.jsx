@@ -503,7 +503,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
       <div style={{ padding:'48px 0' }}>
         <div className="pg">
 
-          {meta.isFullCourse && !authLoading && !isLoggedIn ? (
+          {meta.isFullCourse && router.isReady && !authLoading && !isLoggedIn ? (
             <div style={{ textAlign:'center', padding:'4rem 2rem', border:`1px solid var(--g200)`, borderRadius:6, maxWidth:480, margin:'0 auto' }}>
               <p style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', marginBottom:10 }}>
                 Create a free account to start

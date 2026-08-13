@@ -34,7 +34,7 @@ export default function LoginPage() {
     setUnverified(null)
     const result = await login(email.trim().toLowerCase(), password)
     if (result.success) {
-      router.push(redirect || '/dashboard')
+      router.push(redirect || '/')
     } else {
       if (result.code === 'email_not_verified') {
         setUnverified(result.email)
@@ -47,7 +47,7 @@ export default function LoginPage() {
   const handleGoogle = async (credential) => {
     const result = await googleAuth(credential)
     if (result.success) {
-      router.push(redirect || '/dashboard')
+      router.push(redirect || '/')
     } else {
       setError(typeof result.error === 'string' ? result.error : 'Google sign-in failed.')
     }

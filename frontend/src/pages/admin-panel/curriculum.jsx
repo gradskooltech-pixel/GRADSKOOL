@@ -23,7 +23,7 @@ export default function CurriculumPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading && user?.role !== 'admin') router.replace('/dashboard')
+    if (!isLoading && user?.role !== 'admin') router.replace('/')
   }, [user, isLoading])
 
   const [exam,          setExam]         = useState('cat')

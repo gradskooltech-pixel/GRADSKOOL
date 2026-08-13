@@ -83,7 +83,7 @@ export function AdminLayout({ title, children }) {
 
   useEffect(() => {
     if (!isLoading && !isAdmin) {
-      router.replace('/dashboard')
+      router.replace('/')
     }
   }, [isLoading, isAdmin, router])
 

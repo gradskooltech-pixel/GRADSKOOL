@@ -28,7 +28,7 @@ const useAuthStore = create(
       error: null,
 
       // ── REGISTER ────────────────────────────────────────────────────────────
-      register: async ({ firstName, lastName, email, password, passwordConfirm, targetExam, phone }) => {
+      register: async ({ firstName, lastName, email, password, passwordConfirm, targetExam, phone, redirect }) => {
         set({ isLoading: true, error: null })
         try {
           const { data } = await api.post('/auth/register/', {
@@ -39,6 +39,7 @@ const useAuthStore = create(
             password_confirm: passwordConfirm,
             target_exam: targetExam,
             phone,
+            redirect,
           })
           set({ isLoading: false })
           return { success: true, email, detail: data.detail }

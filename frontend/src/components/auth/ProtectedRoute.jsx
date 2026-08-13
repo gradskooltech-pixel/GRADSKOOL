@@ -22,7 +22,7 @@ export function ProtectedRoute({ children, requireRole = null }) {
     }
 
     if (requireRole && user?.role !== requireRole) {
-      router.replace('/dashboard')
+      router.replace('/')
     }
   }, [isLoggedIn, isLoading, requireRole, user, router, router.isReady])
 
