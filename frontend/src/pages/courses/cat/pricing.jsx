@@ -2,11 +2,16 @@
  * GRADSKOOL — CAT Pricing Page
  * Route: /courses/cat/pricing
  *
- * CAT has two products (CATalysis full cohort, CAThlete crash course),
- * both currently woven inline throughout /courses/cat rather than shown
- * as a single standalone comparison anywhere. This page consolidates
- * both into one place — same data source, same fallback pattern as the
- * main CAT page, so it can never show different numbers.
+ * Consolidates every CAT product into one comparison page. Rebuilt —
+ * the previous version looked up plans by slugs that no longer exist
+ * anywhere ('live-cat-mocks', 'cathlete-no-mocks', 'cathlete-with-mocks'),
+ * so it was silently showing hardcoded fallback prices only, never the
+ * real database values, and had a fictional "CATalysis bundles" section
+ * with add-on prices that don't correspond to any real, purchasable plan.
+ *
+ * Every card here links straight to /checkout?course=...&plan=... using
+ * the exact same slugs the checkout page's CAT_PLAN_GROUPS expects, so
+ * clicking through always lands on the right product pre-selected.
  */
 import Head from 'next/head'
 import Link from 'next/link'
@@ -14,14 +19,15 @@ import Link from 'next/link'
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 const R = { color: 'var(--red)' }
 
-// Same fallback pattern as /courses/cat — see that file's comment for why:
-// CAThlete has no Course/PricingPlan record yet, so these hold until admin
-// data exists, then this page switches over automatically, no code change.
+// Fallback prices — used only if a plan hasn't been seeded yet in the
+// database the moment this page builds. Once seeded, real data always wins.
 const FALLBACK = {
   examDate: '2026-11-29',
-  catalysisPrice: 27999,
-  cathleteBasePrice: 6999,
-  cathleteMocksPrice: 9999,
+  'live-mocks': 27999, 'live-all-mba-mocks': 29999,
+  'live-cat-mocks-books': 31999, 'live-all-mba-mocks-books': 34999,
+  'base': 6999, 'with-mocks': 9999,
+  'alpgebra': 999, 'cat-mocks': 2999, 'cat-books': 3999,
+  'all-mba-mocks-books': 7999,
 }
 
 function fmtPrice(n) {
@@ -40,29 +46,41 @@ export async function getStaticProps() {
 
 export default function CatPricingPage({ examData }) {
   const plans = examData?.plans || []
-  const catalysisPlan = plans.find(p => p.slug === 'live-cat-mocks')
-  const cathleteBase  = plans.find(p => p.slug === 'cathlete-no-mocks')
-  const cathleteMocks = plans.find(p => p.slug === 'cathlete-with-mocks')
-
-  const catalysisPrice     = catalysisPlan?.price_inr ? Number(catalysisPlan.price_inr) : FALLBACK.catalysisPrice
-  const cathleteBasePrice  = cathleteBase?.price_inr  ? Number(cathleteBase.price_inr)  : FALLBACK.cathleteBasePrice
-  const cathleteMocksPrice = cathleteMocks?.price_inr ? Number(cathleteMocks.price_inr) : FALLBACK.cathleteMocksPrice
+  // Real plan (if seeded) wins; otherwise the matching fallback number —
+  // same slug used for both the lookup and the checkout link below, so
+  // this page can never show a price that doesn't match what's charged.
+  const price = (slug) => {
+    const plan = plans.find(p => p.slug === slug)
+    return plan?.price_inr ? Number(plan.price_inr) : FALLBACK[slug]
+  }
 
   const examYear = new Date(examData?.exam_date || FALLBACK.examDate).getFullYear()
   const catalysisYear = examYear + 1
 
-  const ADDONS = [
-    { name:'CATalysis + OMETs Mocks', price: fmtPrice(catalysisPrice + 1499), strike: fmtPrice(catalysisPrice + 1999), save:'Save ₹500' },
-    { name:'CATalysis + XAT Course',  price: fmtPrice(catalysisPrice + 5499), strike: fmtPrice(catalysisPrice + 5999), save:'Save ₹500' },
-    { name:'CATalysis + SNAP Mocks',  price: fmtPrice(catalysisPrice + 2499), strike: fmtPrice(catalysisPrice + 2999), save:'Save ₹500' },
-    { name:'CATalysis + NMAT Mocks',  price: fmtPrice(catalysisPrice + 2499), strike: fmtPrice(catalysisPrice + 2999), save:'Save ₹500' },
+  const CATALYSIS_TIERS = [
+    { slug:'live-mocks',               name:'Live + CAT Mocks',               note:'400+ hrs live · 30 CAT mocks · 30 sectionals', featured:true, badge:'Most Popular' },
+    { slug:'live-all-mba-mocks',       name:'Live + All MBA Mocks',           note:'CAT + XAT + SNAP + NMAT + CMAT mocks', badge:'Best Value' },
+    { slug:'live-cat-mocks-books',     name:'Live + CAT Mocks + Books',       note:'Adds the 16-book printed set' },
+    { slug:'live-all-mba-mocks-books', name:'Live + All MBA Mocks + Books',   note:'Everything — all mocks, books, GDPI prep' },
+  ]
+
+  const CATHLETE_TIERS = [
+    { slug:'base',       name:'CAThlete',           note:'Without mocks — intensive final-stretch prep' },
+    { slug:'with-mocks', name:'CAThlete + Mocks',    note:'With 31 full-length CAT mocks', featured:true, badge:'Recommended' },
+  ]
+
+  const STANDALONE = [
+    { slug:'alpgebra',            name:'ALPgebra',                href:'course=alpgebra',   note:'99 theorems — full Algebra syllabus' },
+    { slug:'cat-mocks',           name:'CAT Mocks',               href:'course=cat',         note:'Full-length mocks + sectional tests' },
+    { slug:'cat-books',           name:'CAT Books',               href:'course=cat-books',   note:"Curated books with ALP Sir's notes" },
+    { slug:'all-mba-mocks-books', name:'All MBA Mocks + Books',   href:'course=cat',         note:'Self-paced mocks across every OMET, plus books' },
   ]
 
   return (
     <>
       <Head>
-        <title>CAT Pricing — CATalysis &amp; CAThlete — GRADSKOOL</title>
-        <meta name="description" content={`CATalysis (CAT ${catalysisYear} full cohort) from ${fmtPrice(catalysisPrice)}, and CAThlete (CAT ${examYear} crash course) from ${fmtPrice(cathleteBasePrice)} — GRADSKOOL.`} />
+        <title>CAT Pricing — Every Plan, One Page — GRADSKOOL</title>
+        <meta name="description" content={`CATalysis, CAThlete, ALPgebra, CAT Mocks, CAT Books — every CAT ${catalysisYear} product and price on one page.`} />
       </Head>
 
       <style>{`
@@ -73,64 +91,62 @@ export default function CatPricingPage({ examData }) {
         .pr-back { font-family:var(--font-sans); font-size:13px; color:var(--g500); text-decoration:none; }
         .pr-body { max-width:1100px; margin:0 auto; padding:32px 40px 80px; }
         .pr-section-label { font-family:var(--font-sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--red); margin-bottom:16px; }
-        .pr-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin-bottom:56px; }
-        .pr-card { border:1px solid var(--g200); border-radius:6px; padding:28px 26px; background:#fff; display:flex; flex-direction:column; }
-        .pr-card.featured { background:var(--black); border-color:var(--black); }
-        .pr-card-name { font-family:var(--font-serif); font-size:19px; margin-bottom:8px; }
-        .pr-card.featured .pr-card-name { color:#fff; }
-        .pr-card-price { font-family:var(--font-serif); font-size:34px; margin:12px 0 4px; }
-        .pr-card.featured .pr-card-price { color:#fff; }
-        .pr-card-note { font-family:var(--font-sans); font-size:12px; color:var(--g500); margin-bottom:18px; }
-        .pr-card.featured .pr-card-note { color:rgba(255,255,255,.6); }
+        .pr-section-sub { font-family:var(--font-sans); font-size:13px; color:var(--g500); margin:-12px 0 16px; }
+        .pr-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-bottom:56px; }
+        .pr-card { border:1px solid var(--g200); border-radius:6px; padding:26px 24px; background:#fff; display:flex; flex-direction:column; position:relative; }
+        .pr-card.featured { border-color:var(--red); border-width:2px; }
+        .pr-badge { position:absolute; top:-12px; left:22px; background:var(--red); color:#fff; font-family:var(--font-sans); font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:3px 10px; border-radius:2px; }
+        .pr-card-name { font-family:var(--font-serif); font-size:18px; margin-bottom:6px; margin-top:4px; }
+        .pr-card-price { font-family:var(--font-serif); font-size:30px; margin:10px 0 4px; }
+        .pr-card-note { font-family:var(--font-sans); font-size:12px; color:var(--g500); margin-bottom:18px; line-height:1.5; }
         .pr-card-cta { margin-top:auto; font-family:var(--font-sans); font-size:13px; font-weight:600; padding:11px; text-align:center; background:var(--red); color:#fff; border-radius:3px; text-decoration:none; }
-        .pr-addon-row { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border:1px solid var(--g200); border-radius:4px; margin-bottom:10px; flex-wrap:wrap; gap:10px; }
-        .pr-addon-name { font-family:var(--font-sans); font-size:13px; color:var(--black); }
-        .pr-addon-price { font-family:var(--font-sans); font-size:13px; }
-        .pr-strike { color:var(--g500); text-decoration:line-through; margin-right:8px; }
       `}</style>
 
       <div className="pr-hero">
         <Link href="/courses/cat" className="pr-back">← Back to CAT</Link>
         <p className="pr-eyebrow" style={{ marginTop:16 }}>Pricing</p>
-        <h1 className="pr-h1">CATalysis &amp; CAThlete pricing</h1>
-        <p className="pr-sub">Two ways to prepare for CAT — pick what fits your timeline.</p>
+        <h1 className="pr-h1">Every CAT product, one page</h1>
+        <p className="pr-sub">CATalysis, CAThlete, ALPgebra, and every standalone add-on — pick what fits your timeline.</p>
       </div>
 
       <div className="pr-body">
         <div className="pr-section-label">CATalysis — CAT {catalysisYear} full cohort</div>
         <div className="pr-grid">
-          <div className="pr-card featured">
-            <div className="pr-card-name">CATalysis</div>
-            <div className="pr-card-price">{fmtPrice(catalysisPrice)}</div>
-            <div className="pr-card-note">400+ hours live · 30 full mocks · 30 sectionals · PI WAT GD included</div>
-            <Link href="/checkout?course=cat&plan=live-mocks" className="pr-card-cta">Enrol Now →</Link>
-          </div>
-        </div>
-
-        <div className="pr-section-label">CATalysis bundles</div>
-        <div style={{ marginBottom:56 }}>
-          {ADDONS.map(a => (
-            <div key={a.name} className="pr-addon-row">
-              <span className="pr-addon-name">{a.name}</span>
-              <span className="pr-addon-price"><span className="pr-strike">{a.strike}</span>{a.price} <span style={{ color:'var(--red)', fontWeight:600 }}>· {a.save}</span></span>
+          {CATALYSIS_TIERS.map(t => (
+            <div key={t.slug} className={`pr-card${t.featured ? ' featured' : ''}`}>
+              {t.badge && <span className="pr-badge">{t.badge}</span>}
+              <div className="pr-card-name">{t.name}</div>
+              <div className="pr-card-price">{fmtPrice(price(t.slug))}</div>
+              <div className="pr-card-note">{t.note}</div>
+              <Link href={`/checkout?course=cat&plan=${t.slug}`} className="pr-card-cta">Enrol Now →</Link>
             </div>
           ))}
         </div>
 
         <div className="pr-section-label">CAThlete — CAT {examYear} crash course</div>
         <div className="pr-grid">
-          <div className="pr-card">
-            <div className="pr-card-name">CAThlete</div>
-            <div className="pr-card-price">{fmtPrice(cathleteBasePrice)}</div>
-            <div className="pr-card-note">Without mocks — intensive final-stretch prep</div>
-            <Link href="/checkout?course=cathlete&plan=base" className="pr-card-cta">Enrol Now →</Link>
-          </div>
-          <div className="pr-card">
-            <div className="pr-card-name">CAThlete + Mocks</div>
-            <div className="pr-card-price">{fmtPrice(cathleteMocksPrice)}</div>
-            <div className="pr-card-note">With 30 full-length CAT mocks</div>
-            <Link href="/checkout?course=cathlete&plan=with-mocks" className="pr-card-cta">Enrol Now →</Link>
-          </div>
+          {CATHLETE_TIERS.map(t => (
+            <div key={t.slug} className={`pr-card${t.featured ? ' featured' : ''}`}>
+              {t.badge && <span className="pr-badge">{t.badge}</span>}
+              <div className="pr-card-name">{t.name}</div>
+              <div className="pr-card-price">{fmtPrice(price(t.slug))}</div>
+              <div className="pr-card-note">{t.note}</div>
+              <Link href={`/checkout?course=cathlete&plan=${t.slug}`} className="pr-card-cta">Enrol Now →</Link>
+            </div>
+          ))}
+        </div>
+
+        <div className="pr-section-label">Standalone products</div>
+        <div className="pr-section-sub">Not ready for the full cohort or crash course? Each of these works on its own.</div>
+        <div className="pr-grid" style={{ marginBottom:24 }}>
+          {STANDALONE.map(t => (
+            <div key={t.slug} className="pr-card">
+              <div className="pr-card-name">{t.name}</div>
+              <div className="pr-card-price">{fmtPrice(price(t.slug))}</div>
+              <div className="pr-card-note">{t.note}</div>
+              <Link href={`/checkout?${t.href}&plan=${t.slug}`} className="pr-card-cta">Enrol Now →</Link>
+            </div>
+          ))}
         </div>
       </div>
     </>

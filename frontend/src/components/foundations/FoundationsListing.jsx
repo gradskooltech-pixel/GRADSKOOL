@@ -13,6 +13,8 @@
  */
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useAuth } from '../../hooks/useAuth'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -285,7 +287,7 @@ function DateNav({ classes, readBasePath, meta, selected, setSelected }) {
           </button>
 
           {popupOpen && (
-            <div style={{ position:'absolute', top:'calc(100% + 8px)', left:0, zIndex:50, width:280, background:'#fff', border:'1px solid var(--g200)', borderRadius:6, boxShadow:'0 8px 24px rgba(0,0,0,.12)', padding:'16px' }}>
+            <div className="cal-popup" style={{ position:'absolute', top:'calc(100% + 8px)', left:0, zIndex:50, width:280, background:'#fff', border:'1px solid var(--g200)', borderRadius:6, boxShadow:'0 8px 24px rgba(0,0,0,.12)', padding:'16px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10 }}>
                 <button onClick={() => setCalMonth(new Date(calMonth.getFullYear(), calMonth.getMonth() - 1, 1))}
                   style={{ background:'none', border:'none', cursor:'pointer', fontSize:14, color:'var(--g500)', padding:4 }}>←</button>
@@ -394,6 +396,8 @@ function SectionNav({ sections, meta, selectedId, setSelectedId }) {
 
 
 export function FoundationsListing({ examSlug, meta, readBasePath }) {
+  const router = useRouter()
+  const { isLoggedIn, isLoading: authLoading } = useAuth()
   const [series, setSeries] = useState([])
   const [sections, setSections] = useState([])
   const [selectedSectionId, setSelectedSectionId] = useState(null)
@@ -436,6 +440,28 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
         a{text-decoration:none;color:inherit}
         .pg{max-width:1100px;margin:0 auto;padding:0 40px}
         @media(max-width:960px){.pg{padding:0 24px}}
+        @media(max-width:600px){.pg{padding:0 16px}}
+
+        /* Upcoming class card — 3-column (thumb/text/buttons) on desktop,
+           stacks to a single column on mobile where a 200px fixed thumbnail
+           would otherwise crush the text and buttons into almost nothing. */
+        .upcoming-card { display:grid; gap:24px; align-items:center; }
+        .upcoming-card.has-thumb { grid-template-columns:200px 1fr auto; }
+        .upcoming-card.no-thumb { grid-template-columns:1fr auto; }
+        @media(max-width:640px) {
+          .upcoming-card.has-thumb, .upcoming-card.no-thumb { grid-template-columns:1fr!important; gap:16px; }
+          .upcoming-card-actions { flex-direction:row!important; }
+          .upcoming-card-actions a { flex:1; text-align:center; }
+        }
+
+        /* Calendar popup — fixed 280px + absolute-from-trigger positioning
+           can overflow off-screen on a narrow phone, especially since the
+           trigger sits after wrapping quick-date buttons and its horizontal
+           position varies. Switch to a viewport-centered fixed popup instead
+           of guessing where the trigger is. */
+        @media(max-width:400px) {
+          .cal-popup { position:fixed!important; top:50%!important; left:50%!important; transform:translate(-50%,-50%)!important; width:calc(100vw - 48px)!important; max-height:80vh; overflow-y:auto; }
+        }
       `}</style>
 
       {/* ── HERO ── */}
@@ -477,7 +503,26 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
       <div style={{ padding:'48px 0' }}>
         <div className="pg">
 
-          {loading ? (
+          {meta.isFullCourse && !authLoading && !isLoggedIn ? (
+            <div style={{ textAlign:'center', padding:'4rem 2rem', border:`1px solid var(--g200)`, borderRadius:6, maxWidth:480, margin:'0 auto' }}>
+              <p style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', marginBottom:10 }}>
+                Create a free account to start
+              </p>
+              <p style={{ fontFamily:'var(--font-body)', fontSize:14, color:'var(--g700)', lineHeight:1.7, marginBottom:28 }}>
+                The complete {meta.name} course is free — no payment, ever. Just log in or create an account to access every session.
+              </p>
+              <div style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap' }}>
+                <Link href={`/auth/register?redirect=${encodeURIComponent(router.asPath)}`}
+                  style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'11px 22px', background:meta.color, color:'#fff', borderRadius:2 }}>
+                  Create free account →
+                </Link>
+                <Link href={`/auth/login?redirect=${encodeURIComponent(router.asPath)}`}
+                  style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'11px 22px', border:'1px solid var(--g200)', color:'var(--black)', borderRadius:2 }}>
+                  Log in
+                </Link>
+              </div>
+            </div>
+          ) : loading ? (
             <p style={{ fontFamily:'var(--font-sans)', color:'var(--g500)', textAlign:'center', padding:'3rem' }}>Loading classes…</p>
           ) : series.length === 0 ? (
             <div style={{ textAlign:'center', padding:'5rem', border:'1px dashed var(--g200)', borderRadius:4 }}>
@@ -513,7 +558,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                   ) : (
                   <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
                     {upcoming.map(cls => (
-                      <div key={cls.id} style={{ background:'var(--black)', borderRadius:4, padding:'24px 28px', display:'grid', gridTemplateColumns: cls.youtube_url ? '200px 1fr auto' : '1fr auto', gap:24, alignItems:'center' }}>
+                      <div key={cls.id} className={`upcoming-card ${cls.youtube_url ? 'has-thumb' : 'no-thumb'}`} style={{ background:'var(--black)', borderRadius:4, padding:'24px 28px' }}>
                         {cls.youtube_url && (
                           <div style={{ position:'relative' }}>
                             <YTThumb url={cls.youtube_url} clickable={false} />
@@ -535,7 +580,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                           </div>
                           <Countdown iso={cls.scheduled_at} />
                         </div>
-                        <div style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', gap:8 }}>
+                        <div className="upcoming-card-actions" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', gap:8 }}>
                           <Link href={`${readBasePath}/${cls.slug}`}
                             style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'#ff4444', color:'#fff', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
                             View class →

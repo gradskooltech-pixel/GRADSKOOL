@@ -15,7 +15,11 @@ import CatTabs from '../../../components/courses/CatTabs'
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 const R = { color: 'var(--red)' }
 
-const FALLBACK = { examDate: '2026-11-29', catalysisPrice: 27999, cohortSize: 27 }
+const FALLBACK = {
+  examDate: '2026-11-29', cohortSize: 27,
+  'live-mocks': 27999, 'live-all-mba-mocks': 29999,
+  'live-cat-mocks-books': 31999, 'live-all-mba-mocks-books': 34999,
+}
 
 function fmtPrice(n) { return `₹${Number(n).toLocaleString('en-IN')}` }
 
@@ -43,21 +47,25 @@ export async function getStaticProps() {
   }
 }
 
+const TIERS = [
+  { slug:'live-mocks',               name:'Live + CAT Mocks',             badge:'Most Popular', features:['400+ hours of live two-way sessions with ALP Sir','30 full-length CAT mocks + 30 sectional tests','Post-test strategic analysis after every mock','Doubt resolution + session PDFs + cheat sheets','PI WAT GD preparation included'] },
+  { slug:'live-all-mba-mocks',       name:'Live + All MBA Mocks',         badge:'Best Value',    features:['Everything in Live + CAT Mocks','Plus XAT, SNAP, NMAT and CMAT mocks','30 sectional tests across all exams','Session recordings included'] },
+  { slug:'live-cat-mocks-books',     name:'Live + CAT Mocks + Books',                             features:['Everything in Live + CAT Mocks','Plus the 16-book printed set','Session recordings included'] },
+  { slug:'live-all-mba-mocks-books', name:'Live + All MBA Mocks + Books',                          features:['Everything — all MBA mocks + books','GDPI preparation — mock PIs, GD, WAT','Session recordings included'] },
+]
+
 export default function CatalysisPage({ examData }) {
-  const [addonOpen, setAddonOpen] = useState(false)
   const plans = examData?.plans || []
-  const catalysisPlan = plans.find(p => p.slug === 'live-cat-mocks')
-  const catalysisPrice = catalysisPlan?.price_inr ? Number(catalysisPlan.price_inr) : FALLBACK.catalysisPrice
+  const price = (slug) => {
+    const plan = plans.find(p => p.slug === slug)
+    return plan?.price_inr ? Number(plan.price_inr) : FALLBACK[slug]
+  }
+  const [selectedTier, setSelectedTier] = useState('live-mocks')
+  const activeTier = TIERS.find(t => t.slug === selectedTier)
+  const catalysisPrice = price(selectedTier)
   const cohortSize = examData?.seats_available?.cohort_size || FALLBACK.cohortSize
   const examYear = new Date(examData?.exam_date || FALLBACK.examDate).getFullYear()
   const catalysisYear = examYear + 1
-
-  const ADDONS = [
-    { name:'CATalysis + OMETs Mocks', price: fmtPrice(catalysisPrice + 1499), strike: fmtPrice(catalysisPrice + 1999), save:'Save ₹500' },
-    { name:'CATalysis + XAT Course',  price: fmtPrice(catalysisPrice + 5499), strike: fmtPrice(catalysisPrice + 5999), save:'Save ₹500' },
-    { name:'CATalysis + SNAP Mocks',  price: fmtPrice(catalysisPrice + 2499), strike: fmtPrice(catalysisPrice + 2999), save:'Save ₹500' },
-    { name:'CATalysis + NMAT Mocks',  price: fmtPrice(catalysisPrice + 2499), strike: fmtPrice(catalysisPrice + 2999), save:'Save ₹500' },
-  ]
 
   return (
     <>
@@ -88,13 +96,13 @@ export default function CatalysisPage({ examData }) {
             400+ hours of live two-way teaching with ALP Sir. 30 full-length CAT mocks. {cohortSize} students per cohort — no exceptions. The most structured CAT preparation in India.
           </p>
           <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-            <Link href="/checkout?course=cat&plan=live-mocks" className="btn btn-red">Enrol Now — {fmtPrice(catalysisPrice)} →</Link>
+            <Link href={`/checkout?course=cat&plan=${selectedTier}`} className="btn btn-red">Enrol Now — {fmtPrice(catalysisPrice)} →</Link>
             <a href={`https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20about%20CATalysis%20${catalysisYear}`}
               target="_blank" rel="noopener noreferrer" className="btn btn-wa">
               <span className="wa-dot" />WhatsApp ALP Sir
             </a>
           </div>
-          <Link href="/courses/cat/pricing" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', display:'inline-block', marginTop:14 }}>View full CATalysis &amp; CAThlete pricing →</Link>
+          <Link href="/courses/cat/pricing" style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', display:'inline-block', marginTop:14 }}>View full CAT pricing →</Link>
           <div style={{ display:'flex', gap:28, marginTop:44, paddingTop:24, borderTop:'var(--border)', flexWrap:'wrap' }}>
             {[['400+ hrs','Live sessions'],['30 mocks','Full-length CAT'],[String(cohortSize),'Students per cohort']].map(([v,l]) => (
               <div key={l}>
@@ -106,10 +114,28 @@ export default function CatalysisPage({ examData }) {
         </div>
 
         <div style={{ background:'var(--off)', display:'flex', flexDirection:'column', justifyContent:'center', padding:'40px 48px' }}>
-          <div style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'28px 32px', marginBottom:16 }}>
-            <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', background:'var(--red)', color:'#fff', padding:'3px 10px', borderRadius:1, display:'inline-block', marginBottom:14 }}>Most Popular</div>
-            <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>CATalysis — Live + Mocks</div>
-            {['400+ hours of live two-way sessions with ALP Sir','30 full-length CAT mocks + 30 sectional tests','Post-test strategic analysis after every mock','Doubt resolution + session PDFs + cheat sheets','PI WAT GD preparation included'].map(item => (
+          <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
+            {TIERS.map(t => (
+              <button key={t.slug} onClick={() => setSelectedTier(t.slug)}
+                style={{
+                  textAlign:'left', width:'100%', padding:'14px 18px', borderRadius:4, cursor:'pointer',
+                  border: selectedTier === t.slug ? '2px solid var(--red)' : 'var(--border)',
+                  background: selectedTier === t.slug ? '#fff' : 'transparent',
+                }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:10 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+                    <span style={{ fontFamily:'var(--font-serif)', fontSize:14, color:'var(--black)' }}>{t.name}</span>
+                    {t.badge && <span style={{ fontFamily:'var(--font-sans)', fontSize:9, fontWeight:700, letterSpacing:'.06em', textTransform:'uppercase', background:'rgba(217,79,80,.1)', color:'var(--red)', padding:'2px 7px', borderRadius:2 }}>{t.badge}</span>}
+                  </div>
+                  <span style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', whiteSpace:'nowrap' }}>{fmtPrice(price(t.slug))}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div style={{ background:'#fff', border:'var(--border)', borderRadius:4, padding:'28px 32px' }}>
+            <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>{activeTier.name}</div>
+            {activeTier.features.map(item => (
               <div key={item} style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:6, display:'flex', gap:8 }}>
                 <span style={R}>—</span><span>{item}</span>
               </div>
@@ -118,23 +144,8 @@ export default function CatalysisPage({ examData }) {
               <div style={{ fontFamily:'var(--font-serif)', fontSize:38, color:'var(--black)', lineHeight:1 }}>{fmtPrice(catalysisPrice)}</div>
               <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
             </div>
-            <Link href="/checkout?course=cat&plan=live-mocks" className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol in CATalysis →</Link>
+            <Link href={`/checkout?course=cat&plan=${selectedTier}`} className="btn btn-red" style={{ marginTop:14, width:'100%', justifyContent:'center' }}>Enrol in CATalysis →</Link>
           </div>
-          <button onClick={() => setAddonOpen(!addonOpen)}
-            style={{ width:'100%', padding:'12px 20px', border:'var(--border)', borderRadius:3, background:'#fff', fontFamily:'var(--font-sans)', fontSize:13, fontWeight:500, color:'var(--g700)', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer' }}>
-            <span>Bundle with other courses (save ₹500 each)</span>
-            <span style={{ transform: addonOpen ? 'rotate(180deg)' : 'none', transition:'transform .2s' }}>↓</span>
-          </button>
-          {addonOpen && (
-            <div style={{ marginTop:10, display:'flex', flexDirection:'column', gap:8 }}>
-              {ADDONS.map(a => (
-                <div key={a.name} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 16px', background:'#fff', border:'var(--border)', borderRadius:3, fontFamily:'var(--font-sans)', fontSize:12 }}>
-                  <span>{a.name}</span>
-                  <span><span style={{ color:'var(--g500)', textDecoration:'line-through', marginRight:6 }}>{a.strike}</span>{a.price}</span>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 

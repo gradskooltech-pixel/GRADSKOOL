@@ -24,10 +24,11 @@ import { S, CloudinaryVideo, CourseFaqAccordion, WaFloat, CourseTestimonials } f
 
 const R = { color:'var(--red)' }
 
-// Paste the real Cloudinary video URL here when ready, e.g.
-// 'https://res.cloudinary.com/<cloud_name>/video/upload/<public_id>.mp4'
+// Accepts either a YouTube URL (shows a thumbnail, embeds in-place on
+// click) or a direct video file URL like Cloudinary's
+// 'https://res.cloudinary.com/<cloud_name>/video/upload/<public_id>.mp4'.
 // Leave blank to show the "coming soon" placeholder.
-const VIDEO_URL = ''
+const VIDEO_URL = 'https://www.youtube.com/watch?v=0CgQQROvDV8'
 
 const COVERAGE = [
   { sec:'Language Skills',     topics:['Reading Comprehension — short passages','Verbal Reasoning — analogies, sentence completion','Grammar and usage — error identification','Para-jumbles and sentence correction','Vocabulary in context','Fill in the blanks'] },

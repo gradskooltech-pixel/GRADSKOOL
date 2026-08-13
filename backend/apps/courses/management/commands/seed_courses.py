@@ -426,7 +426,7 @@ PLANS = {
                  ('PI WAT GD prep for XLRI', True),
              ]),
         dict(name='XAT Mocks Only', slug='mocks',
-             price_inr=Decimal('499'), sort_order=2,
+             price_inr=Decimal('1499'), sort_order=2,
              includes_mocks=True, mock_exams_covered=['XAT'],
              razorpay_sku='xat-mocks',
              features=[

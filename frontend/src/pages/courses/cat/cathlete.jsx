@@ -54,8 +54,8 @@ export default function CathletePage({ examData }) {
   const [withMocks, setWithMocks] = useState(true)
 
   const plans = examData?.plans || []
-  const cathleteBase  = plans.find(p => p.slug === 'cathlete-no-mocks')
-  const cathleteMocks = plans.find(p => p.slug === 'cathlete-with-mocks')
+  const cathleteBase  = plans.find(p => p.slug === 'base')
+  const cathleteMocks = plans.find(p => p.slug === 'with-mocks')
   const cathleteCourse = (examData?.courses || []).find(
     c => c.slug?.includes('cathlete') || c.title?.toLowerCase().includes('cathlete')
   )

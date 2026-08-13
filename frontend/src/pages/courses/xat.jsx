@@ -49,7 +49,7 @@ const FAQS = [
   { q:'What makes XAT different from CAT?', a:'XAT has a unique Decision Making section not found in CAT. It also includes a General Knowledge section (unscored but required for XLRI BM), and the VALR section has poem-based questions which CAT does not.' },
   { q:'Can I take XAT with CATalysis?', a:'Yes. You can add the XAT course as an add-on with CATalysis at ₹5,499 (save ₹500). Since most CAT aspirants also appear for XAT, the bundle is very popular.' },
   { q:'Which is the best college to target through XAT?', a:'XLRI Jamshedpur is the premier XAT-accepting institution, offering BM (Business Management) and HRM (Human Resource Management). XLRI consistently ranks among the top 5 B-schools in India.' },
-  { q:'Are XAT mock tests available separately?', a:'Yes. XAT mocks are available separately for ₹499 if you do not need the full course and only want timed practice tests.' },
+  { q:'Are XAT mock tests available separately?', a:'Yes. XAT mocks are available separately for ₹1,499 if you do not need the full course and only want timed practice tests.' },
 ]
 
 export default function XATPage() {
@@ -125,7 +125,7 @@ export default function XATPage() {
             <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px' }}>
               <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'var(--black)', marginBottom:8 }}>XAT Mocks Only</div>
               <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.6, marginBottom:12 }}>Already studying? Just want timed full-length XAT tests with analysis?</p>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)', marginBottom:12 }}>₹499</div>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)', marginBottom:12 }}>₹1,499</div>
               <Link href="/checkout?course=xat&plan=mocks" className="btn btn-outline" style={{ fontSize:12, padding:'9px 18px' }}>Get XAT Mocks →</Link>
             </div>
             <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px' }}>

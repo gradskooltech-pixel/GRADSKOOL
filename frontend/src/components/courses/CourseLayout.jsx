@@ -58,6 +58,8 @@ export const S = `
 `
 
 export function CloudinaryVideo({ url, poster, title }) {
+  const [playing, setPlaying] = useState(false)
+
   if (!url) {
     return (
       <div style={{ position:'relative', width:'100%', aspectRatio:'16/9', background:'var(--black)', borderRadius:4, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:10 }}>
@@ -68,6 +70,42 @@ export function CloudinaryVideo({ url, poster, title }) {
       </div>
     )
   }
+
+  // A YouTube link isn't a direct video file — it needs an embed, not a
+  // <video src>. Detect it and show a thumbnail that swaps to an in-place
+  // iframe on click, rather than trying (and failing) to play it directly,
+  // and rather than navigating away to youtube.com on click.
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/))([a-zA-Z0-9_-]{11})/)
+  if (ytMatch) {
+    const videoId = ytMatch[1]
+    if (playing) {
+      return (
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ width:'100%', aspectRatio:'16/9', border:'none', borderRadius:4 }}
+        />
+      )
+    }
+    return (
+      <div
+        onClick={() => setPlaying(true)}
+        style={{ position:'relative', width:'100%', aspectRatio:'16/9', background:'#000', borderRadius:4, overflow:'hidden', cursor:'pointer' }}
+      >
+        <img src={poster || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt={title || ''}
+          style={{ width:'100%', height:'100%', objectFit:'cover', opacity:.85 }} />
+        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ width:64, height:64, borderRadius:'50%', background:'rgba(255,255,255,.92)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 16px rgba(0,0,0,.35)' }}>
+            <div style={{ width:0, height:0, borderTop:'12px solid transparent', borderBottom:'12px solid transparent', borderLeft:'19px solid #ff4444', marginLeft:5 }} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // A direct video file URL (Cloudinary, etc.) — plays natively.
   return (
     <video
       src={url}

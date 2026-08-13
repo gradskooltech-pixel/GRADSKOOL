@@ -14,7 +14,7 @@ export default function XatPricingPage() {
     <>
       <Head>
         <title>XAT Pricing — GRADSKOOL</title>
-        <meta name="description" content="XAT Full Course ₹5,999, XAT Mocks Only ₹499 — GRADSKOOL, taught live by ALP Sir." />
+        <meta name="description" content="XAT Full Course ₹5,999, XAT Mocks Only ₹1,499 — GRADSKOOL, taught live by ALP Sir." />
       </Head>
 
       <style>{`
@@ -57,7 +57,7 @@ export default function XatPricingPage() {
             <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', lineHeight:1.7, marginBottom:16 }}>
               Already studying? Just want timed full-length XAT tests with analysis?
             </p>
-            <div className="pr-card-price" style={{ fontSize:28 }}>₹499</div>
+            <div className="pr-card-price" style={{ fontSize:28 }}>₹1,499</div>
             <Link href="/checkout?course=xat&plan=mocks" className="pr-card-cta" style={{ background:'transparent', border:'2px solid var(--red)', color:'var(--red)' }}>Get XAT Mocks →</Link>
           </div>
           <div className="pr-card">

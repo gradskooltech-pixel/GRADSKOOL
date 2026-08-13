@@ -86,7 +86,7 @@ class Command(BaseCommand):
             ('xat', dict(name='XAT Full Course', slug='xat-full-course', price_inr=Decimal('5999'),
                          is_featured=True, sort_order=1, includes_live=True, includes_mocks=True,
                          mock_exams_covered=['XAT'], razorpay_sku='xat-full-course')),
-            ('xat', dict(name='XAT Mocks Only', slug='mocks', price_inr=Decimal('499'),
+            ('xat', dict(name='XAT Mocks Only', slug='mocks', price_inr=Decimal('1499'),
                          sort_order=2, includes_mocks=True, mock_exams_covered=['XAT'],
                          razorpay_sku='xat-mocks')),
 
