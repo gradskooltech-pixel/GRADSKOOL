@@ -98,7 +98,7 @@ def class_to_dict(c):
         'long_description': c.long_description,
         'scheduled_at':   c.scheduled_at.isoformat(),
         'duration_mins':  c.duration_mins,
-        'instructor_name': c.instructor_name or 'ALP Sir',
+        'instructor_name': getattr(c, 'instructor_name', '') or 'ALP Sir',
         'youtube_url':    c.youtube_url,
         'notes':          c.notes,
         'is_published':   c.is_published,
