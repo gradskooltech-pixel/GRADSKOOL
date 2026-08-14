@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.utils.dateparse import parse_datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import FoundationSeries, FoundationSection, FoundationClass
 
 
@@ -114,7 +114,7 @@ class PublicFoundationsView(APIView):
     """GET /api/v1/foundations/?exam=xat  — public listing for the frontend.
     Filters by membership in the series' exams list, not equality — a
     series can appear under multiple exams at once."""
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         exam = request.query_params.get('exam', '').lower()
@@ -126,7 +126,7 @@ class PublicFoundationsView(APIView):
 
 class PublicFoundationClassView(APIView):
     """GET /api/v1/foundations/class/<slug>/  — single class detail"""
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request, slug):
         try:
@@ -140,7 +140,7 @@ class PublicFoundationSectionsView(APIView):
     """GET /api/v1/foundations/sections/?exam=xat — active sections for this
     exam, each with a live count of published classes tagged to it. Used to
     build the "browse by topic" UI on the listing page."""
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         exam = request.query_params.get('exam', '').lower()

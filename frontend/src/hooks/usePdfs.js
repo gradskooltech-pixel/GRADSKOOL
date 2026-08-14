@@ -37,9 +37,13 @@ export function usePdfDetail(slug) {
   const refetch = useCallback(() => {
     if (!slug) return
     setLoading(true)
+    console.log('[PDF DEBUG] Fetching:', `/pdfs/${slug}/`)
     api.get(`/pdfs/${slug}/`)
-      .then(({ data }) => setPdf(data))
-      .catch(() => setNotFound(true))
+      .then(({ data }) => { console.log('[PDF DEBUG] Success:', data); setPdf(data) })
+      .catch((err) => {
+        console.error('[PDF DEBUG] Failed - status:', err.response?.status, 'data:', err.response?.data, 'message:', err.message)
+        setNotFound(true)
+      })
       .finally(() => setLoading(false))
   }, [slug])
 

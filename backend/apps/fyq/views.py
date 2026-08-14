@@ -4,7 +4,7 @@ GRADSKOOL — FYQ (Future Year Questions) API Views
 from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import FYQSection, FYQCategory, FYQTopic, FYQQuestion
 
 
@@ -106,7 +106,7 @@ def _paginate(request, qs, serializer, default_page_size=24):
 class PublicFYQTreeView(APIView):
     """GET /api/v1/fyq/tree/ — the full Section → Category → Topic browse
     tree in one call, for the public FYQ hub page."""
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         sections = FYQSection.objects.all().order_by('order', 'name')
@@ -115,7 +115,7 @@ class PublicFYQTreeView(APIView):
 
 class PublicFYQListView(APIView):
     """GET /api/v1/fyq/?topic=<id>&category=<id>&section=<id>&search=...&page=1"""
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         qs = FYQQuestion.objects.filter(is_published=True).select_related('topic__category__section', 'topic__section').order_by('question_number')
@@ -144,7 +144,7 @@ class PublicFYQListView(APIView):
 
 class PublicFYQDetailView(APIView):
     """GET /api/v1/fyq/question/<slug>/"""
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request, slug):
         try:

@@ -23,7 +23,7 @@ GET  /api/v1/learn/{examSlug}/{topicSlug}/live-sessions/
      → Get live sessions for topic (with access check)
 """
 from django.urls import path
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -823,7 +823,7 @@ class ZoomWebhookView(APIView):
       Event subscriptions → recording.completed
       Webhook URL: https://api.gradskool.in/api/v1/learn/zoom/webhook/
     """
-    permission_classes = []  # Public — verified via Zoom token
+    permission_classes = [AllowAny]  # Public — verified via Zoom token
 
     def post(self, request):
         import hmac, hashlib
@@ -1954,7 +1954,7 @@ class AdminDropoffHeatmapView(APIView):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class ResultsWallView(APIView):
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get(self, request):
         from apps.learn.models import StudentResult
