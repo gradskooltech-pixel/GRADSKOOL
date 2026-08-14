@@ -15,7 +15,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
 const EXAM_META = {
   xat: { name:'XAT', color:'#5b3fa0', course:'/courses/xat', isFullCourse:false },
-  cat: { name:'CAT', color:'#d94f50', course:'/courses/cat/cathlete', isFullCourse:false },
+  cat: { name:'CAT', color:'#d94f50', course:'/courses/cat/cathlete', isFullCourse:false, requireLogin:true },
 }
 
 export async function getServerSideProps({ params, req }) {

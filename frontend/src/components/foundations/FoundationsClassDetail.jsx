@@ -16,8 +16,10 @@
  * at "the full course" would be wrong — it points at Mocks instead, since
  * that's the actual next thing to want.
  */
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import { isLiveNow } from './FoundationsListing'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -126,6 +128,12 @@ function PrevNext({ prevSlug, nextSlug, listBasePath }) {
 }
 
 export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, lesson, prevSlug, nextSlug, canonicalUrl }) {
+  const [, setNowTick] = useState(0) // forces a re-check of isLiveNow every 30s so the chat auto-appears/disappears as the class starts/ends
+  useEffect(() => {
+    const id = setInterval(() => setNowTick(t => t + 1), 30000)
+    return () => clearInterval(id)
+  }, [])
+
   if (!lesson) return (
     <div style={{ padding:'4rem', textAlign:'center' }}>
       <Link href={listBasePath} style={{ color:'var(--red)', fontFamily:'var(--font-sans)' }}>← Back to {meta.name}</Link>
@@ -133,6 +141,7 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, les
   )
 
   const ytId = getYoutubeId(lesson.youtube_url)
+  const isLive = lesson.is_published && isLiveNow(lesson)
   const metaDescription = htmlExcerpt(lesson.long_description) || lesson.description || `Free ${meta.name} class by ALP Sir.`
   const pdfs = lesson.pdfs || []
 
@@ -250,7 +259,26 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, les
               would be misleading, so it stays a static "upcoming" state
               until scheduled_at has passed. */}
           {lesson.youtube_url && !lesson.is_upcoming ? (
-            <VideoEmbed url={lesson.youtube_url} />
+            isLive && ytId ? (
+              <div className="live-chat-grid">
+                <style>{`
+                  .live-chat-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:stretch; }
+                  .live-chat-grid iframe { width:100%; border:none; }
+                  .live-chat-frame { aspect-ratio:9/16; min-height:400px; max-height:600px; border-radius:4px; overflow:hidden; }
+                  @media(max-width:800px) { .live-chat-grid { grid-template-columns:1fr!important; } .live-chat-frame { aspect-ratio:auto; height:400px; } }
+                `}</style>
+                <VideoEmbed url={lesson.youtube_url} />
+                <div className="live-chat-frame">
+                  <iframe
+                    src={`https://www.youtube.com/live_chat?v=${ytId}&embed_domain=${canonicalUrl ? new URL(canonicalUrl).hostname : 'gradskool.in'}`}
+                    height="100%"
+                    title="Live chat"
+                  />
+                </div>
+              </div>
+            ) : (
+              <VideoEmbed url={lesson.youtube_url} />
+            )
           ) : (
             <div style={{ position:'relative', borderRadius:4, overflow:'hidden', background:'var(--black)' }}>
               {ytId && (
