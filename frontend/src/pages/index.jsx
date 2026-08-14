@@ -407,7 +407,7 @@ export default function Home() {
                   CAT and XAT Foundations to get you started, plus the complete NMAT and SNAP courses — every topic, taught live by ALP Sir, entirely free.
                 </p>
               </div>
-              <Link href="/free" className="btn btn-outline">Explore Free Classes →</Link>
+              <Link href="/free-classes" className="btn btn-outline">Explore Free Classes →</Link>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }} className="foundations-promo-grid">
               <style>{`@media(max-width:960px){.foundations-promo-grid{grid-template-columns:1fr!important}}`}</style>

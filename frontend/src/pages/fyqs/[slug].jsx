@@ -7,10 +7,8 @@
  * rather than reusing that one directly, since the underlying data shape is
  * different (no scheduled_at/series/duration here, just question_number/topic).
  */
-import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -61,30 +59,23 @@ function PdfCard({ pdf }) {
   )
 }
 
-export default function FYQDetail() {
-  const router = useRouter()
-  const { slug } = router.query
-  const [q, setQ] = useState(null)
-  const [loading, setLoading] = useState(true)
+export async function getServerSideProps({ params, req }) {
+  try {
+    const res = await fetch(`${API}/fyq/question/${params.slug}/`)
+    if (!res.ok) return { notFound: true }
+    const q = await res.json()
+    const protocol = req.headers['x-forwarded-proto'] || 'https'
+    const canonicalUrl = `${protocol}://${req.headers.host}/fyqs/${params.slug}`
+    return { props: { q, slug: params.slug, canonicalUrl } }
+  } catch {
+    return { notFound: true }
+  }
+}
 
-  useEffect(() => {
-    if (!slug) return
-    fetch(`${API}/fyq/question/${slug}/`)
-      .then(r => r.json()).then(setQ).catch(() => setQ(null))
-      .finally(() => setLoading(false))
-  }, [slug])
-
-  if (loading) return <div style={{ padding:'4rem', textAlign:'center', fontFamily:'var(--font-sans)', color:'var(--g500)' }}>Loading…</div>
-  if (!q) return (
-    <div style={{ padding:'4rem', textAlign:'center' }}>
-      <Link href="/fyqs" style={{ color:'var(--red)', fontFamily:'var(--font-sans)' }}>← Back to FYQs</Link>
-    </div>
-  )
-
+export default function FYQDetail({ q, slug, canonicalUrl }) {
   const ytId = getYoutubeId(q.youtube_url)
   const metaDescription = htmlExcerpt(q.long_description) || `Future Year Question ${q.question_number} — ${q.title}, solved by ALP Sir.`
   const pdfs = q.pdfs || []
-  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}/fyqs/${slug}` : ''
 
   const videoSchema = ytId ? {
     '@context': 'https://schema.org',

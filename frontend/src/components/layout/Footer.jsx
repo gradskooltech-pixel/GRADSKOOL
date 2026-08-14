@@ -64,7 +64,7 @@ export function Footer() {
           <div className="gs-footer-col">
             <h4>Resources</h4>
             <Link href="/blog">Blog</Link>
-            <Link href="/free">Free Classes &amp; Courses</Link>
+            <Link href="/free-classes">Free Classes &amp; Courses</Link>
             <Link href="/pdfs">Digital PDFs</Link>
             <Link href="/faqs">FAQs</Link>
             <Link href="/about">About ALP Sir</Link>

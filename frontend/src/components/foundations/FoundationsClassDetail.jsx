@@ -16,7 +16,6 @@
  * at "the full course" would be wrong — it points at Mocks instead, since
  * that's the actual next thing to want.
  */
-import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -126,38 +125,14 @@ function PrevNext({ prevSlug, nextSlug, listBasePath }) {
   )
 }
 
-export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath }) {
-  const [lesson,  setLesson]  = useState(null)
-  const [loading, setLoad]    = useState(true)
-  const [allSlugs, setAll]    = useState([])
-
-  useEffect(() => {
-    if (!slug) return
-    fetch(`${API}/foundations/class/${slug}/`)
-      .then(r => r.json()).then(setLesson).catch(() => setLesson(null))
-      .finally(() => setLoad(false))
-    fetch(`${API}/foundations/?exam=${examSlug}`)
-      .then(r => r.json())
-      .then(seriesList => {
-        const slugs = (seriesList || []).flatMap(s => (s.classes || []).map(c => c.slug))
-        setAll(slugs)
-      })
-      .catch(() => {})
-  }, [examSlug, slug])
-
-  const idx      = allSlugs.indexOf(slug)
-  const prevSlug = idx > 0 ? allSlugs[idx - 1] : null
-  const nextSlug = idx < allSlugs.length - 1 ? allSlugs[idx + 1] : null
-
-  if (loading) return <div style={{ padding:'4rem', textAlign:'center', fontFamily:'var(--font-sans)', color:'var(--g500)' }}>Loading…</div>
-  if (!lesson)  return (
+export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, lesson, prevSlug, nextSlug, canonicalUrl }) {
+  if (!lesson) return (
     <div style={{ padding:'4rem', textAlign:'center' }}>
       <Link href={listBasePath} style={{ color:'var(--red)', fontFamily:'var(--font-sans)' }}>← Back to {meta.name}</Link>
     </div>
   )
 
   const ytId = getYoutubeId(lesson.youtube_url)
-  const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}${listBasePath}/${slug}` : ''
   const metaDescription = htmlExcerpt(lesson.long_description) || lesson.description || `Free ${meta.name} class by ALP Sir.`
   const pdfs = lesson.pdfs || []
 

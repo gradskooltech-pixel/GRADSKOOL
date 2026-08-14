@@ -1,6 +1,6 @@
 /**
  * GRADSKOOL — Free Classes & Courses Hub
- * Route: /free
+ * Route: /free-classes
  *
  * Moved here from /foundations — that URL undersold what's actually here:
  * XAT is genuine starter/foundations content (stays at /foundations/xat,
@@ -67,8 +67,8 @@ export default function FreeHub({ examSummaries }) {
         title="Free Classes & Courses — CAT, XAT, SNAP, NMAT — GRADSKOOL"
         description="Free live and recorded classes for CAT and XAT, and the complete NMAT and SNAP courses, taught by ALP Sir — entirely free, no cost, just an account."
         keywords="free CAT classes, free XAT classes, free SNAP course, free NMAT course, GRADSKOOL free courses, ALP Sir free classes, CAT foundation classes, XAT foundation classes"
-        canonical="https://gradskool.in/free"
-        breadcrumbs={[{ name:'Home', url:'/' }, { name:'Free Classes & Courses', url:'/free' }]}
+        canonical="https://gradskool.in/free-classes"
+        breadcrumbs={[{ name:'Home', url:'/' }, { name:'Free Classes & Courses', url:'/free-classes' }]}
         schema={[
           faqSchema(FAQS),
           itemListSchema({

@@ -98,7 +98,7 @@ export function Navbar() {
                 ))}
               </div>
             </div>
-            <Link href="/free" className="gs-nav-link">Free Classes</Link>
+            <Link href="/free-classes" className="gs-nav-link">Free Classes</Link>
             <Link href="/fyqs" className="gs-nav-link">FYQs</Link>
             <Link href="/pdfs" className="gs-nav-link">Downloads</Link>
             <Link href="/about" className="gs-nav-link">About</Link>
@@ -127,7 +127,7 @@ export function Navbar() {
         </div>
         <div className="gs-mob-section">
           <div className="gs-mob-label">More</div>
-          <Link href="/free" className="gs-mob-link">Free Classes</Link>
+          <Link href="/free-classes" className="gs-mob-link">Free Classes</Link>
           <Link href="/fyqs" className="gs-mob-link">FYQs</Link>
           <Link href="/pdfs" className="gs-mob-link">Downloads</Link>
           <Link href="/about"  className="gs-mob-link">About ALP Sir</Link>

@@ -26,7 +26,7 @@ const SITE = 'https://gradskool.in'
 const STATIC_PAGES = [
   { path: '/',                          priority: '1.0', changefreq: 'weekly' },
   { path: '/about',                     priority: '0.7', changefreq: 'monthly' },
-  { path: '/free',                      priority: '0.8', changefreq: 'weekly' },
+  { path: '/free-classes',              priority: '0.8', changefreq: 'weekly' },
   { path: '/faqs',                      priority: '0.6', changefreq: 'monthly' },
   { path: '/omets',                     priority: '0.8', changefreq: 'monthly' },
   { path: '/results',                   priority: '0.7', changefreq: 'weekly' },
