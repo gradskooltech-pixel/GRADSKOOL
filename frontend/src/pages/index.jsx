@@ -236,7 +236,7 @@ export default function Home() {
               <h1 className="d-xl" style={{ margin:'0 0 12px' }}>India's most<br /><em style={R}>structured</em><br />CAT &amp; GMAT prep.</h1>
               <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:24 }}>
                 <span style={{ width:6, height:6, borderRadius:'50%', background:'var(--red)', flexShrink:0 }} />
-                <span style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--black)' }}>CAT Crash Course 2026 is Live</span>
+                <Link href="/courses/cat/cathlete" style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--black)', textDecoration:'none' }}>CAThlete — our CAT 2026 Crash Course — is live</Link>
               </div>
               <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.85, maxWidth:440, marginBottom:36 }}>
                 Founded by Abhishek Leela Pandey — 99.93 percentile CAT, 770 GMAT. Live two-way teaching, not recorded lectures. Every cohort capped at 27 students. No exceptions.
