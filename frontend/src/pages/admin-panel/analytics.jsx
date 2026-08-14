@@ -11,7 +11,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:"#ff5e5f", black:"#0f0f0f", white:"#fff", bg:"#f7f6f3", border:"#e8e8e6", gray:"#999", green:"#22c55e", amber:"#f59e0b", blue:"#3b82f6", purple:"#7b2d8b", muted:"#f4f3f0" }
 
-export default function Analytics() {
+function AnalyticsInner() {
   const [data,    setData]  = useState(null)
   const [loading, setLoad]  = useState(true)
   const [days,    setDays]  = useState(30)
@@ -51,7 +51,6 @@ export default function Analytics() {
   const f = data?.funnel || {}
 
   return (
-    <AdminLayout title="Analytics">
     <div style={{ minHeight:"100vh", background:C.bg }}>
       <Head><title>Analytics — Admin — GRADSKOOL</title></Head>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" />
@@ -193,7 +192,6 @@ export default function Analytics() {
         )}
       </div>
     </div>
-  </AdminLayout>
   )
 }
 
@@ -203,4 +201,13 @@ const DEMO = {
   enrollments:[...Array(30)].map((_,i)=>({date:`2026-04-${String(i+1).padStart(2,"0")}`,count:Math.floor(Math.random()*5)})),
   videos:[...Array(30)].map((_,i)=>({date:`2026-04-${String(i+1).padStart(2,"0")}`,count:Math.floor(Math.random()*40+5)})),
   by_exam:[{exam:"CAT",count:62},{exam:"XAT",count:18},{exam:"SNAP",count:8},{exam:"NMAT",count:7}],
+}
+
+
+export default function Analytics(props) {
+  return (
+    <AdminLayout title="Analytics">
+      <AnalyticsInner {...props} />
+    </AdminLayout>
+  )
 }

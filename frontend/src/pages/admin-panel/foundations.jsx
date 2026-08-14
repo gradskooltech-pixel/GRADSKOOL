@@ -86,7 +86,7 @@ function isUpcoming(iso) {
 /* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════ */
-export default function FoundationsAdmin() {
+function FoundationsAdminInner() {
   const [examFilter, setExamFilter] = useState('xat')
   const [series,     setSeries]     = useState([])
   const [loading,    setLoading]    = useState(true)
@@ -124,7 +124,6 @@ export default function FoundationsAdmin() {
   useEffect(() => { load() }, [load])
 
   return (
-    <AdminLayout title="Foundations">
     <div style={{ minHeight:'100vh', background:C.off }}>
       <Head><title>Foundations — Admin — GRADSKOOL</title></Head>
       <Toast msg={msg} />
@@ -220,7 +219,6 @@ export default function FoundationsAdmin() {
         />
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -881,5 +879,14 @@ function SidePanel({ panel, examFilter, onClose, onSave, notify }) {
         </div>
       </div>
     </>
+  )
+}
+
+
+export default function FoundationsAdmin(props) {
+  return (
+    <AdminLayout title="Foundations">
+      <FoundationsAdminInner {...props} />
+    </AdminLayout>
   )
 }

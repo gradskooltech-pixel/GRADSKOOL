@@ -42,7 +42,7 @@ function loadPdfJs() {
   })
 }
 
-export default function AdminPdfNewPage() {
+function AdminPdfNewPageInner() {
   const router = useRouter()
   const { isAdmin, isLoading: authLoading } = useAuth()
 
@@ -152,7 +152,6 @@ export default function AdminPdfNewPage() {
   }, [form, file, fromClassId])
 
   return (
-    <AdminLayout title="Upload PDF">
     <div style={{ minHeight: '100vh', background: C.bg }}>
       <Head><title>Upload PDF — Admin — GRADSKOOL</title></Head>
 
@@ -244,7 +243,6 @@ export default function AdminPdfNewPage() {
         )}
       </div>
     </div>
-  </AdminLayout>
   )
 }
 
@@ -262,4 +260,13 @@ function Field({ label, children }) {
 const input = {
   width: '100%', padding: '0.55rem 0.75rem', border: `1px solid ${C.border}`, borderRadius: 6,
   fontFamily: 'var(--font-sans)', fontSize: 14, color: C.black, boxSizing: 'border-box',
+}
+
+
+export default function AdminPdfNewPage(props) {
+  return (
+    <AdminLayout title="Upload PDF">
+      <AdminPdfNewPageInner {...props} />
+    </AdminLayout>
+  )
 }

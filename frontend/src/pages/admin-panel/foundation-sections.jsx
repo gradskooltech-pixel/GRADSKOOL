@@ -139,7 +139,7 @@ function SectionForm({ initial, onSave, onCancel }) {
   )
 }
 
-export default function FoundationSectionsAdmin() {
+function FoundationSectionsAdminInner() {
   const [sections, setSections] = useState([])
   const [loading, setLoading] = useState(true)
   const [msg, setMsg] = useState(null)
@@ -177,7 +177,6 @@ export default function FoundationSectionsAdmin() {
   }
 
   return (
-    <AdminLayout title="Foundation Sections">
     <div style={{ minHeight:'100vh', background:C.off }}>
       <Head><title>Foundation Sections — Admin — GRADSKOOL</title></Head>
       <Toast msg={msg} />
@@ -218,6 +217,14 @@ export default function FoundationSectionsAdmin() {
         )}
       </div>
     </div>
-  </AdminLayout>
+  )
+}
+
+
+export default function FoundationSectionsAdmin(props) {
+  return (
+    <AdminLayout title="Foundation Sections">
+      <FoundationSectionsAdminInner {...props} />
+    </AdminLayout>
   )
 }

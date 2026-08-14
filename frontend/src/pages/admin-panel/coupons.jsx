@@ -10,7 +10,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:'#ff5e5f',black:'#0f0f0f',white:'#fff',bg:'#f7f6f3',border:'#e8e8e6',gray50:'#fafaf9',gray400:'#999',gray500:'#666',green:'#22c55e',amber:'#f59e0b' }
 
-export default function Coupons() {
+function CouponsInner() {
   const [coupons, setCoupons] = useState([])
   const [modal,   setModal]  = useState(false)
   const [form,    setForm]   = useState({ type:'percent', value:10, max_uses:100, active:true })
@@ -41,7 +41,6 @@ export default function Coupons() {
   }
 
   return (
-    <AdminLayout title="Coupons">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Coupons — Admin</title></Head>
       <div style={{ height:'56px', background:C.white, borderBottom:'1px solid '+C.border, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 1.5rem' }}>
@@ -126,7 +125,6 @@ export default function Coupons() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -142,4 +140,13 @@ function Fld({ label, value, onChange, placeholder, type='text' }) {
 const s = {
   lbl: { fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'700', color:'#666', display:'block', marginBottom:'0.25rem' },
   inp: { width:'100%', padding:'0.5rem 0.625rem', fontFamily:'var(--font-sans)', fontSize:'0.875rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', boxSizing:'border-box', background:'#fff' },
+}
+
+
+export default function Coupons(props) {
+  return (
+    <AdminLayout title="Coupons">
+      <CouponsInner {...props} />
+    </AdminLayout>
+  )
 }

@@ -11,7 +11,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 const C = { red:'#ff5e5f',black:'#0f0f0f',white:'#fff',bg:'#f7f6f3',border:'#e8e8e6',gray50:'#fafaf9',gray400:'#999',gray500:'#666',green:'#22c55e',amber:'#f59e0b',blue:'#3b82f6',purple:'#7b2d8b' }
 const STATUS_COLORS = { upcoming:C.blue, live:'#dc2626', completed:C.green, cancelled:C.gray400 }
 
-export default function LiveSessions() {
+function LiveSessionsInner() {
   const [sessions, setSessions] = useState([])
   const [topics,   setTopics]   = useState([])
   const [exam,     setExam]     = useState('cat')
@@ -99,7 +99,6 @@ export default function LiveSessions() {
   const past      = sessions.filter(s => s.status === 'completed' || s.status === 'cancelled')
 
   return (
-    <AdminLayout title="Live Sessions">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Live Sessions — Admin</title></Head>
       <div style={{ height:'56px', background:C.white, borderBottom:'1px solid '+C.border, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 1.5rem' }}>
@@ -186,7 +185,6 @@ export default function LiveSessions() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -250,4 +248,13 @@ function F({ label, value, onChange, placeholder, textarea, type='text' }) {
 const s = {
   lbl: { fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'700', color:'#666', display:'block', marginBottom:'0.25rem' },
   inp: { width:'100%', padding:'0.5rem 0.625rem', fontFamily:'var(--font-sans)', fontSize:'0.875rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', boxSizing:'border-box', background:'#fff' },
+}
+
+
+export default function LiveSessions(props) {
+  return (
+    <AdminLayout title="Live Sessions">
+      <LiveSessionsInner {...props} />
+    </AdminLayout>
+  )
 }

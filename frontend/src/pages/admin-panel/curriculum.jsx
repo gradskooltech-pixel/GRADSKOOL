@@ -19,7 +19,7 @@ const C = {
 
 const EXAMS = ['cat','xat','snap','nmat','gmat','gre','ipmat','cmat','mhcet','clat','cuet']
 
-export default function CurriculumPage() {
+function CurriculumPageInner() {
   const { user, isLoading } = useAuth()
   const router = useRouter()
 
@@ -147,7 +147,6 @@ export default function CurriculumPage() {
   const videos   = activeTopic   ? (topics.find(t => t.id === activeTopic.id)?.videos || [])   : []
 
   return (
-    <AdminLayout title="Curriculum">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Curriculum — Admin — GRADSKOOL</title></Head>
 
@@ -476,7 +475,6 @@ export default function CurriculumPage() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -517,4 +515,13 @@ const s = {
   select:     { width:'100%', padding:'0.625rem 0.75rem', fontFamily:'var(--font-sans)', fontSize:'0.875rem', border:'1px solid ' + C.border, borderRadius:'4px', outline:'none', color:C.black, background:C.white, cursor:'pointer' },
   cancelBtn:  { fontFamily:'var(--font-sans)', fontSize:'0.82rem', padding:'0.625rem 1.25rem', border:'1px solid ' + C.border, borderRadius:'4px', background:C.white, color:C.gray500, cursor:'pointer' },
   saveBtn:    { fontFamily:'var(--font-sans)', fontSize:'0.82rem', fontWeight:'700', padding:'0.625rem 1.5rem', border:'none', borderRadius:'4px', background:C.red, color:'#fff', cursor:'pointer' },
+}
+
+
+export default function CurriculumPage(props) {
+  return (
+    <AdminLayout title="Curriculum">
+      <CurriculumPageInner {...props} />
+    </AdminLayout>
+  )
 }

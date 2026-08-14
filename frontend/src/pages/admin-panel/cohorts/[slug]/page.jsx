@@ -43,7 +43,7 @@ const DEFAULTS = {
   divider:      { thin:false, bg:'#ffffff', color:'#e8e8e6' },
 }
 
-export default function CohortPageDesigner() {
+function CohortPageDesignerInner() {
   const router = useRouter()
   const { slug } = router.query
 
@@ -97,7 +97,6 @@ export default function CohortPageDesigner() {
   const updateBlock = (idx, data) => setBlocks(b => b.map((bl,i)=>i===idx?{...bl,data}:bl))
 
   return (
-    <AdminLayout title="Cohort">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Page Designer — {cohort?.title||slug}</title></Head>
 
@@ -236,7 +235,6 @@ export default function CohortPageDesigner() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -419,4 +417,13 @@ const s = {
   ib:  { background:'none', border:'none', cursor:'pointer', color:'#999', fontSize:'0.75rem', padding:'1px 3px' },
   add: { fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'700', padding:'0.375rem 0.75rem', background:'#fff', border:'1px solid #ff5e5f', borderRadius:'4px', color:'#ff5e5f', cursor:'pointer', marginTop:'0.375rem' },
   rem: { fontFamily:'var(--font-sans)', fontSize:'0.68rem', color:'#ff5e5f', background:'none', border:'none', cursor:'pointer', padding:'0.375rem 0 0', display:'block' },
+}
+
+
+export default function CohortPageDesigner(props) {
+  return (
+    <AdminLayout title="Cohort">
+      <CohortPageDesignerInner {...props} />
+    </AdminLayout>
+  )
 }

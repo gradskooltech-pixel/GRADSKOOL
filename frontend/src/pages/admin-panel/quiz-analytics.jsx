@@ -14,7 +14,7 @@ const EXAMS = ['cat','xat','snap','nmat','gmat','gre']
 const DIFF_COLOR = { easy: C.green, medium: C.amber, hard: C.red }
 const DIFF_BG    = { easy:'#dcfce7', medium:'#fef3c7', hard:'#fee2e2' }
 
-export default function QuizAnalytics() {
+function QuizAnalyticsInner() {
   const [data,    setData]   = useState(null)
   const [exam,    setExam]   = useState('cat')
   const [loading, setLoad]   = useState(true)
@@ -105,7 +105,6 @@ export default function QuizAnalytics() {
   }
 
   return (
-    <AdminLayout title="Quiz Analytics">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Quiz Analytics — Admin — GRADSKOOL</title></Head>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" async />
@@ -267,7 +266,6 @@ export default function QuizAnalytics() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -294,4 +292,13 @@ const DEMO = {
     {id:3,text:'If successive discounts of 20% and 25% are given, what is the net discount?',difficulty:'medium',total:134,correct:42,correct_rate:31},
     {id:4,text:'Choose the most logical order of sentences to form a coherent paragraph.',difficulty:'medium',total:156,correct:56,correct_rate:36},
   ],
+}
+
+
+export default function QuizAnalytics(props) {
+  return (
+    <AdminLayout title="Quiz Analytics">
+      <QuizAnalyticsInner {...props} />
+    </AdminLayout>
+  )
 }

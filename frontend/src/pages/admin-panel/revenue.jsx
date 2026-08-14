@@ -12,7 +12,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 const C = { red:'#ff5e5f', black:'#0f0f0f', white:'#fff', bg:'#f7f6f3', border:'#e8e8e6', gray:'#999', green:'#22c55e', amber:'#f59e0b', blue:'#3b82f6', muted:'#f4f3f0' }
 const EXAMS = ['','cat','xat','snap','nmat','gmat','gre']
 
-export default function Revenue() {
+function RevenueInner() {
   const [data,    setData]   = useState(null)
   const [days,    setDays]   = useState(30)
   const [exam,    setExam]   = useState('')
@@ -100,7 +100,6 @@ export default function Revenue() {
   const fmt = v => '₹' + (v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(1)+'k' : v)
 
   return (
-    <AdminLayout title="Revenue">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Revenue — Admin — GRADSKOOL</title></Head>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" async />
@@ -195,7 +194,6 @@ export default function Revenue() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -219,4 +217,13 @@ const DEMO = {
     {created_at:'2026-05-17',email:'amit@gmail.com', plan_name:'CAT Live Batch',amount:14999,status:'refunded'},
     {created_at:'2026-05-14',email:'neha@gmail.com', plan_name:'CAT Recorded', amount:9999,status:'paid'},
   ],
+}
+
+
+export default function Revenue(props) {
+  return (
+    <AdminLayout title="Revenue">
+      <RevenueInner {...props} />
+    </AdminLayout>
+  )
 }

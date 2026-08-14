@@ -42,7 +42,7 @@ function slugify(str) {
 /* ══════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════ */
-export default function BlogManage() {
+function BlogManageInner() {
   const [view,    setView]    = useState('list')      // 'list' | 'editor'
   const [posts,   setPosts]   = useState([])
   const [loading, setLoad]    = useState(true)
@@ -121,9 +121,7 @@ export default function BlogManage() {
     init()
 
     // Destroy Quill when leaving editor view
-    return (
-    <AdminLayout title="Blog CMS"></AdminLayout>
-  ) => {
+    return () => {
       if (quillRef.current) {
         quillRef.current = null
       }
@@ -699,4 +697,13 @@ const sideInput = {
   outline: 'none',
   resize: 'vertical',
   boxSizing: 'border-box',
+}
+
+
+export default function BlogManage(props) {
+  return (
+    <AdminLayout title="Blog CMS">
+      <BlogManageInner {...props} />
+    </AdminLayout>
+  )
 }

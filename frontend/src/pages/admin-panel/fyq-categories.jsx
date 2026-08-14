@@ -109,7 +109,7 @@ function InlineForm({ initial, placeholder, onSave, onCancel, showHasCategories 
   )
 }
 
-export default function FYQCategoriesAdmin() {
+function FYQCategoriesAdminInner() {
   const [sections, setSections] = useState([])
   const [loading, setLoading] = useState(true)
   const [msg, setMsg] = useState(null)
@@ -201,7 +201,6 @@ export default function FYQCategoriesAdmin() {
   }
 
   return (
-    <AdminLayout title="FYQ Categories">
     <div style={{ minHeight:'100vh', background:C.off }}>
       <Head><title>FYQ Categories — Admin — GRADSKOOL</title></Head>
       <Toast msg={msg} />
@@ -302,6 +301,14 @@ export default function FYQCategoriesAdmin() {
         )}
       </div>
     </div>
-  </AdminLayout>
+  )
+}
+
+
+export default function FYQCategoriesAdmin(props) {
+  return (
+    <AdminLayout title="FYQ Categories">
+      <FYQCategoriesAdminInner {...props} />
+    </AdminLayout>
   )
 }

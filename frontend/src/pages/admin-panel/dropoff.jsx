@@ -11,7 +11,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:"#ff5e5f",black:"#0f0f0f",white:"#fff",bg:"#f7f6f3",border:"#e8e8e6",gray:"#999",green:"#22c55e",amber:"#f59e0b",blue:"#3b82f6",muted:"#f4f3f0" }
 
-export default function Dropoff() {
+function DropoffInner() {
   const [videos, setVideos] = useState([])
   const [exam,   setExam]   = useState("cat")
   const [loading,setLoad]      = useState(true)
@@ -26,7 +26,6 @@ export default function Dropoff() {
   }, [exam])
 
   return (
-    <AdminLayout title="Drop-off">
     <div style={{ minHeight:"100vh", background:C.bg }}>
       <Head><title>Drop-off Heatmap — Admin — GRADSKOOL</title></Head>
       <div style={{ height:"56px", background:C.white, borderBottom:"1px solid "+C.border, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 1.5rem" }}>
@@ -85,7 +84,6 @@ export default function Dropoff() {
         ))}
       </div>
     </div>
-  </AdminLayout>
   )
 }
 
@@ -94,3 +92,12 @@ const DEMO = [
   { id:2, title:"Percentages — All Concepts", section:"QA", duration_secs:2100, views:22, avg_watch:1050, quartiles:{q25:91,q50:75,q75:55,q100:40} },
   { id:3, title:"Seating Arrangement Tricks", section:"DILR", duration_secs:1800, views:19, avg_watch:1260, quartiles:{q25:89,q50:82,q75:71,q100:58} },
 ]
+
+
+export default function Dropoff(props) {
+  return (
+    <AdminLayout title="Drop-off">
+      <DropoffInner {...props} />
+    </AdminLayout>
+  )
+}

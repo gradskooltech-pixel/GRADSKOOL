@@ -50,7 +50,7 @@ function Toast({ msg }) {
 /* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════ */
-export default function FYQAdmin() {
+function FYQAdminInner() {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -63,9 +63,7 @@ export default function FYQAdmin() {
   const notify = (text, type='success') => { setMsg({ text, type }); setTimeout(() => setMsg(null), 3500) }
   const openPanel = (next) => { setPanelKey(k => k + 1); setPanel(next) }
 
-  useEffect(() => { const t = setTimeout(() => setDebouncedSearch(search), 350); return (
-    <AdminLayout title="FYQs"></AdminLayout>
-  ) => clearTimeout(t) }, [search])
+  useEffect(() => { const t = setTimeout(() => setDebouncedSearch(search), 350); return () => clearTimeout(t) }, [search])
   useEffect(() => { setPage(1) }, [debouncedSearch])
 
   const load = useCallback(() => {
@@ -593,5 +591,14 @@ function SidePanel({ panel, onClose, onSave, notify }) {
         </div>
       </div>
     </>
+  )
+}
+
+
+export default function FYQAdmin(props) {
+  return (
+    <AdminLayout title="FYQs">
+      <FYQAdminInner {...props} />
+    </AdminLayout>
   )
 }

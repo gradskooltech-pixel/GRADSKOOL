@@ -15,7 +15,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 const C = { red:'#ff5e5f',black:'#0f0f0f',white:'#fff',bg:'#f7f6f3',border:'#e8e8e6',gray50:'#fafaf9',gray400:'#999',gray500:'#666',green:'#22c55e',amber:'#f59e0b',blue:'#3b82f6' }
 const EXAMS = ['','cat','xat','snap','nmat','gmat','gre','ipmat','cmat','mhcet','clat','cuet']
 
-export default function VideoLibraryPage() {
+function VideoLibraryPageInner() {
   const [videos,  setVideos]  = useState([])
   const [loading, setLoad]    = useState(true)
   const [search,  setSearch]  = useState('')
@@ -98,7 +98,6 @@ export default function VideoLibraryPage() {
     : videos
 
   return (
-    <AdminLayout title="Video Library">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Video Library — Admin — GRADSKOOL</title></Head>
 
@@ -333,7 +332,6 @@ export default function VideoLibraryPage() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
@@ -353,4 +351,13 @@ const s = {
   lbl: { fontFamily:'var(--font-sans)', fontSize:'0.7rem', fontWeight:'700', color:'#666', display:'block', marginBottom:'0.25rem' },
   inp: { width:'100%', padding:'0.5rem 0.625rem', fontFamily:'var(--font-sans)', fontSize:'0.82rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', boxSizing:'border-box', background:'#fff' },
   sel: { padding:'0.5rem 0.625rem', fontFamily:'var(--font-sans)', fontSize:'0.78rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', background:'#fff', cursor:'pointer' },
+}
+
+
+export default function VideoLibraryPage(props) {
+  return (
+    <AdminLayout title="Video Library">
+      <VideoLibraryPageInner {...props} />
+    </AdminLayout>
+  )
 }

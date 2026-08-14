@@ -47,7 +47,7 @@ const COURSE_TYPES = [
   { value:'custom',        label:'Custom' },
 ]
 
-export default function CourseBuilder() {
+function CourseBuilderInner() {
   const router = useRouter()
   const { id }  = router.query
 
@@ -219,11 +219,9 @@ export default function CourseBuilder() {
   const videos   = activeTopic   ? (topics.find(t => t.id === activeTopic.id)?.videos || [])   : []
 
   if (loading) return (
-    <AdminLayout title="Course">
     <div style={{ minHeight:'100vh', background:C.bg, display:'flex', alignItems:'center', justifyContent:'center' }}>
       <p style={{ fontFamily:'Georgia,serif', color:C.gray400 }}>Loading course builder…</p>
     </div>
-  </AdminLayout>
   )
 
   if (!course) return (
@@ -996,4 +994,13 @@ const s = {
   iconB:{ background:'none', border:'none', cursor:'pointer', color:'#999', fontSize:'0.875rem', padding:'0.15rem 0.25rem' },
   empty:{ padding:'2rem', textAlign:'center', fontFamily:'Georgia,serif', color:'#999', fontSize:'0.875rem' },
   mTitle:{ fontFamily:'Georgia,serif', fontSize:'1.25rem', fontWeight:'700', color:'#0f0f0f', marginBottom:'1.5rem' },
+}
+
+
+export default function CourseBuilder(props) {
+  return (
+    <AdminLayout title="Course">
+      <CourseBuilderInner {...props} />
+    </AdminLayout>
+  )
 }

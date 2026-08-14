@@ -19,7 +19,7 @@ const VIDEO_TYPES = [["","None"],["youtube","YouTube"],["bunny","Bunny"]]
 
 const EMPTY_FORM = { exam:"cat", year:2025, is_verified:true, is_featured:false, video_type:"" }
 
-export default function ResultsWallAdmin() {
+function ResultsWallAdminInner() {
   const [results, setResults] = useState([])
   const [modal,   setModal]   = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -59,7 +59,6 @@ export default function ResultsWallAdmin() {
   }
 
   return (
-    <AdminLayout title="Results Wall">
     <div style={{ minHeight:"100vh", background:C.bg }}>
       <Head><title>Results Wall — Admin — GRADSKOOL</title></Head>
       <div style={{ height:"56px", background:C.white, borderBottom:"1px solid "+C.border, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 1.5rem" }}>
@@ -211,7 +210,15 @@ export default function ResultsWallAdmin() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 const s = { lbl:{ fontFamily:"var(--font-sans)",fontSize:"0.7rem",fontWeight:"700",color:"#666",display:"block",marginBottom:"0.25rem" }, inp:{ width:"100%",padding:"0.5rem 0.625rem",fontFamily:"var(--font-sans)",fontSize:"0.82rem",border:"1px solid #e8e8e6",borderRadius:"4px",outline:"none",color:"#0f0f0f",boxSizing:"border-box",background:"#fff" } }
+
+
+export default function ResultsWallAdmin(props) {
+  return (
+    <AdminLayout title="Results Wall">
+      <ResultsWallAdminInner {...props} />
+    </AdminLayout>
+  )
+}

@@ -25,7 +25,7 @@ const TYPE_LABELS = {
 
 const EXAMS = ['cat','xat','snap','nmat','gmat','gre','ipmat','cmat','mhcet','clat','cuet']
 
-export default function CoursesPage() {
+function CoursesPageInner() {
   const [courses, setCourses]   = useState([])
   const [loading, setLoad]      = useState(true)
   const [modal,   setModal]     = useState(false)
@@ -62,7 +62,6 @@ export default function CoursesPage() {
   const byExam = filtered.reduce((acc, c) => { (acc[c.exam_name] = acc[c.exam_name] || []).push(c); return acc }, {})
 
   return (
-    <AdminLayout title="Course Builder">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Courses — Admin — GRADSKOOL</title></Head>
 
@@ -218,11 +217,19 @@ export default function CoursesPage() {
         </div>
       )}
     </div>
-  </AdminLayout>
   )
 }
 
 const s = {
   lbl: { fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'700', color:'#666', display:'block', marginBottom:'0.25rem' },
   inp: { width:'100%', padding:'0.5rem 0.625rem', fontFamily:'var(--font-sans)', fontSize:'0.82rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', boxSizing:'border-box', background:'#fff' },
+}
+
+
+export default function CoursesPage(props) {
+  return (
+    <AdminLayout title="Course Builder">
+      <CoursesPageInner {...props} />
+    </AdminLayout>
+  )
 }

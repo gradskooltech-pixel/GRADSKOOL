@@ -96,7 +96,7 @@ const NAV = [
   },
 ]
 
-export default function AdminIndex() {
+function AdminIndexInner() {
   const [overview, setOverview] = useState(null)
   const [loading,  setLoad]     = useState(true)
   const [search,   setSearch]   = useState('')
@@ -127,9 +127,7 @@ export default function AdminIndex() {
       if (v >= 1000)   return '₹' + (v / 1000).toFixed(1) + 'k'
       return '₹' + v
     }
-    if (v >= 1000) return (
-    <AdminLayout title="Overview">v / 1000</AdminLayout>
-  ).toFixed(1) + 'k'
+    if (v >= 1000) return (v / 1000).toFixed(1) + 'k'
     return String(v)
   }
 
@@ -253,4 +251,13 @@ const DEMO = {
   revenue: { total:892000, month:148000, week:34500, daily_trend:[] },
   users:   { total:312, verified:287, new_week:14, enrolled:89 },
   leads:   { total:847, converted:89, conversion_rate:11 },
+}
+
+
+export default function AdminIndex(props) {
+  return (
+    <AdminLayout title="Overview">
+      <AdminIndexInner {...props} />
+    </AdminLayout>
+  )
 }

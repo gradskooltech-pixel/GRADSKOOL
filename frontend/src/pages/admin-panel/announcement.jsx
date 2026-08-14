@@ -10,7 +10,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 
 const C = { red:'#ff5e5f',black:'#0f0f0f',white:'#fff',bg:'#f7f6f3',border:'#e8e8e6',gray400:'#999',gray500:'#666',green:'#22c55e' }
 
-export default function Announcement() {
+function AnnouncementInner() {
   const [form,  setForm]  = useState({ text:'', active:false, link:'', color:'#0f0f0f' })
   const [saving,setSaving]= useState(false)
   const [msg,   setMsg]   = useState(null)
@@ -39,7 +39,6 @@ export default function Announcement() {
   ]
 
   return (
-    <AdminLayout title="Announcement">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Announcement — Admin</title></Head>
       <div style={{ height:'56px', background:C.white, borderBottom:'1px solid '+C.border, display:'flex', alignItems:'center', padding:'0 1.5rem', gap:'1rem' }}>
@@ -114,11 +113,19 @@ export default function Announcement() {
         </div>
       </div>
     </div>
-  </AdminLayout>
   )
 }
 
 const s = {
   lbl: { fontFamily:'var(--font-sans)', fontSize:'0.72rem', fontWeight:'700', color:'#666', display:'block', marginBottom:'0.375rem' },
   inp: { width:'100%', padding:'0.625rem 0.75rem', fontFamily:'var(--font-sans)', fontSize:'0.875rem', border:'1px solid #e8e8e6', borderRadius:'4px', outline:'none', color:'#0f0f0f', boxSizing:'border-box' },
+}
+
+
+export default function Announcement(props) {
+  return (
+    <AdminLayout title="Announcement">
+      <AnnouncementInner {...props} />
+    </AdminLayout>
+  )
 }

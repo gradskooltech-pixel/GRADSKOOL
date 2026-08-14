@@ -20,7 +20,7 @@ const C = {
 
 const TABS = ['Profile', 'Activity', 'Enrollments', 'Payments', 'Mocks']
 
-export default function StudentDetail() {
+function StudentDetailInner() {
   const router             = useRouter()
   const { id }             = router.query
   const [data,    setData] = useState(null)
@@ -113,7 +113,6 @@ export default function StudentDetail() {
   if (!data)   return <Shell id={null}><p style={{ padding:'3rem', textAlign:'center', color:C.red }}>Student not found</p></Shell>
 
   return (
-    <AdminLayout title="Student">
     <Shell id={id}>
       <Head><title>{data.first_name} {data.last_name} — Admin — GRADSKOOL</title></Head>
 
@@ -474,7 +473,6 @@ export default function StudentDetail() {
         </div>
       )}
     </Shell>
-  </AdminLayout>
   )
 }
 
@@ -503,4 +501,13 @@ const s = {
   mTitle: { fontFamily:'Georgia,serif', fontSize:'1.25rem', fontWeight:'700', color:'#0f0f0f', marginBottom:'0.5rem' },
   btnPri: { padding:'0.625rem 1.5rem', background:'#ff5e5f', color:'#fff', border:'none', borderRadius:'4px', fontFamily:'var(--font-sans)', fontSize:'0.82rem', fontWeight:'700', cursor:'pointer' },
   btnSec: { padding:'0.625rem 1.25rem', border:'1px solid #e8e8e6', borderRadius:'4px', background:'#fff', fontFamily:'var(--font-sans)', fontSize:'0.82rem', cursor:'pointer' },
+}
+
+
+export default function StudentDetail(props) {
+  return (
+    <AdminLayout title="Student">
+      <StudentDetailInner {...props} />
+    </AdminLayout>
+  )
 }

@@ -12,7 +12,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout'
 const C = { red:'#ff5e5f', black:'#0f0f0f', white:'#fff', bg:'#f7f6f3', border:'#e8e8e6', gray:'#999', green:'#22c55e', amber:'#f59e0b', blue:'#3b82f6', muted:'#f4f3f0' }
 const EXAMS = ['cat','xat','snap','nmat','gmat','gre']
 
-export default function ContentPerformance() {
+function ContentPerformanceInner() {
   const [videos,    setVideos]   = useState([])
   const [exam,      setExam]     = useState('cat')
   const [loading,   setLoad]     = useState(true)
@@ -58,7 +58,6 @@ export default function ContentPerformance() {
   const avgOf = key => filtered.length ? Math.round(filtered.reduce((a,v)=>a+v[key],0)/filtered.length) : 0
 
   return (
-    <AdminLayout title="Content Performance">
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Head><title>Content Performance — Admin — GRADSKOOL</title></Head>
 
@@ -170,7 +169,6 @@ export default function ContentPerformance() {
         ))}
       </div>
     </div>
-  </AdminLayout>
   )
 }
 
@@ -192,3 +190,12 @@ const DEMO_VIDEOS = [
       { name:'Neha Joshi',   watch_pct:100, watched_secs:1680, quiz_score:33, last_watched:'2026-05-21T15:00:00' },
     ]},
 ]
+
+
+export default function ContentPerformance(props) {
+  return (
+    <AdminLayout title="Content Performance">
+      <ContentPerformanceInner {...props} />
+    </AdminLayout>
+  )
+}
