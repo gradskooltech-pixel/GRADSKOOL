@@ -74,7 +74,7 @@ export async function getServerSideProps({ params, req }) {
 
 export default function FYQDetail({ q, slug, canonicalUrl }) {
   const ytId = getYoutubeId(q.youtube_url)
-  const metaDescription = htmlExcerpt(q.long_description) || `Future Year Question ${q.question_number} — ${q.title}, solved by ALP Sir.`
+  const metaDescription = htmlExcerpt(q.long_description) || `Future Year Question ${q.question_number} — ${q.title}, solved by ${q.instructor_name}.`
   const pdfs = q.pdfs || []
 
   const videoSchema = ytId ? {
@@ -145,7 +145,7 @@ export default function FYQDetail({ q, slug, canonicalUrl }) {
           </div>
           <h1 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(22px,4vw,36px)', fontWeight:400, lineHeight:1.15, color:'var(--black)', marginBottom:12 }}>{q.title}</h1>
           <div style={{ display:'flex', alignItems:'center', gap:16, fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', flexWrap:'wrap' }}>
-            <span>ALP Sir</span>
+            <span>{q.instructor_name}</span>
           </div>
         </div>
       </section>

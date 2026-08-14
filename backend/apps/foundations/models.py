@@ -171,6 +171,10 @@ class FoundationClass(models.Model):
     )
     scheduled_at    = models.DateTimeField(help_text='Date and time of the live class (IST)')
     duration_mins   = models.PositiveIntegerField(default=60, help_text='Expected duration in minutes')
+    instructor_name = models.CharField(
+        max_length=100, blank=True,
+        help_text='Who taught this class. Leave blank to show "ALP Sir" (the default).'
+    )
 
     # After class happens
     youtube_url     = models.URLField(

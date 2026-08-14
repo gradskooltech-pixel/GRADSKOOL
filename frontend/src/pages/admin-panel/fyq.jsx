@@ -324,6 +324,7 @@ function SidePanel({ panel, onClose, onSave, notify }) {
     _initial_section_id:  q?.section_id || null,
     _initial_category_id: q?.category_id || null,
     youtube_url:        q?.youtube_url || '',
+    instructor_name:    q?.instructor_name || '',
     long_description:   q?.long_description || '',
     notes:              q?.notes || '',
     is_published:       q?.is_published ?? true,
@@ -507,6 +508,13 @@ function SidePanel({ panel, onClose, onSave, notify }) {
                 topicId={form.topic_id}
                 onTopicChange={id => setForm(f => ({ ...f, topic_id: id }))}
               />
+            </div>
+
+            <div>
+              <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>
+                Solved By <span style={{ fontWeight:400, textTransform:'none', color:C.gray }}>(leave blank for "ALP Sir")</span>
+              </label>
+              <input value={form.instructor_name} onChange={set('instructor_name')} placeholder="ALP Sir" style={inp()} />
             </div>
 
             <div>

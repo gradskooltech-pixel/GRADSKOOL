@@ -66,6 +66,7 @@ def question_to_dict(q, include_body=True):
         'slug':            q.slug,
         'meta_description': q.meta_description,
         'youtube_url':     q.youtube_url,
+        'instructor_name': q.instructor_name or 'ALP Sir',
         'has_video':       q.has_video,
         'is_published':    q.is_published,
         'topic_id':        topic.id if topic else None,
@@ -345,6 +346,7 @@ class AdminFYQListView(APIView):
             slug              = d.get('slug', ''),
             meta_description  = d.get('meta_description', ''),
             youtube_url       = d.get('youtube_url', ''),
+            instructor_name   = d.get('instructor_name', ''),
             long_description  = d.get('long_description', ''),
             notes             = d.get('notes', ''),
             is_published      = d.get('is_published', True),
@@ -383,7 +385,7 @@ class AdminFYQDetailView(APIView):
                     return Response({'error': 'Topic not found'}, status=400)
             else:
                 q.topic = None
-        for field in ['question_number', 'title', 'slug', 'meta_description', 'youtube_url', 'long_description', 'notes', 'is_published']:
+        for field in ['question_number', 'title', 'slug', 'meta_description', 'youtube_url', 'instructor_name', 'long_description', 'notes', 'is_published']:
             if field in d:
                 setattr(q, field, d[field])
         q.save()

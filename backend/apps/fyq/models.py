@@ -125,6 +125,10 @@ class FYQQuestion(models.Model):
     )
 
     youtube_url = models.URLField(blank=True, help_text='Solution walkthrough video')
+    instructor_name = models.CharField(
+        max_length=100, blank=True,
+        help_text='Who solved this question. Leave blank to show "ALP Sir" (the default).'
+    )
 
     # Blog-like content — the actual question text/explanation, same
     # SEO/AEO-oriented rich text pattern as Foundations' long_description.

@@ -98,6 +98,7 @@ def class_to_dict(c):
         'long_description': c.long_description,
         'scheduled_at':   c.scheduled_at.isoformat(),
         'duration_mins':  c.duration_mins,
+        'instructor_name': c.instructor_name or 'ALP Sir',
         'youtube_url':    c.youtube_url,
         'notes':          c.notes,
         'is_published':   c.is_published,
@@ -341,6 +342,7 @@ class AdminFoundationClassListView(APIView):
                 long_description = d.get('long_description', ''),
                 scheduled_at   = scheduled_at,
                 duration_mins  = d.get('duration_mins', 60),
+                instructor_name = d.get('instructor_name', ''),
                 youtube_url    = d.get('youtube_url', ''),
                 notes          = d.get('notes', ''),
                 is_published   = d.get('is_published', True),
@@ -373,7 +375,7 @@ class AdminFoundationClassDetailView(APIView):
         c = self._get(pk)
         if not c: return Response({'error':'Not found'}, status=404)
         d = request.data
-        for field in ['title','slug','description','meta_description','long_description','duration_mins','youtube_url','notes','is_published','lesson_number','exams']:
+        for field in ['title','slug','description','meta_description','long_description','duration_mins','instructor_name','youtube_url','notes','is_published','lesson_number','exams']:
             if field in d:
                 setattr(c, field, d[field])
         if 'section_id' in d:

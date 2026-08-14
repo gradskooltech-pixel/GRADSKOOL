@@ -142,7 +142,7 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, les
 
   const ytId = getYoutubeId(lesson.youtube_url)
   const isLive = lesson.is_published && isLiveNow(lesson)
-  const metaDescription = htmlExcerpt(lesson.long_description) || lesson.description || `Free ${meta.name} class by ALP Sir.`
+  const metaDescription = htmlExcerpt(lesson.long_description) || lesson.description || `Free ${meta.name} class by ${lesson.instructor_name}.`
   const pdfs = lesson.pdfs || []
 
   const videoSchema = ytId ? {
@@ -241,7 +241,7 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, les
           <h1 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(22px,4vw,36px)', fontWeight:400, lineHeight:1.15, color:'var(--black)', marginBottom:12 }}>{lesson.title}</h1>
           {lesson.description && <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.8, marginBottom:16, maxWidth:640 }}>{lesson.description}</p>}
           <div style={{ display:'flex', alignItems:'center', gap:16, fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', flexWrap:'wrap' }}>
-            <span>ALP Sir</span>
+            <span>{lesson.instructor_name}</span>
             {lesson.duration_mins && <span>{lesson.duration_mins} min class</span>}
             {lesson.scheduled_at && <span>{new Date(lesson.scheduled_at).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</span>}
             <span style={{ color:'#ff4444', fontWeight:600 }}>Free</span>

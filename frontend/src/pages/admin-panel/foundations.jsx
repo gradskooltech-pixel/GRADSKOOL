@@ -458,6 +458,7 @@ function SidePanel({ panel, examFilter, onClose, onSave, notify }) {
         exams:         cls.exams_raw || [], // raw override only — empty means "inherits the series"
         scheduled_at:  localDT,
         duration_mins: cls.duration_mins || 60,
+        instructor_name: cls.instructor_name || '',
         youtube_url:   cls.youtube_url || '',
         notes:         cls.notes || '',
         is_published:  cls.is_published ?? true,
@@ -815,6 +816,13 @@ function SidePanel({ panel, examFilter, onClose, onSave, notify }) {
                     <span style={{ fontFamily:'var(--font-sans)', fontSize:12, color:C.gray }}>min</span>
                   </div>
                 </div>
+              </div>
+
+              <div>
+                <label style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:C.gray, display:'block', marginBottom:6 }}>
+                  Instructor <span style={{ fontWeight:400, textTransform:'none', color:C.gray }}>(leave blank for "ALP Sir")</span>
+                </label>
+                <input value={form.instructor_name} onChange={set('instructor_name')} placeholder="ALP Sir" style={inp()} />
               </div>
 
               <div>
