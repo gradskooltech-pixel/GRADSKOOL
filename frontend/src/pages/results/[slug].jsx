@@ -15,7 +15,7 @@ import PageSEO from '../../components/seo/PageSEO'
 import { S } from '../../components/courses/CourseLayout'
 
 const R = { color: 'var(--red)' }
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
 
 function youtubeEmbedUrl(url) {
   if (!url) return null

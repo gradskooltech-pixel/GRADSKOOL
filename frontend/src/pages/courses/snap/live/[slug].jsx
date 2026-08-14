@@ -10,17 +10,25 @@
  */
 import { FoundationsClassDetail } from '../../../../components/foundations/FoundationsClassDetail'
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
 const META = { name:'SNAP', color:'#1a5c8a', course:'/courses/snap', isFullCourse:true }
 
 export async function getServerSideProps({ params, req }) {
   const { slug } = params
+  console.log('[SNAP SSR DEBUG] NEXT_PUBLIC_API_URL env value:', process.env.NEXT_PUBLIC_API_URL)
+  console.log('[SNAP SSR DEBUG] Using API base:', API)
+  console.log('[SNAP SSR DEBUG] Fetching:', `${API}/foundations/class/${slug}/`)
   try {
     const [lessonRes, seriesRes] = await Promise.all([
       fetch(`${API}/foundations/class/${slug}/`),
       fetch(`${API}/foundations/?exam=snap`),
     ])
-    if (!lessonRes.ok) return { notFound: true }
+    console.log('[SNAP SSR DEBUG] lessonRes status:', lessonRes.status, lessonRes.ok)
+    if (!lessonRes.ok) {
+      const body = await lessonRes.text().catch(() => '')
+      console.log('[SNAP SSR DEBUG] lessonRes body:', body.slice(0, 300))
+      return { notFound: true }
+    }
     const lesson = await lessonRes.json()
 
     let prevSlug = null, nextSlug = null
@@ -36,7 +44,8 @@ export async function getServerSideProps({ params, req }) {
     const canonicalUrl = `${protocol}://${req.headers.host}/courses/snap/live/${slug}`
 
     return { props: { slug, lesson, prevSlug, nextSlug, canonicalUrl } }
-  } catch {
+  } catch (err) {
+    console.error('[SNAP SSR DEBUG] Caught exception:', err.message)
     return { notFound: true }
   }
 }

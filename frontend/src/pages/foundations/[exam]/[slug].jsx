@@ -11,7 +11,7 @@
  */
 import { FoundationsClassDetail } from '../../../components/foundations/FoundationsClassDetail'
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
 
 const EXAM_META = {
   xat: { name:'XAT', color:'#5b3fa0', course:'/courses/xat', isFullCourse:false },

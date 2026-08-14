@@ -10,7 +10,7 @@
  */
 import { FoundationsClassDetail } from '../../../../components/foundations/FoundationsClassDetail'
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
 const META = { name:'NMAT', color:'#1a6e3c', course:'/courses/nmat', isFullCourse:true }
 
 export async function getServerSideProps({ params, req }) {
