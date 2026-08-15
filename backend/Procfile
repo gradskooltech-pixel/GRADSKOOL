@@ -1,5 +1,15 @@
 # GRADSKOOL — Railway Procfile
 #
+# web workers/threads (2026-08-15): dropped from --workers 2 --threads 4 to
+# --workers 1 --threads 3 — the Hobby-tier service is hard-capped at 1GB RAM
+# (Railway Settings → Scale → Replica Limits), and 2 full worker processes
+# each carrying their own copy of Django/DRF/Celery/Pillow/Sentry in memory
+# was enough baseline alone to tip into OOM SIGKILLs the moment a PDF page
+# watermark request landed on top. One worker halves that baseline; 3 threads
+# still allows a few concurrent requests without adding a second full worker's
+# import overhead. If this ever feels too serialized under real traffic, the
+# actual fix is upgrading off Hobby's 1GB cap, not raising workers back up.
+#
 # Three processes to deploy on Railway:
 #   web    → Django (gunicorn) — handles API requests
 #   worker → Celery worker     — runs async tasks (drip emails, transcription, AI notes)
@@ -10,6 +20,6 @@
 #   2. Set the start command for each service
 #   3. All three share the same repo + env vars
 
-web:    python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+web:    python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 3 --timeout 120
 worker: celery -A config.celery worker --loglevel=info -Q default,high_priority --concurrency 2
 beat:   celery -A config.celery beat --loglevel=info
