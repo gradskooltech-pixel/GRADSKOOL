@@ -1,0 +1,32 @@
+# Regenerated inside the container — no reason to ship from the host
+node_modules
+.next
+
+# Not needed for the build, and .git especially bloats the build context
+.git
+.gitignore
+
+# Local-dev-only env files — production values come from Railway's
+# Variables tab via Docker build ARGs (see Dockerfile), never from these
+.env.local
+.env.local.example
+envs
+
+# Other platforms' deploy configs — irrelevant to a Railway/Docker build
+netlify.toml
+vercel.json
+netlify-subdomains
+
+# Editor/OS artifacts
+.idea
+.vscode
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docs — harmless to include, but no reason to
+README.md
+DEPLOYMENT.md

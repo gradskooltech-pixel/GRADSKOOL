@@ -1,53 +1,43 @@
-# GRADSKOOL — Railway Deployment Configuration
+# GRADSKOOL — Railway Deployment Configuration (Frontend)
 #
-# Deploy THREE separate Railway services from this monorepo:
+# This is a SEPARATE Railway service from the backend (backend/railway.toml).
+# Both live in the same GitHub repo (monorepo) — Root Directory for this
+# service must be set to `frontend` so Railway only builds this folder.
 #
-#   Service 1: web    → Django API server (gunicorn)
-#   Service 2: worker → Celery async task worker
-#   Service 3: beat   → Celery Beat scheduler (cron-like)
-#
-# Each service uses the same repo + same env vars.
-# Set RAILWAY_SERVICE_NAME to distinguish them in logs.
+# Builds via the explicit frontend/Dockerfile (not Nixpacks auto-detection —
+# see the Dockerfile's header comment for why that was switched, 2026-08-15).
 #
 # Setup:
-#   1. railway link             (link repo to Railway project)
-#   2. railway up               (deploy web service)
-#   3. Create worker service:   use Start Command below
-#   4. Create beat service:     use Start Command below
-#   5. Add all env vars from .env.example to Railway dashboard
+#   1. In Railway, click + New → GitHub Repo → select this repo
+#   2. Set Root Directory: frontend
+#   3. Add env vars below in the Railway dashboard (Variables tab) — for
+#      NEXT_PUBLIC_ vars specifically, they must ALSO be added as build args
+#      if a new one is introduced (see ARG lines in Dockerfile)
 
 [build]
-builder = "NIXPACKS"
-buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 3 --timeout 120 --access-logfile - --error-logfile -"
-healthcheckPath = "/api/v1/courses/homepage/"
+startCommand = "npm run start -- -p $PORT"
+healthcheckPath = "/"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
-# ── WORKER SERVICE START COMMAND ──────────────────────────────────────────────
-# celery -A config.celery worker --loglevel=info -Q default,high_priority --concurrency 2
-
-# ── BEAT SERVICE START COMMAND ────────────────────────────────────────────────
-# celery -A config.celery beat --loglevel=info
-
 # ── ENVIRONMENT VARIABLES (set in Railway dashboard) ─────────────────────────
-# See .env.example for full list.
-# Critical ones:
-#   SECRET_KEY
-#   DATABASE_URL          (Supabase → copy from Supabase dashboard)
-#   DJANGO_SETTINGS_MODULE=config.settings.production
-#   ALLOWED_HOSTS         (comma-separated: api.gradskool.in,*.railway.app)
-#   CORS_ALLOWED_ORIGINS  (https://gradskool.in,https://www.gradskool.in)
-#   RESEND_API_KEY
-#   RAZORPAY_KEY_ID
-#   RAZORPAY_KEY_SECRET
-#   RAZORPAY_WEBHOOK_SECRET
-#   BUNNY_LIBRARY_ID
-#   BUNNY_TOKEN_KEY
-#   UPSTASH_REDIS_URL
-#   SENTRY_DSN
-#   OPENAI_API_KEY
-#   INTERAKT_API_KEY
+# NEXT_PUBLIC_ vars are baked in at BUILD time, not runtime — if you change
+# one, you must redeploy (a restart alone won't pick up the new value).
+# Declared as build ARGs in frontend/Dockerfile:
+#
+#   NEXT_PUBLIC_API_URL          → backend's Railway public URL + /api/v1
+#   NEXT_PUBLIC_MAIN_DOMAIN      → https://gradskool.in
+#   NEXT_PUBLIC_GOOGLE_CLIENT_ID → same Client ID as backend (public, safe to expose)
+#   NEXT_PUBLIC_GA_ID            → GA4 measurement ID (G-NJ36GFWSP3)
+#   NODE_ENV=production
+#
+# NOT set — features not currently active (their code paths default safely
+# to blank/off when unset): NEXT_PUBLIC_SENTRY_DSN, NEXT_PUBLIC_BUNNY_LIBRARY_ID,
+# NEXT_PUBLIC_ZOOM_SDK_KEY, NEXT_PUBLIC_EXAM, NEXT_PUBLIC_SUBDOMAIN. If any of
+# these get turned on later, add its ARG/ENV pair back in frontend/Dockerfile
+# first, or it'll silently stay blank regardless of what's set here.
