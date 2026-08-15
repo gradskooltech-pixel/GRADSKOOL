@@ -14,12 +14,24 @@ POST /api/v1/pdfs/{slug}/create-order/      → Create a Razorpay order for this
 """
 import logging
 
+from django.core.cache import cache
 from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework import generics, serializers
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+# Server-side cache for rendered page images (Redis, already configured for
+# the project — see config/settings/production.py). This exists purely to
+# avoid re-running the PIL watermark/blur pipeline — the most memory- and
+# CPU-heavy thing this app does — on every single request for a page that
+# was just rendered moments ago. A student flipping Prev/Next across the
+# same few pages, or just reloading, was previously paying the full render
+# cost every time.
+PREVIEW_CACHE_SECONDS = 6 * 60 * 60   # 6h — not user-specific, safe to hold longer
+PAGE_CACHE_SECONDS = 15 * 60          # 15m — watermark bakes in the user's email,
+# so this is per-user and kept shorter
 
 from .models import Pdf, PdfPage, PdfPurchase
 from .serializers import PdfListSerializer, PdfPurchaseSerializer
@@ -117,11 +129,19 @@ class PdfPreviewView(APIView):
         except (Pdf.DoesNotExist, PdfPage.DoesNotExist):
             return Response({'error': {'message': 'Preview not available.'}}, status=404)
 
-        data = fetch_bytes(page.storage_path)
-        if not data:
-            return Response({'error': {'message': 'Preview unavailable.'}}, status=502)
+        cache_key = f'pdfpreview:{pdf.id}'
+        blurred = cache.get(cache_key)
 
-        blurred = blur_preview(data)
+        if blurred is None:
+            data = fetch_bytes(page.storage_path)
+            if not data:
+                return Response({'error': {'message': 'Preview unavailable.'}}, status=502)
+
+            blurred = blur_preview(data)
+            # Same output for every visitor — no personalization here, so this
+            # is safe to hold in Redis and reused across everyone who hits it.
+            cache.set(cache_key, blurred, PREVIEW_CACHE_SECONDS)
+
         response = HttpResponse(blurred, content_type='image/jpeg')
         response['Cache-Control'] = 'public, max-age=3600'  # safe to cache — it's blurred, not user-specific
         return response
@@ -144,13 +164,23 @@ class PdfPageView(APIView):
         except PdfPage.DoesNotExist:
             return Response({'error': {'message': 'Page not found.'}}, status=404)
 
-        raw = fetch_bytes(page.storage_path)
-        if not raw:
-            return Response({'error': {'message': 'Page unavailable.'}}, status=502)
+        # Keyed per-user (the watermark bakes in this user's email, so the
+        # bytes aren't interchangeable across users) — this only saves the
+        # render cost for the SAME user re-requesting the SAME page, e.g.
+        # clicking back to a page they already viewed, or a reload.
+        cache_key = f'pdfpage:{pdf.id}:{page_number}:{request.user.id}'
+        watermarked = cache.get(cache_key)
 
-        watermarked = apply_watermark(raw, request.user.email)
+        if watermarked is None:
+            raw = fetch_bytes(page.storage_path)
+            if not raw:
+                return Response({'error': {'message': 'Page unavailable.'}}, status=502)
+
+            watermarked = apply_watermark(raw, request.user.email)
+            cache.set(cache_key, watermarked, PAGE_CACHE_SECONDS)
+
         response = HttpResponse(watermarked, content_type='image/jpeg')
-        response['Cache-Control'] = 'private, no-store'
+        response['Cache-Control'] = 'private, no-store'  # browser/CDN still never caches this — it's Redis-side only
         return response
 
 

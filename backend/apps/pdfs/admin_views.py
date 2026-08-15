@@ -12,6 +12,7 @@ to page images via pdf.js canvas rendering (same approach as the original
 CAT_PDF app) — no server-side poppler/ImageMagick dependency, so this stays
 compatible with your Railway deployment without extra system packages.
 """
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, serializers
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -95,6 +96,13 @@ class AdminPdfPageUploadView(APIView):
             pdf=pdf, page_number=page_number,
             defaults={'storage_path': storage_path},
         )
+
+        if page_number == 1:
+            # PdfPreviewView caches the blurred page-1 render server-side
+            # (see views.py) — invalidate it so a re-upload (e.g. fixing a
+            # broken/incomplete PDF) doesn't keep serving the stale preview
+            # for up to PREVIEW_CACHE_SECONDS.
+            cache.delete(f'pdfpreview:{pdf.id}')
 
         if pdf.status == 'draft':
             pdf.status = 'processing'
