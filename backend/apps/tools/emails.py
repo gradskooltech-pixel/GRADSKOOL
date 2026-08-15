@@ -48,7 +48,7 @@ def send_tool_welcome_email(lead):
     """
     try:
         resend.Emails.send({
-            'from':    'GRADSKOOL <hello@gradskool.in>',
+            'from':    settings.DEFAULT_FROM_EMAIL,
             'to':      lead.email,
             'subject': f'Your free access to {lead.tool.name} is ready',
             'html':    html,

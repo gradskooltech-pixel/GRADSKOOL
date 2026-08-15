@@ -115,10 +115,7 @@ export function Navbar() {
 
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }} className="gs-nav-actions">
             {isLoggedIn && sessionReady ? (
-              <>
-                <Link href="/dashboard" className="gs-btn gs-btn-outline gs-nav-actions-outline">Dashboard</Link>
-                <button onClick={handleLogout} className="gs-nav-link" style={{ background:'none', border:'none', cursor:'pointer', font:'inherit' }}>Log out</button>
-              </>
+              <button onClick={handleLogout} className="gs-btn gs-btn-outline gs-nav-actions-outline" style={{ cursor:'pointer' }}>Log out</button>
             ) : (
               <>
                 <Link href="/courses"  className="gs-btn gs-btn-outline gs-nav-actions-outline">All Courses</Link>
@@ -152,10 +149,7 @@ export function Navbar() {
         </div>
         <div style={{ marginTop:'auto', display:'flex', flexDirection:'column', gap:'10px', paddingTop:'24px' }}>
           {isLoggedIn && sessionReady ? (
-            <>
-              <Link href="/dashboard" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Dashboard</Link>
-              <button onClick={handleLogout} className="gs-btn gs-btn-outline" style={{ justifyContent:'center', cursor:'pointer' }}>Log out</button>
-            </>
+            <button onClick={handleLogout} className="gs-btn gs-btn-red" style={{ justifyContent:'center', cursor:'pointer' }}>Log out</button>
           ) : (
             <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
           )}

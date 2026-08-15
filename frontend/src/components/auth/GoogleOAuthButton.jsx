@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react'
 
 export function GoogleOAuthButton({ onSuccess, onError, label = 'Continue with Google' }) {
   const buttonRef = useRef(null)
+  const wrapperRef = useRef(null)
 
   useEffect(() => {
     // Load GIS script if not present
@@ -28,11 +29,18 @@ export function GoogleOAuthButton({ onSuccess, onError, label = 'Continue with G
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse,
       })
-      if (buttonRef.current) {
+      if (buttonRef.current && wrapperRef.current) {
+        // GIS's renderButton does NOT support width:'100%' — it only accepts
+        // an explicit pixel number. Passing a percentage string (as this used
+        // to) left Google falling back to an inconsistent internal default,
+        // which is why the button visibly changed width between page loads
+        // and caused everything below it to jump/"blink". Measuring the real
+        // container width and passing that as a number makes it deterministic.
+        const measuredWidth = Math.round(wrapperRef.current.getBoundingClientRect().width)
         window.google.accounts.id.renderButton(buttonRef.current, {
           theme: 'outline',
           size: 'large',
-          width: '100%',
+          width: measuredWidth || 300,
           text: 'continue_with',
           shape: 'rectangular',
         })
@@ -49,7 +57,9 @@ export function GoogleOAuthButton({ onSuccess, onError, label = 'Continue with G
   }, [onSuccess, onError])
 
   return (
-    <div style={{ width: '100%' }}>
+    // Fixed height reserves space before Google's async script finishes
+    // rendering, so the form below doesn't jump vertically while it loads.
+    <div ref={wrapperRef} style={{ width: '100%', minHeight: '44px' }}>
       <div ref={buttonRef} style={{ width: '100%' }} />
       {/* Fallback if GIS button doesn't render (e.g. ad blocker) */}
       {!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (

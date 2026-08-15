@@ -199,7 +199,7 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # ── RESEND EMAIL ──────────────────────────────────────────────────────────────
 
 RESEND_API_KEY = config('RESEND_API_KEY', default='')
-DEFAULT_FROM_EMAIL = 'GRADSKOOL <hello@gradskool.in>'
+DEFAULT_FROM_EMAIL = 'GRADSKOOL <gradskool@gradskool.in>'
 EMAIL_VERIFICATION_URL = config('FRONTEND_URL', default='http://localhost:3000') + '/auth/verify-email'
 PASSWORD_RESET_URL = config('FRONTEND_URL', default='http://localhost:3000') + '/auth/reset-password'
 

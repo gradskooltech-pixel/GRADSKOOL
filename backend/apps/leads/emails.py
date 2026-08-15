@@ -40,7 +40,7 @@ def send_drip_email(lead, drip_email) -> bool:
     try:
         resend.api_key = settings.RESEND_API_KEY
         result = resend.Emails.send({
-            'from':    'GRADSKOOL <hello@gradskool.in>',
+            'from':    settings.DEFAULT_FROM_EMAIL,
             'to':      lead.email,
             'subject': drip_email.subject,
             'html':    wrapped,
