@@ -28,7 +28,7 @@ const EXAM_OPTIONS = [
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { register, googleAuth, isLoading } = useAuth()
+  const { register, login, googleAuth, isLoading } = useAuth()
 
   const [form, setForm] = useState({
     firstName: '',

@@ -14,6 +14,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useAuth } from '../../hooks/useAuth'
 
 const COURSES_DROP = [
   { href:'/courses/cat/cathlete', label:'CAThlete — Crash Course' },
@@ -30,6 +31,13 @@ const COURSES_DROP = [
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const router = useRouter()
+  const { isLoggedIn, sessionReady, logout } = useAuth()
+
+  const handleLogout = async () => {
+    await logout()
+    setMobileOpen(false)
+    router.push('/')
+  }
 
   // Close mobile nav on route change
   useEffect(() => {
@@ -106,8 +114,17 @@ export function Navbar() {
           </div>
 
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }} className="gs-nav-actions">
-            <Link href="/courses"  className="gs-btn gs-btn-outline gs-nav-actions-outline">All Courses</Link>
-            <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red">Enrol Now →</Link>
+            {isLoggedIn && sessionReady ? (
+              <>
+                <Link href="/dashboard" className="gs-btn gs-btn-outline gs-nav-actions-outline">Dashboard</Link>
+                <button onClick={handleLogout} className="gs-nav-link" style={{ background:'none', border:'none', cursor:'pointer', font:'inherit' }}>Log out</button>
+              </>
+            ) : (
+              <>
+                <Link href="/courses"  className="gs-btn gs-btn-outline gs-nav-actions-outline">All Courses</Link>
+                <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red">Enrol Now →</Link>
+              </>
+            )}
           </div>
 
           <button className="gs-burger" onClick={() => setMobileOpen(true)} aria-label="Open menu">
@@ -134,7 +151,14 @@ export function Navbar() {
           <Link href="/results"   className="gs-mob-link">Results</Link>
         </div>
         <div style={{ marginTop:'auto', display:'flex', flexDirection:'column', gap:'10px', paddingTop:'24px' }}>
-          <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
+          {isLoggedIn && sessionReady ? (
+            <>
+              <Link href="/dashboard" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Dashboard</Link>
+              <button onClick={handleLogout} className="gs-btn gs-btn-outline" style={{ justifyContent:'center', cursor:'pointer' }}>Log out</button>
+            </>
+          ) : (
+            <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
+          )}
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20more%20about%20GRADSKOOL"
             target="_blank" rel="noopener noreferrer" className="gs-btn gs-btn-outline" style={{ justifyContent:'center' }}>
             <span style={{ width:8, height:8, borderRadius:'50%', background:'#25D366', flexShrink:0, marginRight:6 }} />
