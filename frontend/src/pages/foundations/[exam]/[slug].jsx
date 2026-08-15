@@ -14,7 +14,7 @@ import { FoundationsClassDetail } from '../../../components/foundations/Foundati
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
 
 const EXAM_META = {
-  xat: { name:'XAT', color:'#5b3fa0', course:'/courses/xat', isFullCourse:false },
+  xat: { name:'XAT', color:'#5b3fa0', course:'/courses/xat', isFullCourse:false, requireLogin:true },
   cat: { name:'CAT', color:'#d94f50', course:'/courses/cat/cathlete', isFullCourse:false, requireLogin:true },
 }
 

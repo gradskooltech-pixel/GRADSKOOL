@@ -19,7 +19,9 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { isLiveNow } from './FoundationsListing'
+import { useAuth } from '../../hooks/useAuth'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -57,8 +59,7 @@ function VideoEmbed({ url }) {
           allowFullScreen title="Class video"
         />
       </div>
-    )
-  }
+    )  }
   if (url.includes('mediadelivery.net') || url.includes('b-cdn.net')) {
     return (
       <div style={{ position:'relative', paddingTop:'56.25%', background:'#000', borderRadius:4, overflow:'hidden' }}>
@@ -69,6 +70,43 @@ function VideoEmbed({ url }) {
     )
   }
   return null
+}
+
+// Shown in place of the video when meta.requireLogin is set and the visitor
+// isn't logged in. Deliberately does NOT redirect the whole page away (the
+// way the PDF reader does) — this page is server-rendered specifically so
+// title/description/schema.org data reach social crawlers and search
+// engines even for anonymous visitors (see file header). Only the actual
+// watchable content is gated; everything else stays visible for SEO.
+function LoginGate({ color, redirectPath }) {
+  return (
+    <div style={{
+      position:'relative', paddingTop:'56.25%', background:'#0f0f0f', borderRadius:4,
+      overflow:'hidden', display:'flex',
+    }}>
+      <div style={{
+        position:'absolute', inset:0, display:'flex', flexDirection:'column',
+        alignItems:'center', justifyContent:'center', gap:14, padding:'2rem', textAlign:'center',
+      }}>
+        <div style={{ width:44, height:44, borderRadius:'50%', background:color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+            <rect x="3" y="11" width="18" height="10" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+        <p style={{ color:'#fff', fontFamily:'var(--font-sans)', fontSize:'0.95rem', margin:0, maxWidth:340 }}>
+          Log in to watch this class — it's free, just needs a quick account.
+        </p>
+        <Link
+          href={`/auth/login?redirect=${encodeURIComponent(redirectPath)}`}
+          className="gs-btn gs-btn-red"
+          style={{ padding:'0.65rem 1.5rem' }}
+        >
+          Log in to watch →
+        </Link>
+      </div>
+    </div>
+  )
 }
 
 function PdfCard({ pdf, color }) {
@@ -128,6 +166,8 @@ function PrevNext({ prevSlug, nextSlug, listBasePath }) {
 }
 
 export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, lesson, prevSlug, nextSlug, canonicalUrl }) {
+  const router = useRouter()
+  const { isLoggedIn, sessionReady } = useAuth()
   const [, setNowTick] = useState(0) // forces a re-check of isLiveNow every 30s so the chat auto-appears/disappears as the class starts/ends
   useEffect(() => {
     const id = setInterval(() => setNowTick(t => t + 1), 30000)
@@ -141,6 +181,7 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, les
   )
 
   const ytId = getYoutubeId(lesson.youtube_url)
+  const gateVideo = meta.requireLogin && sessionReady && !isLoggedIn
   const isLive = lesson.is_published && isLiveNow(lesson)
   const metaDescription = htmlExcerpt(lesson.long_description) || lesson.description || `Free ${meta.name} class by ${lesson.instructor_name}.`
   const pdfs = lesson.pdfs || []
@@ -259,7 +300,9 @@ export function FoundationsClassDetail({ examSlug, slug, meta, listBasePath, les
               would be misleading, so it stays a static "upcoming" state
               until scheduled_at has passed. */}
           {lesson.youtube_url && !lesson.is_upcoming ? (
-            isLive && ytId ? (
+            gateVideo ? (
+              <LoginGate color={meta.color} redirectPath={router.asPath} />
+            ) : isLive && ytId ? (
               <div className="live-chat-grid">
                 <style>{`
                   .live-chat-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:stretch; }
