@@ -10,6 +10,21 @@ export function GoogleOAuthButton({ onSuccess, onError, label = 'Continue with G
   const buttonRef = useRef(null)
   const wrapperRef = useRef(null)
 
+  // Keep the latest callbacks in refs instead of the effect's dependency
+  // array. onSuccess/onError are typically passed as inline functions from
+  // the login/register page (e.g. `onSuccess={handleGoogle}` where
+  // handleGoogle isn't wrapped in useCallback) — meaning a NEW function
+  // reference gets created on every re-render of that page, including every
+  // single keystroke while typing into the email/password fields. With
+  // those in the effect's deps, that meant renderButton() was tearing down
+  // and re-running on every keystroke, which is what caused the button to
+  // visibly redraw/flicker. Reading from refs lets the effect below run
+  // exactly once per mount while still always calling the current callback.
+  const onSuccessRef = useRef(onSuccess)
+  const onErrorRef = useRef(onError)
+  useEffect(() => { onSuccessRef.current = onSuccess }, [onSuccess])
+  useEffect(() => { onErrorRef.current = onError }, [onError])
+
   useEffect(() => {
     // Load GIS script if not present
     if (!window.google) {
@@ -49,12 +64,13 @@ export function GoogleOAuthButton({ onSuccess, onError, label = 'Continue with G
 
     function handleCredentialResponse(response) {
       if (response.credential) {
-        onSuccess(response.credential)
+        onSuccessRef.current(response.credential)
       } else {
-        onError?.('Google sign-in failed. Please try again.')
+        onErrorRef.current?.('Google sign-in failed. Please try again.')
       }
     }
-  }, [onSuccess, onError])
+    // Deliberately empty — see comment above on the ref pattern for why.
+  }, [])
 
   return (
     // Fixed height reserves space before Google's async script finishes
