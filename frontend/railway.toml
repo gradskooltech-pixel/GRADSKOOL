@@ -19,7 +19,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "npm run start -- -p $PORT"
+startCommand = "sh -c \"npm run start -- -p $PORT\""
 healthcheckPath = "/"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"

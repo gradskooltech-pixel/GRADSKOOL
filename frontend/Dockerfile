@@ -58,7 +58,10 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.js ./next.config.js
 
 EXPOSE 3000
-# railway.toml's [deploy] startCommand takes priority over this when set —
-# this CMD is just a correct, self-contained fallback if that field is ever
-# cleared. Shell form (not exec/array form) so $PORT actually expands.
-CMD npm run start -- -p $PORT
+# railway.toml's [deploy] startCommand takes priority over this when set.
+# Exec form with an explicit `sh -c` wrapper (not shell form / not exec-array
+# with next directly) — this guarantees $PORT gets shell-expanded from the
+# container's environment regardless of how the outer process invokes CMD.
+# Without the explicit sh -c, $PORT can arrive at `next start -p` as the
+# literal 4-character string "$PORT" instead of the actual port number.
+CMD ["sh", "-c", "npm run start -- -p $PORT"]
