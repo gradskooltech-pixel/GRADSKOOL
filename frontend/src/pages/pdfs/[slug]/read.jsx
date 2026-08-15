@@ -18,8 +18,8 @@ import { usePdfProtection, PdfBlurOverlay } from '../../../components/pdfs/PdfPr
 export default function PdfReaderPage() {
   const router = useRouter()
   const { slug } = router.query
-  const { pdf, isLoading, notFound } = usePdfDetail(slug)
-  const { isLoggedIn, isLoading: authLoading } = useAuth()
+  const { isLoggedIn, isLoading: authLoading, sessionReady } = useAuth()
+  const { pdf, isLoading, notFound } = usePdfDetail(slug, { enabled: sessionReady })
 
   const [pageNum, setPageNum] = useState(1)
   const containerRef = useRef(null)
@@ -27,14 +27,14 @@ export default function PdfReaderPage() {
 
   // Redirect unauthenticated users straight to login, preserving the reader as the return target
   useEffect(() => {
-    if (router.isReady && !authLoading && !isLoggedIn) {
+    if (router.isReady && sessionReady && !isLoggedIn) {
       router.replace(`/auth/login?redirect=${encodeURIComponent(`/pdfs/${slug}/read`)}`)
     }
-  }, [authLoading, isLoggedIn, slug, router, router.isReady])
+  }, [sessionReady, isLoggedIn, slug, router, router.isReady])
 
-  const { src, isLoading: pageLoading, error: pageError } = usePdfPageImage(slug, pageNum)
+  const { src, isLoading: pageLoading, error: pageError } = usePdfPageImage(slug, sessionReady ? pageNum : null)
 
-  if (isLoading || authLoading || !isLoggedIn) return <div style={styles.loadingPage}>Loading…</div>
+  if (!sessionReady || isLoading || authLoading || !isLoggedIn) return <div style={styles.loadingPage}>Loading…</div>
   if (notFound || !pdf) return <NotFoundState />
   if (!pdf.is_owned) return <PurchaseGate pdf={pdf} />
 

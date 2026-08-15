@@ -26,6 +26,14 @@ const useAuthStore = create(
       user: null,
       isLoading: false,
       error: null,
+      // True once the initial hydrateSession() attempt (on app mount) has
+      // resolved, success or failure. Distinct from `isLoading`, which is
+      // reused by login/register/etc and never set during hydration itself.
+      // Pages that fire an authenticated (or ownership-dependent, even if
+      // technically AllowAny) request on mount should wait for this before
+      // firing — otherwise that first request races the token restore and
+      // silently reads as anonymous, with no 401 to trigger a retry.
+      sessionReady: false,
 
       // ── REGISTER ────────────────────────────────────────────────────────────
       register: async ({ firstName, lastName, email, password, passwordConfirm, targetExam, phone, redirect }) => {
@@ -184,7 +192,7 @@ const useAuthStore = create(
       // Called once in _app.jsx to restore session if refresh token exists
       hydrateSession: async () => {
         const refreshToken = getRefreshToken()
-        if (!refreshToken) return
+        if (!refreshToken) { set({ sessionReady: true }); return }
 
         try {
           const { data } = await api.post('/auth/token/refresh/', { refresh: refreshToken })
@@ -193,10 +201,10 @@ const useAuthStore = create(
 
           // Fetch fresh user profile
           const { data: user } = await api.get('/auth/me/')
-          set({ user })
+          set({ user, sessionReady: true })
         } catch (_) {
           clearTokens()
-          set({ user: null })
+          set({ user: null, sessionReady: true })
         }
       },
 

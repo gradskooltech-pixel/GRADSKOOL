@@ -29,13 +29,13 @@ export function usePdfList(examSlug, fyqOnly) {
   return { pdfs, isLoading }
 }
 
-export function usePdfDetail(slug) {
+export function usePdfDetail(slug, { enabled = true } = {}) {
   const [pdf, setPdf] = useState(null)
   const [isLoading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
   const refetch = useCallback(() => {
-    if (!slug) return
+    if (!slug || !enabled) return
     setLoading(true)
     console.log('[PDF DEBUG] Fetching:', `/pdfs/${slug}/`)
     api.get(`/pdfs/${slug}/`)
@@ -45,7 +45,7 @@ export function usePdfDetail(slug) {
         setNotFound(true)
       })
       .finally(() => setLoading(false))
-  }, [slug])
+  }, [slug, enabled])
 
   useEffect(() => { refetch() }, [refetch])
 

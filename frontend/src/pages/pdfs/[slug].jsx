@@ -33,8 +33,8 @@ function pdfSchema(pdf) {
 export default function PdfDetailPage() {
   const router = useRouter()
   const { slug } = router.query
-  const { pdf, isLoading, notFound } = usePdfDetail(slug)
-  const { isLoggedIn, user, isLoading: authLoading } = useAuth()
+  const { isLoggedIn, user, sessionReady } = useAuth()
+  const { pdf, isLoading, notFound } = usePdfDetail(slug, { enabled: sessionReady })
   const { loadRazorpay } = useRazorpay()
   const { createOrder } = useCreatePdfOrder()
   const { verify } = useVerifyPdfPayment()
@@ -83,11 +83,6 @@ export default function PdfDetailPage() {
 
     const rzp = new Razorpay({
       ...orderResult.data,
-      prefill: {
-        contact: phoneValue || user?.phone || '',
-        email: user?.email || '',
-        name: [user?.first_name, user?.last_name].filter(Boolean).join(' '),
-      },
       handler: async (response) => {
         await verify(response)
         setState('idle')
@@ -139,10 +134,8 @@ export default function PdfDetailPage() {
     else handleClaim(phone)
   }
 
-  if (isLoading || authLoading) return <div style={styles.loadingPage}>Loading…</div>
-  if (notFound || !pdf) {
-    return isLoggedIn ? <NotFoundState /> : <LoginPromptState slug={slug} />
-  }
+  if (isLoading) return <div style={styles.loadingPage}>Loading…</div>
+  if (notFound || !pdf) return <NotFoundState />
 
   const isFree = pdf.is_free
   const owned = pdf.is_owned
@@ -265,27 +258,6 @@ function NotFoundState() {
       <Link href="/pdfs" style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--red)' }}>
         ← Back to PDF Library
       </Link>
-    </div>
-  )
-}
-
-function LoginPromptState({ slug }) {
-  return (
-    <div style={styles.loadingPage}>
-      <p style={{ fontFamily: 'var(--font-serif)', fontSize: 22, marginBottom: 12 }}>Log in to view this PDF</p>
-      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--g500)', marginBottom: 20, maxWidth: 320 }}>
-        Create a free account or log in to see this page.
-      </p>
-      <div style={{ display: 'flex', gap: 10 }}>
-        <Link href={`/auth/login?redirect=${encodeURIComponent(`/pdfs/${slug}`)}`}
-          style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, background: 'var(--red)', color: '#fff', padding: '10px 20px', borderRadius: 2, textDecoration: 'none' }}>
-          Log in
-        </Link>
-        <Link href={`/auth/register?redirect=${encodeURIComponent(`/pdfs/${slug}`)}`}
-          style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, border: '1px solid var(--g200)', color: 'var(--black)', padding: '10px 20px', borderRadius: 2, textDecoration: 'none' }}>
-          Create account
-        </Link>
-      </div>
     </div>
   )
 }

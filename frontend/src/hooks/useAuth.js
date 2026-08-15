@@ -18,6 +18,7 @@ export function useAuth() {
     isLoading: store.isLoading,
     error: store.error,
     isLoggedIn: !!store.user,
+    sessionReady: store.sessionReady,
     isVerified: store.user?.is_verified ?? false,
     isAdmin: store.user?.role === 'admin',
     isInstructor: store.user?.role === 'instructor',
