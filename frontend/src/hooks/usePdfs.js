@@ -13,18 +13,28 @@ export { useRazorpay }
 
 // ── BROWSE ─────────────────────────────────────────────────────────────────
 
-export function usePdfList(examSlug, fyqOnly) {
+export function usePdfList(examSlug, fyqOnly, { enabled = true } = {}) {
   const [pdfs, setPdfs] = useState([])
   const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Guards against firing an unfiltered fetch before the caller actually
+    // knows what to filter by. Without this, on a hard page reload (not a
+    // client-side navigation) router.query is briefly {} before Next.js
+    // resolves it — examSlug/fyqOnly would be undefined for that first
+    // render, this effect would fire a fetch of ALL published PDFs with no
+    // filter, and there was no cancellation of that stale request once the
+    // real params arrived — so whichever response landed last won the race.
+    // On a fresh navigation the correct one usually won by luck of timing;
+    // on a hard reload the wrong (unfiltered) one reliably did.
+    if (!enabled) return
     const params = examSlug ? { exam: examSlug } : {}
     if (fyqOnly) params.fyq_only = '1'
     api.get('/pdfs/', { params })
       .then(({ data }) => setPdfs(data.results || data || []))
       .catch(() => setPdfs([]))
       .finally(() => setLoading(false))
-  }, [examSlug, fyqOnly])
+  }, [examSlug, fyqOnly, enabled])
 
   return { pdfs, isLoading }
 }

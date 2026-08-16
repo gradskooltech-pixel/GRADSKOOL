@@ -25,7 +25,7 @@ export default function PdfLibraryByExam() {
   const { examSlug } = router.query
   const meta = EXAM_META[examSlug]
 
-  const { pdfs, isLoading } = usePdfList(meta?.fetchExam, meta?.fyqOnly)
+  const { pdfs, isLoading } = usePdfList(meta?.fetchExam, meta?.fyqOnly, { enabled: !!meta })
   const { isLoggedIn } = useAuth()
 
   if (!examSlug) return null
