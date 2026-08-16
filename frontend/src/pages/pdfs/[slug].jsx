@@ -9,6 +9,8 @@ import PageSEO from '../../components/seo/PageSEO'
 import { usePdfDetail, useCreatePdfOrder, useVerifyPdfPayment, useRazorpay, useClaimFreePdf } from '../../hooks/usePdfs'
 import { useAuth } from '../../hooks/useAuth'
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+
 // Matches the shape of courseSchema/faqSchema etc. in components/seo/PageSEO —
 // gives each PDF's own page a shot at rich-result eligibility (price, free/paid,
 // in-stock), the same way course pages already do.
@@ -30,11 +32,34 @@ function pdfSchema(pdf) {
   }
 }
 
-export default function PdfDetailPage() {
+// getServerSideProps (2026-08-15): usePdfDetail fetches client-side, gated
+// behind sessionReady — meaning the server-rendered HTML for every PDF page
+// used to be just "Loading…" with no <PageSEO> tags at all, since social
+// crawlers never execute JS to trigger that fetch. PDFs are added constantly
+// via admin, so a fixed getStaticPaths list isn't practical here (unlike the
+// small, fixed EXAM_META set on /pdfs/exam/[examSlug]) — getServerSideProps
+// fetches the same public (unauthenticated) PdfDetailView endpoint anyone
+// would hit, seeding real title/description/cover_image_url/price into the
+// initial HTML. is_owned will read false here regardless of who's actually
+// logged in (SSR has no user session) — that's fine, it's only used for SEO
+// content; the client-side fetch still runs afterward and refines it with
+// the real personalized ownership status.
+export async function getServerSideProps({ params }) {
+  try {
+    const res = await fetch(`${API}/pdfs/${params.slug}/`)
+    if (!res.ok) return { notFound: true }
+    const initialPdf = await res.json()
+    return { props: { initialPdf } }
+  } catch {
+    return { props: { initialPdf: null } }
+  }
+}
+
+export default function PdfDetailPage({ initialPdf }) {
   const router = useRouter()
   const { slug } = router.query
   const { isLoggedIn, user, sessionReady } = useAuth()
-  const { pdf, isLoading, notFound } = usePdfDetail(slug, { enabled: sessionReady })
+  const { pdf, isLoading, notFound } = usePdfDetail(slug, { enabled: sessionReady, initialData: initialPdf })
   const { loadRazorpay } = useRazorpay()
   const { createOrder } = useCreatePdfOrder()
   const { verify } = useVerifyPdfPayment()
@@ -146,6 +171,7 @@ export default function PdfDetailPage() {
         title={`${pdf.title} — GRADSKOOL PDF Library`}
         description={pdf.description || `Read ${pdf.title} directly in your GRADSKOOL account.`}
         canonical={`/pdfs/${pdf.slug}`}
+        ogImage={pdf.cover_image_url}
         breadcrumbs={[
           { name: 'Home', url: '/' },
           { name: 'PDF Library', url: '/pdfs' },

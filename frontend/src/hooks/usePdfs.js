@@ -39,9 +39,17 @@ export function usePdfList(examSlug, fyqOnly, { enabled = true } = {}) {
   return { pdfs, isLoading }
 }
 
-export function usePdfDetail(slug, { enabled = true } = {}) {
-  const [pdf, setPdf] = useState(null)
-  const [isLoading, setLoading] = useState(true)
+// `initialData` lets a page seed this from getServerSideProps (see
+// pages/pdfs/[slug].jsx) — without it, isLoading starts true and the server-
+// rendered HTML is just a loading spinner with no <PageSEO> tags at all,
+// which is what social crawlers (WhatsApp, etc.) were seeing for every PDF
+// page, since they never execute the client-side fetch. With initialData
+// present, real content renders on the very first paint, server-side
+// included; the client-side fetch (once `enabled`) still runs afterward to
+// refine it with the personalized is_owned status once auth resolves.
+export function usePdfDetail(slug, { enabled = true, initialData = null } = {}) {
+  const [pdf, setPdf] = useState(initialData)
+  const [isLoading, setLoading] = useState(!initialData)
   const [notFound, setNotFound] = useState(false)
 
   const refetch = useCallback(() => {
