@@ -67,7 +67,10 @@ function AdminPdfNewPageInner() {
 
   useEffect(() => {
     api.get('/courses/exams/').then(({ data }) => {
-      const list = Array.isArray(data) ? data : Array.isArray(data?.results) ? data.results : []
+      const list = Array.isArray(data) ? data
+        : Array.isArray(data?.exams) ? data.exams
+        : Array.isArray(data?.results) ? data.results
+        : []
       setExams(list)
     }).catch(() => setExams([]))
   }, [])
