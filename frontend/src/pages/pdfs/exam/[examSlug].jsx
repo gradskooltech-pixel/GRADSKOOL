@@ -5,9 +5,18 @@
  * Handles both the four regular exam cards (cat/xat/snap/nmat) and the
  * special "cat-fyqs" slug, which fetches with fyq_only=1 instead — same
  * page, same card styling, just a different query to the same endpoint.
+ *
+ * getStaticProps (2026-08-15): `meta` used to be resolved purely client-side
+ * from router.query.examSlug, which is empty during the server-rendered
+ * pass — social crawlers (WhatsApp, Facebook, etc.) never execute JS, so
+ * they saw a version of this page with meta=undefined, which doesn't even
+ * render <PageSEO> at all (falls into the early "not found" branch instead).
+ * Every share showed a bare domain with no title/image. EXAM_META is a
+ * small, fixed, hardcoded lookup — no API call needed — so resolving it at
+ * build time via getStaticProps is cheap and makes the title/description/
+ * ogImage actually present in the initial HTML crawlers fetch.
  */
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import PageSEO from '../../../components/seo/PageSEO'
 import { usePdfList } from '../../../hooks/usePdfs'
 import { useAuth } from '../../../hooks/useAuth'
@@ -27,22 +36,22 @@ const EXAM_META = {
   'cat-fyqs': { label:'CAT FYQs', color:'#b45309', fetchExam:'cat', fyqOnly:true, ogImage:'/assets/og-cat.jpg' },
 }
 
-export default function PdfLibraryByExam() {
-  const router = useRouter()
-  const { examSlug } = router.query
-  const meta = EXAM_META[examSlug]
+export async function getStaticPaths() {
+  return {
+    paths: Object.keys(EXAM_META).map((examSlug) => ({ params: { examSlug } })),
+    fallback: false, // any slug not in EXAM_META 404s, same as the old client-side "not found" branch did
+  }
+}
 
+export async function getStaticProps({ params }) {
+  const meta = EXAM_META[params.examSlug]
+  if (!meta) return { notFound: true }
+  return { props: { examSlug: params.examSlug, meta } }
+}
+
+export default function PdfLibraryByExam({ examSlug, meta }) {
   const { pdfs, isLoading } = usePdfList(meta?.fetchExam, meta?.fyqOnly, { enabled: !!meta })
   const { isLoggedIn } = useAuth()
-
-  if (!examSlug) return null
-  if (!meta) {
-    return (
-      <div style={{ padding:'4rem', textAlign:'center' }}>
-        <Link href="/pdfs" style={{ color:'var(--red)', fontFamily:'var(--font-sans)' }}>← Back to PDF Library</Link>
-      </div>
-    )
-  }
 
   return (
     <>
