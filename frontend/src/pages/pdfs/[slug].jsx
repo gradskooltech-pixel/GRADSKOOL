@@ -182,8 +182,17 @@ export default function PdfDetailPage({ initialPdf }) {
 
       <style>{`
         .pdfd-wrap { max-width:1000px; margin:0 auto; padding:56px 40px 96px; display:grid; grid-template-columns:280px 1fr; gap:56px; }
-        @media(max-width:760px){ .pdfd-wrap{ grid-template-columns:1fr; padding:40px 24px 64px; gap:32px; } }
         .pdfd-cover { width:100%; aspect-ratio:3/4; background:var(--off) center/cover no-repeat; border:var(--border); border-radius:var(--radius); }
+        @media(max-width:760px){
+          .pdfd-wrap{ grid-template-columns:1fr; padding:40px 24px 64px; gap:24px; }
+          /* Cover was width:100% above, same as desktop's fixed 280px column
+             — on a narrow phone that made a tall 3:4-ratio image span the
+             full screen width, pushing price/CTA far down the page. Capped
+             to a small centered thumbnail instead. Placed AFTER the base
+             .pdfd-cover rule above so this actually wins the cascade at
+             matching widths (same specificity — source order decides ties). */
+          .pdfd-cover{ width:140px; margin:0 auto; }
+        }
         .pdfd-back { font-family:var(--font-sans); font-size:12px; color:var(--g500); text-decoration:none; display:inline-block; margin-bottom:20px; }
         .pdfd-back:hover { color:var(--black); }
         .pdfd-eyebrow { font-family:var(--font-sans); font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
