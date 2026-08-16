@@ -190,7 +190,12 @@ class PdfPageView(APIView):
                 async_result = render_watermarked_page.apply_async(
                     args=[pdf.id, page_number, request.user.id, request.user.email, page.storage_path]
                 )
-                success = async_result.get(timeout=20)
+                # Must stay comfortably under the frontend's axios timeout
+                # (lib/api.js: timeout: 15000) — if we wait longer than the
+                # browser is willing to, the browser cancels the request
+                # before we can even fall back to inline rendering, and the
+                # user gets a hard failure instead of a (slightly slow) success.
+                success = async_result.get(timeout=10)
             except Exception:
                 logger.warning('Celery dispatch/wait failed for pdf page render — falling back to inline render', exc_info=True)
 
