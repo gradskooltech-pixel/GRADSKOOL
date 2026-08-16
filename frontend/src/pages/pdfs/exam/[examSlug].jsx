@@ -13,11 +13,18 @@ import { usePdfList } from '../../../hooks/usePdfs'
 import { useAuth } from '../../../hooks/useAuth'
 
 const EXAM_META = {
-  cat:      { label:'CAT',      color:'#d94f50', fetchExam:'cat',  fyqOnly:false },
-  xat:      { label:'XAT',      color:'#5b3fa0', fetchExam:'xat',  fyqOnly:false },
+  cat:      { label:'CAT',      color:'#d94f50', fetchExam:'cat',  fyqOnly:false, ogImage:'/assets/og-cat.jpg' },
+  xat:      { label:'XAT',      color:'#5b3fa0', fetchExam:'xat',  fyqOnly:false, ogImage:'/assets/og-xat.jpg' },
+  // No og-snap.jpg exists in /public/assets yet (confirmed 2026-08-15 — this
+  // is a pre-existing gap, the exams API also references a file that isn't
+  // there). Left unset so PageSEO falls back to the generic site OG image
+  // instead of pointing at a 404. Add og-snap.jpg to /public/assets and set
+  // this to '/assets/og-snap.jpg' once that image exists.
   snap:     { label:'SNAP',     color:'#1a5c8a', fetchExam:'snap', fyqOnly:false },
-  nmat:     { label:'NMAT',     color:'#1a6e3c', fetchExam:'nmat', fyqOnly:false },
-  'cat-fyqs': { label:'CAT FYQs', color:'#b45309', fetchExam:'cat', fyqOnly:true },
+  nmat:     { label:'NMAT',     color:'#1a6e3c', fetchExam:'nmat', fyqOnly:false, ogImage:'/assets/og-nmat.jpg' },
+  // No dedicated FYQs graphic — reuses the CAT exam's own OG image since this
+  // page is CAT-specific, rather than falling back to the generic site image.
+  'cat-fyqs': { label:'CAT FYQs', color:'#b45309', fetchExam:'cat', fyqOnly:true, ogImage:'/assets/og-cat.jpg' },
 }
 
 export default function PdfLibraryByExam() {
@@ -43,6 +50,7 @@ export default function PdfLibraryByExam() {
         title={`${meta.label} PDFs — GRADSKOOL PDF Library`}
         description={`${meta.label} formula handbooks, question banks, and reference PDFs — read directly in your account.`}
         canonical={`/pdfs/exam/${examSlug}`}
+        ogImage={meta.ogImage}
         breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'PDF Library', url: '/pdfs' }, { name: meta.label, url: `/pdfs/exam/${examSlug}` }]}
       />
 
