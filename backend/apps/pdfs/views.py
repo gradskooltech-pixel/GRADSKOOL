@@ -68,11 +68,18 @@ class PdfListView(generics.ListAPIView):
         fyq_only  = self.request.query_params.get('fyq_only')
 
         if fyq_only:
-            # The "<EXAM> FYQs" card — only PDFs attached to an FYQ question,
-            # kept as its own pool rather than mixed into the regular exam card.
-            items = [p for p in qs if p.fyq_question]
+            # The "<EXAM> FYQs" card is populated two ways: PDFs attached to
+            # a specific FYQ question (fyq_question set — also shows on that
+            # question's own page), OR PDFs explicitly tagged fyq_category
+            # (no question attachment, uses the PDF's own `exam` field instead
+            # of fyq_question.exams since there's no question to inherit from).
+            items = [p for p in qs if p.fyq_question or p.fyq_category]
             if exam_slug:
-                items = [p for p in items if exam_slug in (p.fyq_question.exams or [])]
+                items = [
+                    p for p in items
+                    if (p.fyq_question and exam_slug in (p.fyq_question.exams or []))
+                       or (p.fyq_category and p.exam and p.exam.slug == exam_slug)
+                ]
             return items
 
         if exam_slug:
@@ -80,11 +87,11 @@ class PdfListView(generics.ListAPIView):
             # tagged with that exam, OR it's attached to a foundation class
             # that applies to that exam (a class's own exams override wins
             # when set, same inheritance rule used throughout foundations).
-            # FYQ-linked PDFs are deliberately excluded here — those live
-            # under their own separate "<EXAM> FYQs" card instead.
+            # FYQ-linked/tagged PDFs are deliberately excluded here — those
+            # live under their own separate "<EXAM> FYQs" card instead.
             items = []
             for p in qs:
-                if p.fyq_question:
+                if p.fyq_question or p.fyq_category:
                     continue
                 if p.exam and p.exam.slug == exam_slug:
                     items.append(p)

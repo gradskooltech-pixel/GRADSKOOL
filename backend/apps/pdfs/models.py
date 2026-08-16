@@ -52,6 +52,19 @@ class Pdf(models.Model):
         related_name='pdfs',
     )
 
+    # Independent of fyq_question above. Setting fyq_question attaches a PDF
+    # to ONE specific question AND makes it show as a card on that question's
+    # own page — those two things happen together, no way to separate them.
+    # This flag exists for the opposite case: a PDF should count under the
+    # "<EXAM> FYQs" library bucket WITHOUT being tied to (or surfaced on) any
+    # individual question's page — e.g. a general compiled FYQ handbook. Uses
+    # the `exam` field above (not fyq_question.exams) to decide which
+    # "<EXAM> FYQs" bucket it belongs to.
+    fyq_category = models.BooleanField(
+        default=False,
+        help_text='Counts toward the "<EXAM> FYQs" library card without attaching to any specific FYQ question. Requires Exam to be set above.',
+    )
+
     title            = models.CharField(max_length=200)
     slug             = models.SlugField(max_length=220, unique=True, blank=True)
     description      = models.TextField(blank=True)

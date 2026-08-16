@@ -33,7 +33,7 @@ class AdminPdfSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'slug', 'description', 'cover_image_url', 'card_label',
             'price_inr', 'is_free', 'page_count', 'status', 'is_published',
-            'sort_order', 'exam', 'exam_slug', 'foundation_class', 'fyq_question', 'created_at',
+            'sort_order', 'exam', 'exam_slug', 'foundation_class', 'fyq_question', 'fyq_category', 'created_at',
         ]
         read_only_fields = ['id', 'slug', 'page_count', 'status', 'created_at']
 

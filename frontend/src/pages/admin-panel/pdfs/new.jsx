@@ -56,7 +56,7 @@ function AdminPdfNewPageInner() {
 
   const [exams, setExams] = useState([])
   const [form, setForm] = useState({
-    title: '', description: '', exam: '', price_inr: '', is_free: false, cover_image_url: '', card_label: '',
+    title: '', description: '', exam: '', price_inr: '', is_free: false, cover_image_url: '', card_label: '', fyq_category: false,
   })
   const [file, setFile] = useState(null)
   const [pdfId, setPdfId] = useState(null)
@@ -109,6 +109,7 @@ function AdminPdfNewPageInner() {
         cover_image_url: form.cover_image_url,
         card_label: form.card_label,
         foundation_class: fromClassId || null,
+        fyq_category: form.fyq_category,
       })
       setPdfId(created.id)
 
@@ -192,6 +193,25 @@ function AdminPdfNewPageInner() {
                 {exams.map((ex) => <option key={ex.id} value={ex.id}>{ex.name || ex.slug}</option>)}
               </select>
             </Field>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 13 }}>
+              <input
+                type="checkbox"
+                checked={form.fyq_category}
+                onChange={(e) => setField('fyq_category', e.target.checked)}
+                disabled={status === 'uploading' || !form.exam}
+              />
+              Count under "&lt;Exam&gt; FYQs" in the PDF Library
+            </label>
+            {form.fyq_category && !form.exam && (
+              <p style={{ margin: '-8px 0 0', fontFamily: 'var(--font-sans)', fontSize: 12, color: 'var(--red, #c0392b)' }}>
+                Pick an Exam above first — the FYQs bucket is per-exam.
+              </p>
+            )}
+            {form.fyq_category && (
+              <p style={{ margin: '-8px 0 0', fontFamily: 'var(--font-sans)', fontSize: 12, color: 'var(--gray-500, #888)' }}>
+                This counts toward the library bucket only — it won't be attached to (or shown on) any individual FYQ question's page. To attach a PDF to one specific question instead, do that from that question's own edit screen in FYQs.
+              </p>
+            )}
             <Field label="Cover image URL (optional)">
               <input style={input} value={form.cover_image_url} onChange={(e) => setField('cover_image_url', e.target.value)} disabled={status === 'uploading'} />
             </Field>
