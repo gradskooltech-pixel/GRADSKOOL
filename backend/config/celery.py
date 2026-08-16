@@ -72,6 +72,14 @@ app.conf.task_routes = {
     'leads.trigger_sequence_for_lead':         {'queue': 'high_priority'},
     'notifications.send_whatsapp_async':       {'queue': 'high_priority'},
     'notifications.send_session_reminders':    {'queue': 'high_priority'},
+    # A live user is waiting on this one (PdfPageView blocks briefly for the
+    # result) — belongs with the other real-time-sensitive tasks, not the
+    # batch queue. Task name not in this dict falls back to Celery's own
+    # default queue name ('celery'), which `worker` never listens to
+    # (Procfile: `-Q default,high_priority`) — an unrouted task here would
+    # sit forever and every page load would silently eat the full apply_async
+    # timeout before falling back to inline rendering.
+    'pdfs.render_watermarked_page':            {'queue': 'high_priority'},
 
     # Default: batch work
     'leads.send_due_drip_emails':         {'queue': 'default'},

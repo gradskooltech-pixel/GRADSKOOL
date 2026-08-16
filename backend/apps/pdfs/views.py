@@ -36,6 +36,7 @@ PAGE_CACHE_SECONDS = 15 * 60          # 15m — watermark bakes in the user's em
 from .models import Pdf, PdfPage, PdfPurchase
 from .serializers import PdfListSerializer, PdfPurchaseSerializer
 from .supabase_storage import fetch_bytes
+from .tasks import render_watermarked_page
 from .watermark import apply_watermark, blur_preview
 from . import services
 
@@ -179,12 +180,33 @@ class PdfPageView(APIView):
         watermarked = cache.get(cache_key)
 
         if watermarked is None:
-            raw = fetch_bytes(page.storage_path)
-            if not raw:
-                return Response({'error': {'message': 'Page unavailable.'}}, status=502)
+            # The actual PIL work happens in a Celery task (apps/pdfs/tasks.py),
+            # on the `worker` process, not here — see that file's docstring
+            # for why. We wait briefly for the result rather than doing the
+            # rendering ourselves, so the frontend needs no changes at all
+            # (still a plain GET expecting image bytes back).
+            success = None
+            try:
+                async_result = render_watermarked_page.apply_async(
+                    args=[pdf.id, page_number, request.user.id, request.user.email, page.storage_path]
+                )
+                success = async_result.get(timeout=20)
+            except Exception:
+                logger.warning('Celery dispatch/wait failed for pdf page render — falling back to inline render', exc_info=True)
 
-            watermarked = apply_watermark(raw, request.user.email)
-            cache.set(cache_key, watermarked, PAGE_CACHE_SECONDS)
+            if success:
+                watermarked = cache.get(cache_key)
+
+            if not watermarked:
+                # Fallback: render inline, same as before this change existed.
+                # Better a possible memory spike on this worker than a broken
+                # PDF reader if Celery/Redis is briefly unavailable — this
+                # path should be rare, not the normal case.
+                raw = fetch_bytes(page.storage_path)
+                if not raw:
+                    return Response({'error': {'message': 'Page unavailable.'}}, status=502)
+                watermarked = apply_watermark(raw, request.user.email)
+                cache.set(cache_key, watermarked, PAGE_CACHE_SECONDS)
 
         response = HttpResponse(watermarked, content_type='image/jpeg')
         response['Cache-Control'] = 'private, no-store'  # browser/CDN still never caches this — it's Redis-side only
