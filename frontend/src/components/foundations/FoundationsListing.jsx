@@ -378,7 +378,15 @@ function DateNav({ classes, readBasePath, meta, selected, setSelected }) {
 function SectionNav({ sections, meta, selectedId, setSelectedId }) {
   if (sections.length === 0) return null
   return (
-    <div style={{ border:'1px solid var(--g200)', borderRadius:6, padding:'20px 24px', marginBottom:40, background:'#fff' }}>
+    // Sticky right below the main site nav (62px, position:sticky itself —
+    // see components/layout/Navbar.jsx) so section-jumping and the search
+    // box below stay reachable while scrolling through a long list of
+    // classes, instead of needing a trip back to the top of the page.
+    <div style={{
+      position:'sticky', top:62, zIndex:20,
+      border:'1px solid var(--g200)', borderRadius:6, padding:'16px 24px', marginBottom:40,
+      background:'rgba(255,255,255,.97)', backdropFilter:'blur(10px)',
+    }}>
       <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:14 }}>
         Browse by section
       </div>
