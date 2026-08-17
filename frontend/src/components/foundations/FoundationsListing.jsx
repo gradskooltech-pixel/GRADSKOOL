@@ -43,7 +43,7 @@ export function formatTime(iso) {
   return new Date(iso).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', timeZoneName:'short' })
 }
 
-export function Countdown({ iso }) {
+export function Countdown({ iso, compact = false }) {
   const [diff, setDiff] = useState(null)
   useEffect(() => {
     const tick = () => {
@@ -60,6 +60,23 @@ export function Countdown({ iso }) {
   }, [iso])
 
   if (!diff) return null
+
+  if (compact) {
+    // Single inline line instead of three number boxes — used in the
+    // Upcoming card, which already carries a thumbnail, title, description,
+    // and date line; three chunky boxes on top of all that was a lot of the
+    // "too much visual clutter" feedback this card got.
+    const parts = []
+    if (diff.days) parts.push(`${diff.days}d`)
+    if (diff.days || diff.hours) parts.push(`${diff.hours}h`)
+    parts.push(`${diff.mins}m`)
+    return (
+      <div style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, color:'rgba(255,255,255,.55)', marginTop:8 }}>
+        Starts in {parts.join(' ')}
+      </div>
+    )
+  }
+
   return (
     <div style={{ display:'flex', gap:12, marginTop:10, flexWrap:'wrap' }}>
       {[['days','Days'],['hours','Hrs'],['mins','Min']].map(([k,u]) => (
@@ -272,11 +289,10 @@ function DateNav({ classes, readBasePath, meta, selected, setSelected }) {
   )
 
   return (
-    <div style={{ border:'1px solid var(--g200)', borderRadius:6, padding:'20px 24px', marginBottom:40, background:'#fff' }}>
-      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:14 }}>
-        Browse by date
+    <div>
+      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, color:'var(--g500)', marginBottom:10 }}>
+        Date
       </div>
-
       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
         {quickBtn('Yesterday', yesterday, selected && isSameDay(selected, yesterday))}
         {quickBtn('Today', today, selected && isSameDay(selected, today))}
@@ -378,17 +394,9 @@ function DateNav({ classes, readBasePath, meta, selected, setSelected }) {
 function SectionNav({ sections, meta, selectedId, setSelectedId }) {
   if (sections.length === 0) return null
   return (
-    // Sticky right below the main site nav (62px, position:sticky itself —
-    // see components/layout/Navbar.jsx) so section-jumping and the search
-    // box below stay reachable while scrolling through a long list of
-    // classes, instead of needing a trip back to the top of the page.
-    <div style={{
-      position:'sticky', top:62, zIndex:20,
-      border:'1px solid var(--g200)', borderRadius:6, padding:'16px 24px', marginBottom:40,
-      background:'rgba(255,255,255,.97)', backdropFilter:'blur(10px)',
-    }}>
-      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:14 }}>
-        Browse by section
+    <div>
+      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, color:'var(--g500)', marginBottom:10 }}>
+        Section
       </div>
       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
         {sections.map(sec => (
@@ -471,15 +479,18 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
         @media(max-width:600px){.pg{padding:0 16px}}
 
         /* Upcoming class card — 3-column (thumb/text/buttons) on desktop,
-           stacks to a single column on mobile where a 200px fixed thumbnail
+           stacks to a single column on mobile where a fixed thumbnail
            would otherwise crush the text and buttons into almost nothing. */
-        .upcoming-card { display:grid; gap:24px; align-items:center; }
-        .upcoming-card.has-thumb { grid-template-columns:200px 1fr auto; }
+        .upcoming-card { display:grid; gap:20px; align-items:center; }
+        .upcoming-card.has-thumb { grid-template-columns:150px 1fr auto; }
         .upcoming-card.no-thumb { grid-template-columns:1fr auto; }
         @media(max-width:640px) {
-          .upcoming-card.has-thumb, .upcoming-card.no-thumb { grid-template-columns:1fr!important; gap:16px; }
-          .upcoming-card-actions { flex-direction:row!important; }
-          .upcoming-card-actions a { flex:1; text-align:center; }
+          .upcoming-card.has-thumb, .upcoming-card.no-thumb { grid-template-columns:1fr!important; gap:14px; }
+          /* Buy Mocks is a small text link now, not a second button (see
+             FoundationsListing card markup) — no longer stretched to equal
+             width alongside the primary button, just left-aligned below it. */
+          .upcoming-card-actions { flex-direction:column!important; align-items:flex-start!important; }
+          .upcoming-card-actions a:first-child { width:100%; text-align:center; }
         }
 
         /* Calendar popup — fixed 280px + absolute-from-trigger positioning
@@ -591,8 +602,25 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                 </div>
               )}
 
-              <DateNav classes={allClasses} readBasePath={readBasePath} meta={meta} selected={selectedDate} setSelected={setSelectedDate} />
-              <SectionNav sections={sections} meta={meta} selectedId={selectedSectionId} setSelectedId={setSelectedSectionId} />
+              {/* One unified, sticky filter panel — this used to be two
+                  separate boxes ("Browse by date" / "Browse by section"),
+                  each with their own border/padding/eyebrow label, stacked
+                  with a gap between. Merged into one container with an
+                  internal divider so it reads as ONE control, not two
+                  unrelated ones, and takes noticeably less vertical space
+                  before the actual class list starts. Sticky right below
+                  the main site nav (62px, itself position:sticky — see
+                  components/layout/Navbar.jsx) so it stays reachable while
+                  scrolling instead of needing a trip back to the top. */}
+              <div style={{
+                position:'sticky', top:62, zIndex:20,
+                border:'1px solid var(--g200)', borderRadius:6, padding:'18px 24px', marginBottom:40,
+                background:'rgba(255,255,255,.97)', backdropFilter:'blur(10px)',
+              }}>
+                <DateNav classes={allClasses} readBasePath={readBasePath} meta={meta} selected={selectedDate} setSelected={setSelectedDate} />
+                {sections.length > 0 && <div style={{ height:1, background:'var(--g200)', margin:'18px 0' }} />}
+                <SectionNav sections={sections} meta={meta} selectedId={selectedSectionId} setSelectedId={setSelectedSectionId} />
+              </div>
 
               {/* ── UPCOMING ── */}
               {(upcoming.length > 0 || selectedDate) && (
@@ -612,7 +640,7 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                   ) : (
                   <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
                     {upcoming.map(cls => (
-                      <div key={cls.id} className={`upcoming-card ${cls.youtube_url ? 'has-thumb' : 'no-thumb'}`} style={{ background:'var(--black)', borderRadius:4, padding:'24px 28px' }}>
+                      <div key={cls.id} className={`upcoming-card ${cls.youtube_url ? 'has-thumb' : 'no-thumb'}`} style={{ background:'var(--black)', borderRadius:4, padding:'18px 20px' }}>
                         {cls.youtube_url && (
                           <div style={{ position:'relative' }}>
                             <YTThumb url={cls.youtube_url} clickable={false} />
@@ -622,26 +650,36 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                           </div>
                         )}
                         <div>
-                          <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:6 }}>
+                          <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:4 }}>
                             Lesson {cls.lesson_number} · {cls.series_title}
                           </div>
-                          <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'#fff', marginBottom:8, lineHeight:1.2 }}>{cls.title}</div>
+                          <div style={{ fontFamily:'var(--font-serif)', fontSize:18, color:'#fff', marginBottom:6, lineHeight:1.25 }}>{cls.title}</div>
+                          {/* Description trimmed to one line here — this card's job is "here's
+                              what's next, go watch it", not the full pitch; the full description
+                              is still on the class's own page after clicking through. */}
                           {cls.description && (
-                            <p style={{ fontFamily:'var(--font-body)', fontSize:13, color:'rgba(255,255,255,.5)', lineHeight:1.7, marginBottom:10 }}>{cls.description}</p>
+                            <p style={{
+                              fontFamily:'var(--font-body)', fontSize:12, color:'rgba(255,255,255,.45)', lineHeight:1.5, marginBottom:8,
+                              overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
+                            }}>{cls.description}</p>
                           )}
-                          <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'rgba(255,255,255,.4)', marginBottom:4 }}>
-                            {formatDate(cls.scheduled_at)} · {formatTime(cls.scheduled_at)} · {cls.duration_mins} min
+                          <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'rgba(255,255,255,.35)' }}>
+                            {formatDate(cls.scheduled_at)} · {formatTime(cls.scheduled_at)}
                           </div>
-                          <Countdown iso={cls.scheduled_at} />
+                          <Countdown iso={cls.scheduled_at} compact />
                         </div>
-                        <div className="upcoming-card-actions" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', gap:8 }}>
+                        <div className="upcoming-card-actions" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:8 }}>
                           <Link href={`${readBasePath}/${cls.slug}`}
-                            style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'#ff4444', color:'#fff', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
-                            View class →
+                            style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px 20px', background:'#ff4444', color:'#fff', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
+                            Watch class →
                           </Link>
+                          {/* Demoted from an equal-weight button to a small text link —
+                              this card's primary job is "watch the class"; Mocks is a
+                              real but secondary upsell, not a second co-equal CTA
+                              competing for attention right next to it. */}
                           {meta.mocksCheckoutUrl && (
                             <Link href={meta.mocksCheckoutUrl}
-                              style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'transparent', color:'#fff', border:'1px solid rgba(255,255,255,.3)', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
+                              style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:600, color:'rgba(255,255,255,.5)', textDecoration:'underline', textUnderlineOffset:2, whiteSpace:'nowrap' }}>
                               Buy Mocks →
                             </Link>
                           )}
