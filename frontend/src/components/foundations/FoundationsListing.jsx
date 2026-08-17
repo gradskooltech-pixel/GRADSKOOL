@@ -398,7 +398,7 @@ function SectionNav({ sections, meta, selectedId, setSelectedId }) {
       <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, color:'var(--g500)', marginBottom:10 }}>
         Section
       </div>
-      <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+      <div className="section-pills" style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
         {sections.map(sec => (
           <button
             key={sec.id}
@@ -478,6 +478,14 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
         @media(max-width:960px){.pg{padding:0 24px}}
         @media(max-width:600px){.pg{padding:0 16px}}
 
+        /* Section pills wrap to 2-3 lines on a narrow screen if there are
+           many sections, pushing the rest of the page down unpredictably.
+           Horizontal scroll instead keeps this row's height constant. */
+        @media(max-width:640px) {
+          .section-pills { flex-wrap:nowrap!important; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+          .section-pills button { flex-shrink:0; }
+        }
+
         /* Upcoming class card — 3-column (thumb/text/buttons) on desktop,
            stacks to a single column on mobile where a fixed thumbnail
            would otherwise crush the text and buttons into almost nothing. */
@@ -486,11 +494,8 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
         .upcoming-card.no-thumb { grid-template-columns:1fr auto; }
         @media(max-width:640px) {
           .upcoming-card.has-thumb, .upcoming-card.no-thumb { grid-template-columns:1fr!important; gap:14px; }
-          /* Buy Mocks is a small text link now, not a second button (see
-             FoundationsListing card markup) — no longer stretched to equal
-             width alongside the primary button, just left-aligned below it. */
-          .upcoming-card-actions { flex-direction:column!important; align-items:flex-start!important; }
-          .upcoming-card-actions a:first-child { width:100%; text-align:center; }
+          .upcoming-card-actions { flex-direction:row!important; }
+          .upcoming-card-actions a { flex:1; text-align:center; }
         }
 
         /* Calendar popup — fixed 280px + absolute-from-trigger positioning
@@ -668,18 +673,14 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                           </div>
                           <Countdown iso={cls.scheduled_at} compact />
                         </div>
-                        <div className="upcoming-card-actions" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:8 }}>
+                        <div className="upcoming-card-actions" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', gap:8 }}>
                           <Link href={`${readBasePath}/${cls.slug}`}
-                            style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px 20px', background:'#ff4444', color:'#fff', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
-                            Watch class →
+                            style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'#ff4444', color:'#fff', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
+                            View class →
                           </Link>
-                          {/* Demoted from an equal-weight button to a small text link —
-                              this card's primary job is "watch the class"; Mocks is a
-                              real but secondary upsell, not a second co-equal CTA
-                              competing for attention right next to it. */}
                           {meta.mocksCheckoutUrl && (
                             <Link href={meta.mocksCheckoutUrl}
-                              style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:600, color:'rgba(255,255,255,.5)', textDecoration:'underline', textUnderlineOffset:2, whiteSpace:'nowrap' }}>
+                              style={{ fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'9px 18px', background:'transparent', color:'#fff', border:'1px solid rgba(255,255,255,.3)', borderRadius:2, textDecoration:'none', display:'inline-block', whiteSpace:'nowrap' }}>
                               Buy Mocks →
                             </Link>
                           )}
@@ -726,9 +727,20 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                   {/* ── SERIES WITH RECORDINGS ── */}
                   {series.some(s => (s.classes || []).some(c => c.is_published)) && (
                     <div style={{ marginBottom:24 }}>
+                      {/* This search only covers past recordings, not upcoming
+                          classes — nothing distinguished that before, which
+                          could read as confusing given it sits right below a
+                          filter panel that DOES affect the Upcoming section
+                          above. Same label style as "Date"/"Section" in that
+                          panel, for visual consistency, but deliberately
+                          placed here (not in that panel) since it genuinely
+                          filters a different, separate list. */}
+                      <div style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, color:'var(--g500)', marginBottom:10 }}>
+                        Past classes
+                      </div>
                       <input
                         type="text"
-                        placeholder="Search a class by title or lesson number…"
+                        placeholder="Search recordings by title or lesson number…"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:14, padding:'11px 16px', border:'1px solid var(--g200)', borderRadius:4, outline:'none', boxSizing:'border-box' }}
