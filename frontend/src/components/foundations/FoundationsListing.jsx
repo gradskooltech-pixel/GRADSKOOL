@@ -654,7 +654,18 @@ export function FoundationsListing({ examSlug, meta, readBasePath }) {
                             </div>
                           </div>
                         )}
-                        <div>
+                        {/* minWidth:0 is load-bearing here, not decoration — without it,
+                            a CSS Grid item won't shrink below its content's natural
+                            width. The description below uses whiteSpace:'nowrap' to
+                            truncate to one line, so its "natural width" is the entire
+                            unwrapped sentence — without this override, the grid item
+                            refuses to shrink to fit the middle track, the whole grid
+                            renders wider than the card, and the action button on the
+                            right gets pushed outside the card's visible boundary. This
+                            was the actual cause of the floating "View class" button —
+                            not the actions column, which is why reverting that alone
+                            didn't fix it. */}
+                        <div style={{ minWidth:0 }}>
                           <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, letterSpacing:'.1em', textTransform:'uppercase', color:meta.color, marginBottom:4 }}>
                             Lesson {cls.lesson_number} · {cls.series_title}
                           </div>
