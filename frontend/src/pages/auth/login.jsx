@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [password, setPassword]         = useState('')
   const [showPwd, setShowPwd]           = useState(false)
   const [error, setError]               = useState('')
+  const [noAccountEmail, setNoAccount]  = useState(null)
   const [unverifiedEmail, setUnverified]= useState(null)
   const [resendSent, setResendSent]     = useState(false)
   const [focusedField, setFocused]      = useState(null)
@@ -31,6 +32,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setNoAccount(null)
     setUnverified(null)
     const result = await login(email.trim().toLowerCase(), password)
     if (result.success) {
@@ -38,6 +40,14 @@ export default function LoginPage() {
     } else {
       if (result.code === 'email_not_verified') {
         setUnverified(result.email)
+      } else if (result.code === 'no_account') {
+        // Login-audit data showed most "failed" logins were people who'd
+        // simply never registered, retrying the same form — telling them
+        // clearly (with a direct link to sign up) instead of a generic
+        // "invalid email or password" fixes that for real, at the cost of
+        // some email-enumeration exposure — see the matching comment in
+        // apps/accounts/views.py LoginView for the full trade-off.
+        setNoAccount(email.trim().toLowerCase())
       } else {
         setError(typeof result.error === 'string' ? result.error : 'Login failed. Check your email and password.')
       }
@@ -101,6 +111,16 @@ export default function LoginPage() {
 
       {/* Error */}
       {error && <div style={s.errorBanner}>{error}</div>}
+
+      {/* No account with this email */}
+      {noAccountEmail && (
+        <div style={s.warnBanner}>
+          <strong>No account found</strong> for {noAccountEmail}.{' '}
+          <Link href={`/auth/register?email=${encodeURIComponent(noAccountEmail)}`} style={s.inlineBtn}>
+            Create an account →
+          </Link>
+        </div>
+      )}
 
       {/* Unverified email */}
       {unverifiedEmail && (

@@ -223,12 +223,22 @@ class LoginAuditLog(models.Model):
     """
     OUTCOMES = [('success', 'Success'), ('failed', 'Failed'), ('blocked', 'Blocked')]
 
+    # Was previously invisible in this table — every failure just said
+    # "Failed", and you had to know that a blank `user` column meant "no
+    # such account" vs a populated one meaning "wrong password" to tell
+    # them apart. Explicit now.
+    FAILURE_REASONS = [
+        ('no_account', 'No account with this email'),
+        ('wrong_password', 'Wrong password'),
+    ]
+
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='login_logs'
     )
     email_attempted = models.EmailField()
     outcome = models.CharField(max_length=20, choices=OUTCOMES)
+    failure_reason = models.CharField(max_length=20, choices=FAILURE_REASONS, blank=True)
     ip_address = models.GenericIPAddressField(null=True)
     user_agent = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

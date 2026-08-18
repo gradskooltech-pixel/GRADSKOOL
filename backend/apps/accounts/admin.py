@@ -74,10 +74,10 @@ class PasswordResetTokenAdmin(admin.ModelAdmin):
 
 @admin.register(LoginAuditLog)
 class LoginAuditLogAdmin(admin.ModelAdmin):
-    list_display = ['email_attempted', 'outcome', 'user', 'ip_address', 'created_at']
-    list_filter = ['outcome']
+    list_display = ['email_attempted', 'outcome', 'failure_reason', 'user', 'ip_address', 'created_at']
+    list_filter = ['outcome', 'failure_reason']
     search_fields = ['email_attempted', 'ip_address']
-    readonly_fields = ['user', 'email_attempted', 'outcome', 'ip_address', 'user_agent', 'created_at']
+    readonly_fields = ['user', 'email_attempted', 'outcome', 'failure_reason', 'ip_address', 'user_agent', 'created_at']
     ordering = ['-created_at']
 
     def has_add_permission(self, request):

@@ -150,26 +150,55 @@ def send_welcome_email(user) -> bool:
             </tr>
             <tr>
               <td style="padding:40px;">
+                <table cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+                  <tr>
+                    <td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;border-radius:50%;background:#f0fdf4;border:1px solid #86efac;font-size:22px;line-height:1;">✓</td>
+                  </tr>
+                </table>
                 <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#ff5e5f;">
                   Account Verified
                 </p>
-                <h1 style="margin:0 0 20px;font-size:26px;line-height:1.15;color:#0f0f0f;font-weight:700;">
+                <h1 style="margin:0 0 16px;font-size:26px;line-height:1.15;color:#0f0f0f;font-weight:700;">
                   Welcome to GRADSKOOL,<br>{user.first_name or 'Aspirant'}.
                 </h1>
-                <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#555;">
-                  Your account is now active. Explore free tools, browse courses,
-                  or WhatsApp us to find the right plan for your preparation.
+                <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#555;">
+                  Your account is active. Here's where most people start:
                 </p>
+                <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px;">
+                  <tr>
+                    <td style="padding:0 0 16px;border-bottom:1px solid #f0f0ee;">
+                      <p style="margin:0 0 2px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;font-weight:600;color:#0f0f0f;">Free Classes</p>
+                      <p style="margin:0;font-size:14px;line-height:1.6;color:#777;">Live sessions on YouTube, no cost, no catch — a real feel for how ALP Sir teaches.</p>
+                    </td>
+                  </tr>
+                  <tr><td style="height:16px;line-height:16px;font-size:0;">&nbsp;</td></tr>
+                  <tr>
+                    <td style="padding:0;">
+                      <p style="margin:0 0 2px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;font-weight:600;color:#0f0f0f;">CAThlete</p>
+                      <p style="margin:0;font-size:14px;line-height:1.6;color:#777;">Our CAT 2026 crash course, live two-way teaching, cohorts capped at 27.</p>
+                    </td>
+                  </tr>
+                </table>
                 <table cellpadding="0" cellspacing="0">
                   <tr>
                     <td style="background:#ff5e5f;border-radius:3px;">
-                      <a href="https://gradskool.in/tools"
-                         style="display:inline-block;padding:14px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">
-                        Explore Free Tools →
+                      <a href="https://gradskool.in/free-classes"
+                         style="display:inline-block;padding:14px 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">
+                        Explore Free Classes →
+                      </a>
+                    </td>
+                    <td style="width:12px;">&nbsp;</td>
+                    <td style="border:1px solid #e0e0dd;border-radius:3px;">
+                      <a href="https://gradskool.in/courses/cat/cathlete"
+                         style="display:inline-block;padding:13px 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;font-weight:600;color:#0f0f0f;text-decoration:none;">
+                        Explore CAThlete →
                       </a>
                     </td>
                   </tr>
                 </table>
+                <p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:#999;">
+                  Not sure which fits? Just reply to this email or WhatsApp us — we'll point you the right way.
+                </p>
               </td>
             </tr>
             <tr>

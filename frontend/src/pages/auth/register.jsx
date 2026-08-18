@@ -2,7 +2,7 @@
  * GRADSKOOL — Register Page
  * Route: /auth/register
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { AuthLayout } from '../../components/auth/AuthLayout'
@@ -42,6 +42,16 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // Prefill from ?email= — e.g. the "No account found, create one?" link on
+  // the login page passes the email they already typed there, so they don't
+  // have to retype it. router.query is empty on first render (populates
+  // after hydration), so this fires once it's actually available.
+  useEffect(() => {
+    if (router.query.email) {
+      setForm((prev) => ({ ...prev, email: decodeURIComponent(String(router.query.email)) }))
+    }
+  }, [router.query.email])
 
   const set = (field) => (e) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }))

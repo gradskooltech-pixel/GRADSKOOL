@@ -161,27 +161,39 @@ class LoginView(APIView):
         except User.DoesNotExist:
             try:
                 LoginAuditLog.objects.create(
-                    email_attempted=email, outcome='failed',
+                    email_attempted=email, outcome='failed', failure_reason='no_account',
                     ip_address=ip, user_agent=ua
                 )
             except Exception:
                 pass
-            # Generic message — no email enumeration
+            # SECURITY TRADE-OFF (2026-08-19): this used to be a generic
+            # "Invalid email or password" for both "no such account" and
+            # "wrong password", specifically to prevent email enumeration —
+            # a distinct message here lets anyone probe whether a given
+            # email is registered on GRADSKOOL. Changed deliberately, at the
+            # site owner's request, because the actual login-audit data
+            # showed most "failed" logins were confused users who'd never
+            # registered, retrying the same login form instead of signing
+            # up — a real, larger UX cost than the enumeration risk here.
+            # If this becomes a problem (credential-stuffing, targeted
+            # harassment via email-existence probing), revert to the
+            # generic message below.
             return Response(
-                {'detail': 'Invalid email or password.'},
+                {'detail': 'No account found with this email. Did you mean to sign up instead?',
+                 'code': 'no_account'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
         if not user.check_password(password):
             try:
                 LoginAuditLog.objects.create(
-                    user=user, email_attempted=email, outcome='failed',
+                    user=user, email_attempted=email, outcome='failed', failure_reason='wrong_password',
                     ip_address=ip, user_agent=ua
                 )
             except Exception:
                 pass
             return Response(
-                {'detail': 'Invalid email or password.'},
+                {'detail': 'Incorrect password.', 'code': 'wrong_password'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
