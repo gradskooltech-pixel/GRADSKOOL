@@ -6,12 +6,13 @@ Provides rich management interface for:
 - Email verification tokens
 - Password reset tokens
 - Login audit logs
+- Password reset request logs
 """
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 
-from .models import User, EmailVerificationToken, PasswordResetToken, LoginAuditLog
+from .models import User, EmailVerificationToken, PasswordResetToken, LoginAuditLog, PasswordResetRequestLog
 
 
 @admin.register(User)
@@ -78,6 +79,21 @@ class LoginAuditLogAdmin(admin.ModelAdmin):
     list_filter = ['outcome', 'failure_reason']
     search_fields = ['email_attempted', 'ip_address']
     readonly_fields = ['user', 'email_attempted', 'outcome', 'failure_reason', 'ip_address', 'user_agent', 'created_at']
+    ordering = ['-created_at']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(PasswordResetRequestLog)
+class PasswordResetRequestLogAdmin(admin.ModelAdmin):
+    list_display = ['email_attempted', 'account_found', 'user', 'ip_address', 'created_at']
+    list_filter = ['account_found']
+    search_fields = ['email_attempted', 'ip_address']
+    readonly_fields = ['user', 'email_attempted', 'account_found', 'ip_address', 'user_agent', 'created_at']
     ordering = ['-created_at']
 
     def has_add_permission(self, request):

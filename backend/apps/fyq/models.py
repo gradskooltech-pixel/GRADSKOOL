@@ -20,6 +20,8 @@ accidentally mis-set here.
 from django.db import models
 from django.utils.text import slugify
 
+from shared.utils import sanitize_html
+
 
 class FYQSection(models.Model):
     """Level 1 — Quants, LRDI, VARC."""
@@ -154,6 +156,10 @@ class FYQQuestion(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(f'fyq-{self.question_number}-{self.title}')
+        # Both rich HTML from the admin editor, rendered raw via
+        # dangerouslySetInnerHTML on the public FYQ page.
+        self.long_description = sanitize_html(self.long_description)
+        self.notes = sanitize_html(self.notes)
         super().save(*args, **kwargs)
 
     @property

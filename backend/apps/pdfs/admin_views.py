@@ -12,12 +12,24 @@ to page images via pdf.js canvas rendering (same approach as the original
 CAT_PDF app) — no server-side poppler/ImageMagick dependency, so this stays
 compatible with your Railway deployment without extra system packages.
 """
+from io import BytesIO
+
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
+from PIL import Image
 from rest_framework import generics, serializers
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+# 15MB per page image — generous for a single scanned/rendered page (typical
+# is a few hundred KB to low single-digit MB), but stops someone uploading
+# something enormous, whether malicious or just a mistake. This endpoint is
+# admin-only (IsAdmin), so the realistic risk is lower than a public upload
+# endpoint, but a compromised admin account or an honest oversized-file
+# mistake could still cause real storage cost or the same class of memory
+# pressure that caused this project's earlier PDF-rendering crash loop.
+MAX_UPLOAD_BYTES = 15 * 1024 * 1024
 
 from shared.permissions import IsAdmin
 from .models import Pdf, PdfPage
@@ -87,8 +99,29 @@ class AdminPdfPageUploadView(APIView):
         except ValueError:
             return Response({'error': {'message': 'page_number must be an integer.'}}, status=400)
 
+        # Size check first — cheap, avoids reading/decoding a huge file just
+        # to then reject it.
+        if file.size > MAX_UPLOAD_BYTES:
+            return Response(
+                {'error': {'message': f'File too large ({file.size // 1024 // 1024}MB) — max {MAX_UPLOAD_BYTES // 1024 // 1024}MB.'}},
+                status=400
+            )
+
+        # Real validation — file.content_type is whatever the CLIENT claims
+        # in the request, trivially spoofable, not an actual guarantee the
+        # bytes are a real image. Attempting to decode it with PIL (already
+        # a dependency — see watermark.py) is the actual check: anything
+        # that isn't a genuine, intact image raises here and gets rejected
+        # before ever reaching storage.
+        raw = file.read()
+        try:
+            img = Image.open(BytesIO(raw))
+            img.verify()
+        except Exception:
+            return Response({'error': {'message': 'File is not a valid image.'}}, status=400)
+
         storage_path = f'pdfs/{pdf.id}/page-{page_number:04d}.webp'
-        ok = upload_bytes(storage_path, file.read(), content_type=file.content_type or 'image/webp')
+        ok = upload_bytes(storage_path, raw, content_type=file.content_type or 'image/webp')
         if not ok:
             return Response({'error': {'message': 'Upload to storage failed.'}}, status=502)
 

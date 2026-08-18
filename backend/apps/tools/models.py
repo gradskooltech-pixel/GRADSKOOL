@@ -26,6 +26,8 @@ Tag taxonomy (tag_type field):
 from django.db import models
 from django.utils.text import slugify
 
+from shared.utils import sanitize_html
+
 
 # ── TAG SYSTEM ────────────────────────────────────────────────────────────────
 
@@ -329,6 +331,12 @@ class QATopic(models.Model):
 
     def __str__(self):
         return f'{self.number:02d}. {self.name}'
+
+    def save(self, *args, **kwargs):
+        # Rich HTML from the admin editor, rendered raw via
+        # dangerouslySetInnerHTML on the tool page's "Rules" tab.
+        self.concept_notes = sanitize_html(self.concept_notes)
+        super().save(*args, **kwargs)
 
     def question_count(self):
         if self.tag:

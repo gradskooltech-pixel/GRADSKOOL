@@ -29,6 +29,14 @@ razorpay==1.4.1
 # WhatsApp
 requests>=2.31.0,<2.33.0
 
+# HTML sanitization — admin-authored content (blog, FYQ notes, tool pages,
+# foundation class notes) is written via Quill.js and rendered raw via
+# dangerouslySetInnerHTML on the frontend, with no sanitization anywhere
+# before this (2026-08-19). nh3 (Rust bindings, actively maintained —
+# bleach's own maintainers now recommend it over bleach itself) strips
+# anything outside an explicit tag/attribute allowlist before save.
+nh3==0.2.18
+
 # Error tracking
 sentry-sdk[django]==1.43.0
 

@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import DOMPurify from 'isomorphic-dompurify'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -414,7 +415,15 @@ function extractVideoId(url) {
 
 function markdownToHtml(text) {
   if (!text) return ''
-  return text
+  // This is a naive regex converter — it does NOT escape raw HTML in the
+  // source text before processing, so anything typed directly into this
+  // field (e.g. a literal <script> tag) would previously pass straight
+  // through to dangerouslySetInnerHTML untouched. Of every rich-text field
+  // on the site, this one had the least protection — not even a Quill
+  // allowlist stood in the way, just a plain text field. Sanitizing the
+  // OUTPUT here (isomorphic-dompurify — works in both Next.js SSR/SSG and
+  // the browser, unlike plain dompurify which needs a real DOM) closes it.
+  const raw = text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/\n\n/g, '</p><p>')
@@ -422,4 +431,5 @@ function markdownToHtml(text) {
     .replace(/^/, '<p>')
     .replace(/$/, '</p>')
     .replace(/<p><\/p>/g, '')
+  return DOMPurify.sanitize(raw)
 }

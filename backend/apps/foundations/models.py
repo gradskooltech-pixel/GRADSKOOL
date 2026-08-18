@@ -8,6 +8,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
+from shared.utils import sanitize_html
+
 
 EXAM_CHOICES = [
     ('xat',  'XAT'),
@@ -83,6 +85,11 @@ class FoundationSeries(models.Model):
         if not self.slug:
             first_exam = (self.exams or ['series'])[0]
             self.slug = slugify(f'{first_exam}-{self.title}')
+        # notes is rich HTML from the admin editor, rendered raw via
+        # dangerouslySetInnerHTML on the public listing page — sanitize
+        # here so the stored value itself is safe, not just wherever
+        # someone remembers to sanitize it on render.
+        self.notes = sanitize_html(self.notes)
         super().save(*args, **kwargs)
 
 
@@ -205,6 +212,10 @@ class FoundationClass(models.Model):
         if not self.slug:
             first_exam = (self.series.exams or ['class'])[0]
             self.slug = slugify(f'{first_exam}-{self.lesson_number}-{self.title}')
+        # Both rich HTML from the admin editor, rendered raw via
+        # dangerouslySetInnerHTML on the class page — see FoundationSeries.save().
+        self.long_description = sanitize_html(self.long_description)
+        self.notes = sanitize_html(self.notes)
         super().save(*args, **kwargs)
 
     @property

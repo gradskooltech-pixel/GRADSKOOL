@@ -250,3 +250,40 @@ class LoginAuditLog(models.Model):
             models.Index(fields=['email_attempted', '-created_at']),
             models.Index(fields=['ip_address', '-created_at']),
         ]
+
+
+class PasswordResetRequestLog(models.Model):
+    """
+    Track password reset requests for security monitoring — mirrors
+    LoginAuditLog's pattern. Added 2026-08-19: previously the only record of
+    a reset request was a plain logger.info() line, which scrolls away in
+    Railway's ephemeral logs and isn't searchable/filterable anywhere.
+    Useful for spotting account-takeover attempts (repeated reset requests
+    for an account that isn't the requester's), and for basic "did this
+    email ever get sent" support troubleshooting.
+
+    Deliberately logs BOTH found and not-found cases — the actual HTTP
+    response to the requester stays identical either way (no email
+    enumeration leak to them, see PasswordResetRequestView), this table is
+    for internal visibility only.
+    """
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='password_reset_requests'
+    )
+    email_attempted = models.EmailField()
+    account_found = models.BooleanField(help_text='Did this email match a real, active account?')
+    ip_address = models.GenericIPAddressField(null=True)
+    user_agent = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'password_reset_request_logs'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['email_attempted', '-created_at']),
+            models.Index(fields=['ip_address', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f'PasswordResetRequest({self.email_attempted}, found={self.account_found})'

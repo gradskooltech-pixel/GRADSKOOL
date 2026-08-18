@@ -30,7 +30,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .emails import send_verification_email, send_welcome_email, send_password_reset_email
-from .models import User, EmailVerificationToken, PasswordResetToken, LoginAuditLog
+from .models import User, EmailVerificationToken, PasswordResetToken, LoginAuditLog, PasswordResetRequestLog
 from .serializers import (
     RegisterSerializer,
     UserProfileSerializer,
@@ -148,6 +148,23 @@ class LoginView(APIView):
     """
     permission_classes = [AllowAny]
     throttle_classes = [LoginRateThrottle]
+
+    def throttled(self, request, wait):
+        # DRF's throttle check runs in initial(), before post() ever
+        # executes — so a rate-limited request never reached the logging
+        # code below at all. The model already had 'blocked' as an outcome
+        # choice; it was just never actually set anywhere. This is the one
+        # place that can catch it, since it's the actual point DRF raises
+        # the Throttled exception.
+        try:
+            email = request.data.get('email', '').lower().strip()
+            LoginAuditLog.objects.create(
+                email_attempted=email, outcome='blocked',
+                ip_address=_get_client_ip(request), user_agent=request.META.get('HTTP_USER_AGENT', '')
+            )
+        except Exception:
+            pass
+        super().throttled(request, wait)
 
     def post(self, request):
         email = request.data.get('email', '').lower().strip()
@@ -354,12 +371,28 @@ class PasswordResetRequestView(APIView):
         serializer.is_valid(raise_exception=True)
 
         email = serializer.validated_data['email']
+        ip = _get_client_ip(request)
+        ua = request.META.get('HTTP_USER_AGENT', '')
         try:
             user = User.objects.get(email=email, is_active=True)
             token = PasswordResetToken.objects.create(user=user)
             send_password_reset_email(user, str(token.token))
+            try:
+                PasswordResetRequestLog.objects.create(
+                    user=user, email_attempted=email, account_found=True,
+                    ip_address=ip, user_agent=ua
+                )
+            except Exception:
+                pass
         except User.DoesNotExist:
-            pass  # Silent — no enumeration
+            try:
+                PasswordResetRequestLog.objects.create(
+                    email_attempted=email, account_found=False,
+                    ip_address=ip, user_agent=ua
+                )
+            except Exception:
+                pass
+            pass  # Silent — no enumeration in the HTTP response either way
 
         return Response({
             'detail': 'If an account with this email exists, a reset link has been sent.'

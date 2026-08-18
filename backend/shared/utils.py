@@ -14,10 +14,12 @@ Functions:
   paginate_queryset(qs, request)  → Standard pagination helper
   mask_email(email)               → 'k***v@example.com' for display
   send_admin_alert(subject, body) → Quick email to ADMINS list
+  sanitize_html(html)             → Strip anything outside the Quill-content allowlist
 """
 import re
 import random
 import string
+import nh3
 import logging
 from django.conf import settings
 from django.utils.text import slugify
@@ -220,3 +222,47 @@ def get_pagination_meta(paginator_page) -> dict:
         'has_next':    paginator_page.has_next(),
         'has_prev':    paginator_page.has_previous(),
     }
+
+
+# ── HTML SANITIZATION ─────────────────────────────────────────────────────────
+
+def sanitize_html(html: str) -> str:
+    """
+    Strips anything outside an explicit allowlist before admin-authored
+    content (blog posts, FYQ notes, tool pages, foundation class notes —
+    all written via Quill.js) gets saved. Previously this content was
+    stored and rendered completely raw via dangerouslySetInnerHTML on the
+    frontend, with no sanitization anywhere (2026-08-19) — if an admin
+    account were ever compromised, or someone pasted content from an
+    untrusted source into Quill without noticing a stray <script> tag or
+    an onerror= handler, it would execute for every visitor to that page.
+
+    Sanitizing on SAVE (here) rather than only on render means the stored
+    value itself is safe — protects every current and future place that
+    reads this content, not just the one page you thought to sanitize.
+
+    Allowlist matches what Quill.js actually produces — headings, basic
+    formatting, lists, links, images, code blocks. Quill uses classes
+    (ql-align-center etc.) for alignment/indent rather than inline styles,
+    so `class` is allowed globally; `style` is deliberately NOT allowed —
+    arbitrary inline CSS can't run script, but could still be used for UI
+    redressing (e.g. positioning fake elements over real ones).
+    """
+    if not html:
+        return html
+    return nh3.clean(
+        html,
+        tags={
+            'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'sub', 'sup',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
+            'a', 'img', 'span', 'div',
+        },
+        attributes={
+            'a': {'href', 'target'},
+            'img': {'src', 'alt', 'width', 'height'},
+            '*': {'class'},
+        },
+        url_schemes={'http', 'https', 'mailto'},
+        link_rel='noopener noreferrer nofollow',
+    )
