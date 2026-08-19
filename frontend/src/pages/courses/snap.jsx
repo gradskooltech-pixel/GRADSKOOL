@@ -149,16 +149,16 @@ export default function SNAPPage() {
                   <span style={R}>—</span><span>{item}</span>
                 </div>
               ))}
-              {/* PRICE PLACEHOLDER — replace once confirmed. This must also
-                  exist as a real PricingPlan row in Django admin (Courses →
-                  Pricing plans) with slug="snap-emv" under the SNAP exam —
-                  checkout reads live plan data from the database, this
+              {/* Price confirmed: ₹499. This must also exist as a real
+                  PricingPlan row in Django admin (Courses → Pricing plans)
+                  with slug="snap-emv" AND price_inr=499 under the SNAP exam
+                  — checkout reads live plan data from the database, this
                   page's price display alone doesn't drive what Razorpay
                   actually charges. The email branching in
                   apps/payments/services.py._send_enrollment_email() also
                   checks for that exact slug. */}
               <div style={{ marginTop:16, display:'flex', alignItems:'baseline', gap:10, borderTop:'var(--border)', paddingTop:16, marginBottom:16 }}>
-                <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)' }}>₹—</div>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)' }}>₹499</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
               </div>
               <Link href="/checkout/snap?plan=snap-emv" className="btn btn-outline" style={{ width:'100%', justifyContent:'center' }}>Enrol Now →</Link>

@@ -89,12 +89,20 @@ export function Countdown({ iso, compact = false }) {
   )
 }
 
-export function YTThumb({ url, clickable = true }) {
+export function YTThumb({ url, clickable = true, onThumbClick }) {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/))([a-zA-Z0-9_-]{11})/)
   if (!m) return null
+  // Was hardcoded to window.open(url,'_blank') — clicking any recording's
+  // thumbnail sent people straight to raw YouTube, off the GRADSKOOL site
+  // entirely, even though the "View class + notes" link right below the
+  // exact same thumbnail goes to this class's own page instead. onThumbClick
+  // lets a caller override just the click destination while keeping the
+  // play-button overlay and hover cursor intact — defaults to the original
+  // YouTube-opening behavior so any other unmodified caller is unaffected.
+  const handleClick = onThumbClick || (() => window.open(url, '_blank'))
   return (
     <div style={{ position:'relative', aspectRatio:'16/9', background:'#000', borderRadius:3, overflow:'hidden', cursor: clickable ? 'pointer' : 'default' }}
-      onClick={clickable ? () => window.open(url,'_blank') : undefined}>
+      onClick={clickable ? handleClick : undefined}>
       <img src={`https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`} alt=""
         style={{ width:'100%', height:'100%', objectFit:'cover', opacity:.85 }} />
       {clickable && (
@@ -109,6 +117,7 @@ export function YTThumb({ url, clickable = true }) {
 }
 
 export function ClassCard({ cls, meta, readBasePath }) {
+  const router = useRouter()
   // A YouTube URL can exist BEFORE the class happens — a pre-scheduled
   // Live link is a real, stable URL from the moment it's created, not
   // just after the stream ends. So "has a video" and "is upcoming" are
@@ -122,7 +131,11 @@ export function ClassCard({ cls, meta, readBasePath }) {
     <div style={{ background:'#fff' }}>
       {hasVideo && (
         <div style={{ position:'relative' }}>
-          <YTThumb url={cls.youtube_url} clickable={!isLiveSoon} />
+          <YTThumb
+            url={cls.youtube_url}
+            clickable={!isLiveSoon}
+            onThumbClick={!isLiveSoon ? () => router.push(`${readBasePath}/${cls.slug}`) : undefined}
+          />
           {isLiveSoon && (
             <div style={{ position:'absolute', top:8, left:8, fontFamily:'var(--font-sans)', fontSize:9, fontWeight:700, letterSpacing:'.05em', textTransform:'uppercase', padding:'3px 8px', borderRadius:2, background:'rgba(0,0,0,.75)', color:'#fff' }}>
               Upcoming

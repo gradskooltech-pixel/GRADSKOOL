@@ -94,6 +94,21 @@ class Command(BaseCommand):
                           is_featured=True, sort_order=1, includes_mocks=True,
                           mock_exams_covered=['SNAP'], razorpay_sku='snap-mocks')),
 
+            # EMV is fulfilled entirely on Learnyst (courses.gradskool.in),
+            # not through GRADSKOOL's own platform — deliberately every
+            # includes_* flag stays at its default False. Setting any of
+            # them True would incorrectly unlock GRADSKOOL's own live
+            # sessions/mocks/books as a side effect of rebuild_access()'s
+            # OR-merge across a student's active plans (see
+            # apps/enrollments/services.py), which this purchase doesn't
+            # actually grant. Access instead goes out via the branch in
+            # apps/payments/services.py._send_enrollment_email(), matched
+            # on this exact slug — keep the two in sync if this ever
+            # changes.
+            ('snap', dict(name='SNAP EMV — Ethics, Morality & Values', slug='snap-emv',
+                          price_inr=Decimal('499'), sort_order=2,
+                          razorpay_sku='snap-emv')),
+
             ('nmat', dict(name='NMAT Mocks', slug='nmat-mocks', price_inr=Decimal('1499'),
                           is_featured=True, sort_order=1, includes_mocks=True,
                           mock_exams_covered=['NMAT'], razorpay_sku='nmat-mocks')),
