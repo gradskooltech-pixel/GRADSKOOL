@@ -110,9 +110,9 @@ export default function SNAPPage() {
       <section style={{ padding:'56px 0', borderTop:'var(--border)', borderBottom:'var(--border)', background:'var(--off)' }}>
         <div className="container">
           <div className="eyebrow" style={{ marginBottom:14 }}><span className="dot" />Get started</div>
-          <h2 className="d-lg" style={{ marginBottom:32 }}>Two ways to <em style={R}>prepare.</em></h2>
-          <div style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr', gap:20 }} className="enrol-grid-2">
-            <style>{`@media(max-width:800px){.enrol-grid-2{grid-template-columns:1fr!important}}`}</style>
+          <h2 className="d-lg" style={{ marginBottom:32 }}>Three ways to <em style={R}>prepare.</em></h2>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:20 }} className="enrol-grid-2">
+            <style>{`@media(max-width:1000px){.enrol-grid-2{grid-template-columns:1fr!important}}`}</style>
 
             <div style={{ background:'#fff', border:`2px solid var(--red)`, borderRadius:6, padding:'32px 36px', position:'relative' }}>
               <div style={{ position:'absolute', top:-13, left:32, background:'var(--red)', color:'#fff', fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.08em', textTransform:'uppercase', padding:'4px 12px', borderRadius:2 }}>Start here</div>
@@ -137,6 +137,31 @@ export default function SNAPPage() {
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
               </div>
               <Link href="/checkout?course=snap" className="btn btn-outline" style={{ width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
+            </div>
+
+            <div style={{ background:'#fff', border:'var(--border)', borderRadius:6, padding:'32px 36px' }}>
+              <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'var(--black)', marginBottom:14 }}>SNAP EMV — Ethics, Morality & Values</div>
+              <p style={{ fontFamily:'var(--font-body)', fontSize:12, color:'var(--g500)', lineHeight:1.6, marginBottom:14 }}>
+                SNAP 2026's new dedicated section — no past papers exist for it yet. A focused course covering concepts, ethical frameworks, business ethics, and situational dilemmas.
+              </p>
+              {['Ethical frameworks & concepts','Business ethics case studies','Situational dilemma practice','150+ practice questions'].map(item => (
+                <div key={item} style={{ fontFamily:'var(--font-body)', fontSize:13, color:'var(--g700)', marginBottom:6, display:'flex', gap:8 }}>
+                  <span style={R}>—</span><span>{item}</span>
+                </div>
+              ))}
+              {/* PRICE PLACEHOLDER — replace once confirmed. This must also
+                  exist as a real PricingPlan row in Django admin (Courses →
+                  Pricing plans) with slug="snap-emv" under the SNAP exam —
+                  checkout reads live plan data from the database, this
+                  page's price display alone doesn't drive what Razorpay
+                  actually charges. The email branching in
+                  apps/payments/services.py._send_enrollment_email() also
+                  checks for that exact slug. */}
+              <div style={{ marginTop:16, display:'flex', alignItems:'baseline', gap:10, borderTop:'var(--border)', paddingTop:16, marginBottom:16 }}>
+                <div style={{ fontFamily:'var(--font-serif)', fontSize:28, color:'var(--black)' }}>₹—</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST</div>
+              </div>
+              <Link href="/checkout/snap?plan=snap-emv" className="btn btn-outline" style={{ width:'100%', justifyContent:'center' }}>Enrol Now →</Link>
             </div>
           </div>
         </div>

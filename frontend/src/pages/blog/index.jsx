@@ -53,9 +53,25 @@ export default function BlogPage() {
         <link rel="canonical" href="https://gradskool.in/blog" />
       </Head>
 
+      {/* This page had zero media queries anywhere — the card grid was a
+          fixed 3 columns regardless of screen width, which is genuinely
+          broken on a phone (three cramped, unreadable columns instead of
+          collapsing). The container padding also eats a large share of a
+          narrow screen at a flat 2rem on both sides; tightened below too. */}
+      <style jsx global>{`
+        .blog-cards-grid { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 860px) {
+          .blog-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 560px) {
+          .blog-cards-grid { grid-template-columns: 1fr !important; }
+          .blog-container { padding-left: 1rem !important; padding-right: 1rem !important; }
+        }
+      `}</style>
+
       {/* HERO */}
       <div style={s.hero}>
-        <div style={s.container}>
+        <div className="blog-container" style={s.container}>
           <p style={s.eyebrow}>From the GRADSKOOL Team</p>
           <h1 style={s.title}>Strategy. Insights. Exam Intelligence.</h1>
           <p style={s.sub}>
@@ -83,9 +99,9 @@ export default function BlogPage() {
 
       {/* GRID */}
       <div style={s.gridWrap}>
-        <div style={s.container}>
+        <div className="blog-container" style={s.container}>
           {loading ? (
-            <div style={s.grid}>
+            <div className="blog-cards-grid" style={s.grid}>
               {[0,1,2,3,4,5].map(i => <BlogCardSkel key={i} />)}
             </div>
           ) : displayPosts.length === 0 ? (
@@ -108,7 +124,7 @@ export default function BlogPage() {
               )}
             </div>
           ) : (
-            <div style={s.grid}>
+            <div className="blog-cards-grid" style={s.grid}>
               {displayPosts.map((post, i) => (
                 <BlogCard key={post.slug || i} post={post} />
               ))}

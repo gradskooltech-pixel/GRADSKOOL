@@ -929,6 +929,10 @@ class AdminBlogPostListView(APIView):
             tag, _ = BlogTag.objects.get_or_create(name=tag_name, defaults={'slug':slugify(tag_name)})
             post.tags.add(tag)
 
+        related_slugs = [s for s in request.data.get('related_posts', []) if s != post.slug]
+        if related_slugs:
+            post.related_posts.set(BlogPost.objects.filter(slug__in=related_slugs))
+
         return Response({'success':True,'slug':post.slug,'id':post.id}, status=201)
 
 
@@ -962,6 +966,9 @@ class AdminBlogPostDetailView(APIView):
             'is_featured': post.is_featured,
             'tags':        [t.name for t in post.tags.all()],
             'read_time_mins': post.read_time_mins,
+            'related_posts': [
+                {'slug': p.slug, 'title': p.title} for p in post.related_posts.all()
+            ],
         })
 
     def patch(self, request, slug):
@@ -1003,6 +1010,12 @@ class AdminBlogPostDetailView(APIView):
             for tag_name in request.data['tags']:
                 tag, _ = BlogTag.objects.get_or_create(name=tag_name, defaults={'slug':dslug(tag_name)})
                 post.tags.add(tag)
+
+        if 'related_posts' in request.data:
+            # A post excluding itself — otherwise nothing stops someone
+            # accidentally featuring a post on its own sidebar.
+            slugs = [s for s in request.data['related_posts'] if s != post.slug]
+            post.related_posts.set(BlogPost.objects.filter(slug__in=slugs))
 
         body = request.data.get('body', post.body) or ''
         post.read_time_mins = max(1, len(body.split()) // 200)

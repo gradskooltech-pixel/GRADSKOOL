@@ -175,6 +175,7 @@ function BlogManageInner() {
         // the UI regardless of its real, saved status.
         status:           data.status            || 'draft',
         is_featured:      data.is_featured      ?? false,
+        related_posts:    (data.related_posts || []).map(p => p.slug),
       })
       setEditSlug(slug)
       setView('editor')
@@ -607,6 +608,23 @@ function BlogManageInner() {
             </p>
           </SideBox>
 
+          {/* Related Articles — manual picks take priority over automatic
+              tag-matching on the public page (see pages/blog/[slug].jsx);
+              leave empty to fall back to automatic. Reuses the `posts`
+              list already loaded for the main table (loadPosts()) instead
+              of firing a new search request per keystroke. */}
+          <SideBox label="Related Articles" hint="Shown in 'More Articles' sidebar">
+            <RelatedPostsPicker
+              allPosts={posts}
+              currentSlug={editSlug}
+              selected={form.related_posts}
+              onChange={(slugs) => setForm(f => ({ ...f, related_posts: slugs }))}
+            />
+            <p style={{ fontFamily:'var(--font-sans)', fontSize:10, color:C.gray, marginTop:4, lineHeight:1.5 }}>
+              Leave empty to automatically show other posts with a matching exam tag instead.
+            </p>
+          </SideBox>
+
           {/* OG Image */}
           <SideBox label="OG / Hero Image URL" hint="Bunny CDN URL">
             <input
@@ -720,7 +738,7 @@ function getVideoEmbed(url) {
 }
 
 function emptyForm() {
-  return { title:'', slug:'', excerpt:'', body:'', tags:[], og_image_url:'', thumbnail_video_url:'', meta_title:'', meta_description:'', status:'draft', is_featured:false }
+  return { title:'', slug:'', excerpt:'', body:'', tags:[], og_image_url:'', thumbnail_video_url:'', meta_title:'', meta_description:'', status:'draft', is_featured:false, related_posts:[] }
 }
 
 function SideBox({ label, hint, children }) {
@@ -731,6 +749,59 @@ function SideBox({ label, hint, children }) {
         {hint && <span style={{ fontFamily:'var(--font-sans)', fontSize:10, color:'#cccbc7' }}>{hint}</span>}
       </div>
       {children}
+    </div>
+  )
+}
+
+function RelatedPostsPicker({ allPosts, currentSlug, selected, onChange }) {
+  const [query, setQuery] = useState('')
+
+  const selectedPosts = selected
+    .map(slug => (allPosts || []).find(p => p.slug === slug))
+    .filter(Boolean)
+
+  const results = query.trim()
+    ? (allPosts || [])
+        .filter(p => p.slug !== currentSlug && !selected.includes(p.slug))
+        .filter(p => p.title.toLowerCase().includes(query.trim().toLowerCase()))
+        .slice(0, 6)
+    : []
+
+  return (
+    <div>
+      {selectedPosts.length > 0 && (
+        <div style={{ display:'flex', flexDirection:'column', gap:4, marginBottom:8 }}>
+          {selectedPosts.map(p => (
+            <div key={p.slug} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:8, padding:'5px 8px', background:'#fff5f5', border:'1px solid #ffd0d0', borderRadius:2 }}>
+              <span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'#0f0f0f', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.title}</span>
+              <button
+                onClick={() => onChange(selected.filter(s => s !== p.slug))}
+                style={{ flexShrink:0, border:'none', background:'transparent', color:'#999', cursor:'pointer', fontSize:14, lineHeight:1, padding:0 }}
+                title="Remove">
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search posts by title…"
+        style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:12, padding:'7px 10px', border:'1px solid #e6e5e1', borderRadius:2, outline:'none', boxSizing:'border-box' }}
+      />
+      {results.length > 0 && (
+        <div style={{ marginTop:4, border:'1px solid #e6e5e1', borderRadius:2, overflow:'hidden' }}>
+          {results.map(p => (
+            <button
+              key={p.slug}
+              onClick={() => { onChange([...selected, p.slug]); setQuery('') }}
+              style={{ display:'block', width:'100%', textAlign:'left', padding:'7px 10px', border:'none', borderBottom:'1px solid #f0f0ee', background:'#fff', cursor:'pointer', fontFamily:'var(--font-sans)', fontSize:12, color:'#0f0f0f' }}>
+              {p.title}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

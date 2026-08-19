@@ -288,6 +288,35 @@ def _send_enrollment_email(order: Order):
         return
 
     resend.api_key = settings.RESEND_API_KEY
+
+    # Most plans give access on GRADSKOOL's own dashboard — but the SNAP
+    # EMV course runs entirely on a separate platform (Learnyst), so
+    # "log in to your dashboard" would be actively wrong/misleading for it.
+    # Checked by plan slug rather than exam+name, since that's the one
+    # field guaranteed stable and unique regardless of how the plan's
+    # display name gets edited later.
+    if order.plan.slug == 'snap-emv':
+        access_block = f"""
+            <p style="margin:0 0 24px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
+              This course runs on our partner platform. Sign up or log in there using
+              <strong>{order.user.email}</strong> — the same email you used to pay here — to access it.
+            </p>
+            <a href="https://courses.gradskool.in/learn/snap-2026-ethics-morality-values"
+               style="display:inline-block;padding:14px 28px;background:#0f0f0f;color:#fff;
+                      border-radius:3px;font-family:sans-serif;font-size:14px;font-weight:600;
+                      text-decoration:none;">Access Your Course →</a>
+        """
+    else:
+        access_block = """
+            <p style="margin:0 0 24px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
+              Access is now active. Log in to your dashboard to start learning.
+            </p>
+            <a href="https://gradskool.in/dashboard"
+               style="display:inline-block;padding:14px 28px;background:#0f0f0f;color:#fff;
+                      border-radius:3px;font-family:sans-serif;font-size:14px;font-weight:600;
+                      text-decoration:none;">Go to Dashboard →</a>
+        """
+
     html = f"""
     <!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f3;font-family:Georgia,serif;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f3;padding:40px 20px;">
@@ -325,13 +354,7 @@ def _send_enrollment_email(order: Order):
             <p style="margin:0 0 8px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
               Invoice: <strong>{order.invoice_number}</strong>
             </p>
-            <p style="margin:0 0 24px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
-              Access is now active. Log in to your dashboard to start learning.
-            </p>
-            <a href="https://gradskool.in/dashboard"
-               style="display:inline-block;padding:14px 28px;background:#0f0f0f;color:#fff;
-                      border-radius:3px;font-family:sans-serif;font-size:14px;font-weight:600;
-                      text-decoration:none;">Go to Dashboard →</a>
+            {access_block}
             <hr style="margin:32px 0;border:none;border-top:1px solid #e8e8e6;">
             <p style="margin:0;font-family:sans-serif;font-size:12px;color:#999;line-height:1.6;">
               Questions? WhatsApp us at +91 6360597966 · gradskool.in

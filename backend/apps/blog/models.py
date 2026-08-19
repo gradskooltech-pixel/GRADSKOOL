@@ -60,6 +60,14 @@ class BlogPost(models.Model):
     excerpt       = models.CharField(max_length=400)
     body          = models.TextField(help_text='Rich HTML from the Quill admin editor (sanitized on save — see save())')
     tags          = models.ManyToManyField(BlogTag, blank=True, related_name='posts')
+    # Manual curation for the "More Articles" sidebar — takes priority over
+    # automatic tag-matching when set (see BlogPostDetailView / the public
+    # post page). symmetrical=False since post A featuring post B doesn't
+    # mean B should automatically feature A back — each post's sidebar is
+    # curated independently.
+    related_posts = models.ManyToManyField(
+        'self', blank=True, symmetrical=False, related_name='featured_on'
+    )
     author        = models.ForeignKey(
         'accounts.User', on_delete=models.SET_NULL,
         null=True, blank=True, related_name='blog_posts'
@@ -146,10 +154,21 @@ class BlogPostListSerializer(serializers.ModelSerializer):
 
 
 class BlogPostDetailSerializer(BlogPostListSerializer):
+    # Nested directly (full post summaries, same shape the listing page
+    # uses) rather than just slugs, so the "More Articles" sidebar has
+    # everything it needs without a second round-trip. Only ever includes
+    # published posts — an admin could technically pick a post that's since
+    # been unpublished or deleted, so this guards against surfacing that.
+    related_posts = serializers.SerializerMethodField()
+
     class Meta(BlogPostListSerializer.Meta):
         fields = BlogPostListSerializer.Meta.fields + [
-            'body', 'meta_title', 'meta_desc', 'view_count',
+            'body', 'meta_title', 'meta_desc', 'view_count', 'related_posts',
         ]
+
+    def get_related_posts(self, obj):
+        posts = obj.related_posts.filter(status='published')
+        return BlogPostListSerializer(posts, many=True).data
 
 
 # ── VIEWS ─────────────────────────────────────────────────────────────────────

@@ -46,7 +46,13 @@ const EXAM_TAG_TO_COURSE = {
 // `undefined` as nothing, not an error, so it never surfaced as a crash
 // the way the admin-panel tags bug did).
 function getPrimaryTag(post) {
-  return (post.tags || [])[0] || null
+  const tags = post.tags || []
+  // Skip internal routing tags like "snap (foundations)" — these exist
+  // purely to publish a post under /foundations/[exam] (see the admin
+  // panel's tag picker hint), not meant for display. The actual
+  // user-facing exam tag ("SNAP") is what should show as the breadcrumb
+  // and badge, regardless of which one happens to be first in the array.
+  return tags.find(t => !(t.name || '').toLowerCase().includes('foundation')) || tags[0] || null
 }
 
 // A post can carry several tags (e.g. both "SNAP" and "snap (foundations)"
@@ -82,7 +88,11 @@ export default function BlogPostPage({ initialPost }) {
   const router     = useRouter()
   const { slug }   = router.query
   const { post, loading, error } = useBlogPost(slug, initialPost)
-  const { posts: related }       = useBlogPosts({ limit: 4 })
+  // Fetched once, unconditionally (hooks can't take conditional params
+  // without extra plumbing) — used both for tag-matching AND as the final
+  // fallback, so this is the only related-posts network request needed
+  // regardless of which of the three cases below actually applies.
+  const { posts: recentPool } = useBlogPosts({ limit: 12 })
 
   if (loading) return <PostShell><Skel /></PostShell>
   if (error || !post) return (
@@ -99,9 +109,24 @@ export default function BlogPostPage({ initialPost }) {
     </PostShell>
   )
 
-  const relatedPosts = (related || []).filter(p => p.slug !== slug).slice(0, 3)
   const examCourse = getExamCourseForPost(post)
+
+  // Priority: manual curation (admin panel's Related Articles picker) →
+  // automatic tag-matching (other posts sharing the same exam tag) →
+  // most-recent-posts fallback, so the sidebar is never just empty.
+  const manualRelated = post.related_posts || []
+  const tagMatched = examCourse
+    ? (recentPool || []).filter(p =>
+        p.slug !== slug && (p.tags || []).some(t => (t.name || '').toLowerCase() === examCourse.label.toLowerCase())
+      )
+    : []
+  const relatedPosts = manualRelated.length > 0
+    ? manualRelated.slice(0, 3)
+    : tagMatched.length > 0
+      ? tagMatched.slice(0, 3)
+      : (recentPool || []).filter(p => p.slug !== slug).slice(0, 3)
   const primaryTag = getPrimaryTag(post)
+  const { html: bodyHtml, toc } = extractTocAndInjectIds(post.body)
 
   return (
     <PostShell examCourse={examCourse}>
@@ -124,7 +149,45 @@ export default function BlogPostPage({ initialPost }) {
         )}
       </Head>
 
-      <div style={s.layout}>
+      <div className="blog-grid" style={{ ...s.layout, gridTemplateColumns: toc.length > 0 ? '200px 1fr 300px' : '1fr 300px' }}>
+        {/* This page had no responsive/media-query handling on its grid
+            layout at all before this — already not great on mobile with
+            just the 2-column (article + sidebar) version, and adding a
+            third fixed-width TOC column would've made a narrow screen
+            actively worse without this. Simplest reasonable fix: collapse
+            to a single column and just hide the TOC below ~900px, rather
+            than attempt to cram a 3-column layout into a phone screen. */}
+        <style jsx>{`
+          @media (max-width: 900px) {
+            .blog-grid { grid-template-columns: 1fr !important; }
+            .blog-toc { display: none; }
+          }
+        `}</style>
+
+        {/* ── TABLE OF CONTENTS (left, sticky) ──────────────────────
+            Only rendered when the post actually has h2/h3 headings —
+            a TOC with nothing in it isn't worth the layout column. */}
+        {toc.length > 0 && (
+          <nav className="blog-toc" style={{ position:'sticky', top:'80px', alignSelf:'start' }}>
+            <p style={{ fontFamily:'var(--font-sans)', fontSize:'0.7rem', fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', color:C.gray400, marginBottom:'0.9rem' }}>
+              On this page
+            </p>
+            <div style={{ display:'flex', flexDirection:'column', gap:'0.65rem' }}>
+              {toc.map(item => (
+                <a key={item.id} href={`#${item.id}`}
+                  style={{
+                    fontFamily:'var(--font-sans)', fontSize:'0.8rem', lineHeight:1.4, textDecoration:'none',
+                    color: C.gray600,
+                    paddingLeft: item.level === 3 ? '0.85rem' : 0,
+                    borderLeft: item.level === 3 ? `2px solid ${C.border}` : 'none',
+                  }}>
+                  {item.text}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
+
         {/* ── ARTICLE ────────────────────────────────────────────── */}
         <article style={s.article}>
           {/* Article header */}
@@ -176,7 +239,7 @@ export default function BlogPostPage({ initialPost }) {
           {/* Article body */}
           <div style={s.body}>
             {post.body
-              ? <HtmlBody content={post.body} />
+              ? <HtmlBody content={bodyHtml} />
               : <p style={s.excerpt}>{post.excerpt || post.meta_desc}</p>
             }
           </div>
@@ -230,6 +293,37 @@ export default function BlogPostPage({ initialPost }) {
 }
 
 // Simple markdown-to-HTML renderer for headings and paragraphs
+// Auto-generates a table of contents from the post's own h2/h3 headings —
+// no manual admin work needed. Pure string regex, not a DOM parser
+// (DOMParser/jsdom would work but jsdom already broke the production build
+// once this session — see the git history on this file — a regex has zero
+// dependencies and works identically during SSR and in the browser).
+// Quill's raw output has no id attributes on headings at all, so this both
+// extracts the TOC list AND injects the ids the anchor links jump to,
+// in one pass.
+function extractTocAndInjectIds(html) {
+  if (!html) return { html, toc: [] }
+  const toc = []
+  let index = 0
+  const newHtml = html.replace(/<h([23])>(.*?)<\/h\1>/g, (match, level, inner) => {
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      // Strip tags leaves HTML entities un-decoded (&amp; etc) — fine
+      // inside the actual rendered heading (real HTML), but this `text`
+      // specifically becomes a plain React string in the TOC sidebar,
+      // where it'd show the literal characters "&amp;" instead of "&".
+      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'")
+      .trim()
+    if (!text) return match
+    index += 1
+    const id = `section-${index}`
+    toc.push({ id, text, level: Number(level) })
+    return `<h${level} id="${id}">${inner}</h${level}>`
+  })
+  return { html: newHtml, toc }
+}
+
 function HtmlBody({ content }) {
   // Replaces the old MarkdownBody, which line-by-line parsed markdown
   // syntax (## heading, - list item, split on \n). The admin CMS moved to
