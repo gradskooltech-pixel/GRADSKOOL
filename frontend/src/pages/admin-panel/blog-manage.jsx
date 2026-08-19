@@ -168,7 +168,12 @@ function BlogManageInner() {
         thumbnail_video_url:  data.thumbnail_video_url  || '',
         meta_title:       data.meta_title       || '',
         meta_description: data.meta_description || '',
-        is_published:     data.is_published     ?? false,
+        // Was is_published (boolean) — the actual model field, and every
+        // API response, is `status` ('draft'|'published'), not a boolean.
+        // Meant is_published was always undefined here, always defaulting
+        // to false — every post opened for editing showed as "Draft" in
+        // the UI regardless of its real, saved status.
+        status:           data.status            || 'draft',
         is_featured:      data.is_featured      ?? false,
       })
       setEditSlug(slug)
@@ -186,8 +191,14 @@ function BlogManageInner() {
     setSaving(true)
     const payload = {
       ...form,
-      slug:         form.slug || slugify(form.title),
-      is_published: publish ?? form.is_published,
+      slug:   form.slug || slugify(form.title),
+      // Was is_published: publish ?? form.is_published — the backend's
+      // PATCH/POST handlers only ever check request.data['status'], never
+      // 'is_published', so this was silently ignored on every single
+      // save. Both buttons always call save() with an explicit true/false
+      // (see onClick handlers below), so the ?? fallback was dead code
+      // regardless — simplified along with the field-name fix.
+      status: publish ? 'published' : 'draft',
     }
     try {
       if (editSlug) {
@@ -222,7 +233,13 @@ function BlogManageInner() {
   /* ── quick toggle publish ── */
   const togglePublish = async (post) => {
     try {
-      await api.patch(`/dashboard/blog/${post.slug}/`, { is_published: !post.is_published })
+      // Was { is_published: !post.is_published } — post.is_published was
+      // always undefined (list endpoint returns `status`, not
+      // is_published), so this always sent `true`, and the backend PATCH
+      // handler ignored it anyway since it only checks `status`. Net
+      // effect: this button silently did nothing, ever.
+      const newStatus = post.status === 'published' ? 'draft' : 'published'
+      await api.patch(`/dashboard/blog/${post.slug}/`, { status: newStatus })
       loadPosts()
     } catch {
       notify('Failed', 'error')
@@ -330,9 +347,9 @@ function BlogManageInner() {
                   {/* status */}
                   <button onClick={() => togglePublish(post)}
                     style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:2, border:'none', cursor:'pointer',
-                      background: post.is_published ? '#dcfce7' : C.g100,
-                      color: post.is_published ? '#166534' : C.gray }}>
-                    {post.is_published ? 'Live' : 'Draft'}
+                      background: post.status === 'published' ? '#dcfce7' : C.g100,
+                      color: post.status === 'published' ? '#166534' : C.gray }}>
+                    {post.status === 'published' ? 'Live' : 'Draft'}
                   </button>
                   {/* featured */}
                   <span style={{ fontFamily:'var(--font-sans)', fontSize:18, textAlign:'center', cursor:'pointer', color: post.is_featured ? '#f59e0b' : C.border }}
@@ -453,7 +470,7 @@ function BlogManageInner() {
           <span style={{ fontFamily:'var(--font-sans)', fontSize:14, fontWeight:600, color:C.black }}>
             {editSlug ? 'Edit Post' : 'New Post'}
           </span>
-          {form.is_published && (
+          {form.status === 'published' && (
             <span style={{ fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, padding:'2px 8px', borderRadius:2, background:'#dcfce7', color:'#166534' }}>Live</span>
           )}
         </div>
@@ -464,7 +481,7 @@ function BlogManageInner() {
           </button>
           <button onClick={() => save(true)} disabled={saving}
             style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 22px', background:C.red, color:'#fff', border:'none', borderRadius:2, cursor:saving?'not-allowed':'pointer' }}>
-            {saving ? 'Publishing…' : form.is_published ? 'Update live' : 'Publish →'}
+            {saving ? 'Publishing…' : form.status === 'published' ? 'Update live' : 'Publish →'}
           </button>
         </div>
       </div>
@@ -541,9 +558,9 @@ function BlogManageInner() {
           {/* Status */}
           <SideBox label="Status">
             <div style={{ display:'flex', gap:6 }}>
-              {[['Draft', false],['Published', true]].map(([label, val]) => (
-                <button key={label} onClick={() => setForm(f => ({ ...f, is_published: val }))}
-                  style={{ flex:1, fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'8px', border:`1px solid ${form.is_published === val ? C.red : C.border}`, borderRadius:2, background: form.is_published === val ? '#fff5f5' : C.white, color: form.is_published === val ? C.red : C.gray, cursor:'pointer' }}>
+              {[['Draft', 'draft'],['Published', 'published']].map(([label, val]) => (
+                <button key={label} onClick={() => setForm(f => ({ ...f, status: val }))}
+                  style={{ flex:1, fontFamily:'var(--font-sans)', fontSize:12, fontWeight:600, padding:'8px', border:`1px solid ${form.status === val ? C.red : C.border}`, borderRadius:2, background: form.status === val ? '#fff5f5' : C.white, color: form.status === val ? C.red : C.gray, cursor:'pointer' }}>
                   {label}
                 </button>
               ))}
@@ -703,7 +720,7 @@ function getVideoEmbed(url) {
 }
 
 function emptyForm() {
-  return { title:'', slug:'', excerpt:'', body:'', tags:[], og_image_url:'', thumbnail_video_url:'', meta_title:'', meta_description:'', is_published:false, is_featured:false }
+  return { title:'', slug:'', excerpt:'', body:'', tags:[], og_image_url:'', thumbnail_video_url:'', meta_title:'', meta_description:'', status:'draft', is_featured:false }
 }
 
 function SideBox({ label, hint, children }) {

@@ -2725,7 +2725,12 @@ class SitemapView(APIView):
         from apps.courses.models import Exam
         from apps.blog.models import BlogPost
         exams = list(Exam.objects.values_list('slug', flat=True))
-        posts = list(BlogPost.objects.filter(is_published=True).values_list('slug', flat=True)) if hasattr(BlogPost, 'is_published') else []
+        # Was BlogPost.objects.filter(is_published=True) guarded behind
+        # hasattr(BlogPost, 'is_published') — the model has never had that
+        # field (it's `status`, a 'draft'/'published' CharField), so
+        # hasattr() was always False and this always fell through to [].
+        # Blog posts have never actually appeared in sitemap.xml.
+        posts = list(BlogPost.objects.filter(status='published').values_list('slug', flat=True))
         return Response({'exams': exams, 'posts': posts})
 
 class RobotsView(APIView):

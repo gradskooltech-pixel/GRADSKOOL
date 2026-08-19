@@ -12,16 +12,76 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useBlogPost, useBlogPosts } from '../../hooks/useToolsBlogDashboard'
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+
 const C = {
   red: '#ff5e5f', black: '#0f0f0f', white: '#ffffff',
   gray50: '#fafaf9', gray100: '#f5f5f3',
   gray400: '#999', gray500: '#666', gray600: '#555', border: '#e8e8e6',
 }
 
-export default function BlogPostPage() {
+// Maps a blog tag name to a real, single-exam course page — deliberately
+// NOT every tag in the admin panel's picker (CAT Strategy, VARC, DILR, QA,
+// IIM, Placements, MBA Abroad, Mindset are topic tags, not exams; there's
+// no dedicated course page a "Placements" tag should point to). Only tags
+// that map to one of the actual pages/courses/*.jsx files.
+const EXAM_TAG_TO_COURSE = {
+  cat:   { slug: 'cat',   label: 'CAT' },
+  xat:   { slug: 'xat',   label: 'XAT' },
+  snap:  { slug: 'snap',  label: 'SNAP' },
+  nmat:  { slug: 'nmat',  label: 'NMAT' },
+  mhcet: { slug: 'mhcet', label: 'MHCET' },
+  gmat:  { slug: 'gmat',  label: 'GMAT' },
+  gre:   { slug: 'gre',   label: 'GRE' },
+  ipmat: { slug: 'ipmat', label: 'IPMAT' },
+  cuet:  { slug: 'cuet',  label: 'CUET' },
+  cmat:  { slug: 'cmat',  label: 'CMAT' },
+}
+
+// post.tag / post.category (used below, previously) don't exist on the API
+// response at all — the actual field is post.tags, an ARRAY of tag objects
+// ({id, name, slug, post_count} — see BlogTagSerializer). Neither of the
+// old field names matched anything, so the breadcrumb and tag badge have
+// been rendering blank this whole time (silently — React just renders
+// `undefined` as nothing, not an error, so it never surfaced as a crash
+// the way the admin-panel tags bug did).
+function getPrimaryTag(post) {
+  return (post.tags || [])[0] || null
+}
+
+// A post can carry several tags (e.g. both "SNAP" and "snap (foundations)"
+// on the same post) — this finds the first one that actually maps to a
+// real course page, so the sidebar/topbar CTA can point somewhere genuinely
+// relevant instead of the generic /courses listing.
+function getExamCourseForPost(post) {
+  for (const tag of post.tags || []) {
+    const match = EXAM_TAG_TO_COURSE[(tag.name || '').toLowerCase()]
+    if (match) return match
+  }
+  return null
+}
+
+// getServerSideProps (2026-08-19): blog posts are added constantly via the
+// admin panel, so a fixed getStaticPaths list isn't practical here (same
+// reasoning as pages/pdfs/[slug].jsx) — fetches the same public endpoint
+// the client-side hook hits, seeding real title/excerpt/og_image_url into
+// the initial HTML so crawlers see actual content instead of an empty
+// skeleton loader.
+export async function getServerSideProps({ params }) {
+  try {
+    const res = await fetch(`${API}/blog/posts/${params.slug}/`)
+    if (!res.ok) return { props: { initialPost: null } }
+    const initialPost = await res.json()
+    return { props: { initialPost } }
+  } catch {
+    return { props: { initialPost: null } }
+  }
+}
+
+export default function BlogPostPage({ initialPost }) {
   const router     = useRouter()
   const { slug }   = router.query
-  const { post, loading, error } = useBlogPost(slug)
+  const { post, loading, error } = useBlogPost(slug, initialPost)
   const { posts: related }       = useBlogPosts({ limit: 4 })
 
   if (loading) return <PostShell><Skel /></PostShell>
@@ -40,9 +100,11 @@ export default function BlogPostPage() {
   )
 
   const relatedPosts = (related || []).filter(p => p.slug !== slug).slice(0, 3)
+  const examCourse = getExamCourseForPost(post)
+  const primaryTag = getPrimaryTag(post)
 
   return (
-    <PostShell>
+    <PostShell examCourse={examCourse}>
       <Head>
         <title>{post.title} — GRADSKOOL Blog</title>
         <meta name="description" content={post.meta_desc || post.excerpt || post.title} />
@@ -73,11 +135,11 @@ export default function BlogPostPage() {
               <span style={s.breadSep}>/</span>
               <Link href="/blog" style={s.breadLink}>Blog</Link>
               <span style={s.breadSep}>/</span>
-              <span style={{ color:C.black }}>{post.tag || post.category}</span>
+              <span style={{ color:C.black }}>{primaryTag?.name || 'GRADSKOOL'}</span>
             </p>
 
             {/* Tag */}
-            <span style={s.tag}>{post.tag || post.category}</span>
+            <span style={s.tag}>{primaryTag?.name || 'GRADSKOOL'}</span>
 
             {/* Title */}
             <h1 style={s.title}>{post.title}</h1>
@@ -135,11 +197,15 @@ export default function BlogPostPage() {
           {/* CTA */}
           <div style={s.ctaBox}>
             <p style={s.ctaEyebrow}>Ready to prepare?</p>
-            <p style={s.ctaTitle}>Join a GRADSKOOL Cohort</p>
+            <p style={s.ctaTitle}>
+              {examCourse ? `Join a GRADSKOOL ${examCourse.label} Cohort` : 'Join a GRADSKOOL Cohort'}
+            </p>
             <p style={s.ctaBody}>
               Live two-way sessions. 27 students per cohort. Taught by ALP Sir himself.
             </p>
-            <Link href="/courses" style={s.ctaBtn}>Explore Courses →</Link>
+            <Link href={examCourse ? `/courses/${examCourse.slug}` : '/courses'} style={s.ctaBtn}>
+              {examCourse ? `Explore ${examCourse.label} Course →` : 'Explore Courses →'}
+            </Link>
             <a href="https://wa.me/916360597966" target="_blank" rel="noreferrer" style={s.ctaWa}>
               💬 WhatsApp Us
             </a>
@@ -212,7 +278,7 @@ function HtmlBody({ content }) {
   )
 }
 
-function PostShell({ children }) {
+function PostShell({ children, examCourse = null }) {
   return (
     <div style={{ minHeight:'100vh', background:C.white }}>
       {/* Topbar */}
@@ -225,7 +291,9 @@ function PostShell({ children }) {
         </Link>
         <div style={{ display:'flex', gap:'1.5rem', alignItems:'center' }}>
           <Link href="/blog" style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', color:C.gray500, textDecoration:'none' }}>← All Articles</Link>
-          <Link href="/courses" style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', fontWeight:'600', color:C.red, textDecoration:'none' }}>Explore Courses →</Link>
+          <Link href={examCourse ? `/courses/${examCourse.slug}` : '/courses'} style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', fontWeight:'600', color:C.red, textDecoration:'none' }}>
+            {examCourse ? `Explore ${examCourse.label} Course →` : 'Explore Courses →'}
+          </Link>
         </div>
       </div>
       <div style={{ maxWidth:'1160px', margin:'0 auto', padding:'0 2rem' }}>

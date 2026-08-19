@@ -204,9 +204,16 @@ export function useBlogPosts(params = {}) {
   return { posts: data?.results || [], count: data?.count || 0, loading }
 }
 
-export function useBlogPost(slug) {
-  const [post, setPost]    = useState(null)
-  const [loading, setLoad] = useState(true)
+// `initialData` lets pages/blog/[slug].jsx seed this from
+// getServerSideProps — without it, loading starts true and the server-
+// rendered HTML is just a skeleton with no <Head> tags at all (the page
+// bails out with `if (loading) return <Skel/>` before the Head block
+// with title/og:image ever renders), which is what WhatsApp/social
+// crawlers were seeing for every blog post, since they never execute the
+// client-side fetch. Same fix already applied to PDF pages earlier.
+export function useBlogPost(slug, initialData = null) {
+  const [post, setPost]    = useState(initialData)
+  const [loading, setLoad] = useState(!initialData)
 
   useEffect(() => {
     if (!slug) return
