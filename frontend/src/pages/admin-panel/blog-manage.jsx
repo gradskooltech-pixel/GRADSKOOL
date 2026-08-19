@@ -48,6 +48,7 @@ function BlogManageInner() {
   const [posts,   setPosts]   = useState([])
   const [loading, setLoad]    = useState(true)
   const [saving,  setSaving]  = useState(false)
+  const [resubmitting, setResubmitting] = useState(false)
   const [msg,     setMsg]     = useState(null)
   const [editSlug,setEditSlug]= useState(null)        // null = new post
   const [form,    setForm]    = useState(emptyForm())
@@ -247,6 +248,26 @@ function BlogManageInner() {
     }
   }
 
+  /* ── manual IndexNow resubmit (Bing/Yandex etc — not Google, see
+     backend shared/utils.py for why) — publishing a post already triggers
+     this automatically; this button is for bulk situations, e.g. right
+     after a deploy that changed a lot of pages at once. ── */
+  const resubmitToIndexNow = async () => {
+    setResubmitting(true)
+    try {
+      const { data } = await api.post('/dashboard/indexnow/resubmit/')
+      if (data.success) {
+        notify(`Submitted ${data.url_count} URLs to IndexNow ✓`)
+      } else {
+        notify('IndexNow submission failed — check server logs', 'error')
+      }
+    } catch (e) {
+      notify(e.response?.data?.error || 'Failed to resubmit', 'error')
+    } finally {
+      setResubmitting(false)
+    }
+  }
+
   /* ── image upload to Bunny ── */
   const uploadImage = async (file) => {
     if (!file) return
@@ -302,10 +323,17 @@ function BlogManageInner() {
             <span style={{ fontFamily:'var(--font-sans)', fontSize:14, fontWeight:600, color:C.black }}>Blog</span>
             <span style={{ fontFamily:'var(--font-sans)', fontSize:12, color:C.gray, background:C.g100, padding:'2px 8px', borderRadius:2 }}>{posts.length} posts</span>
           </div>
-          <button onClick={openNew}
-            style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 20px', background:C.red, color:'#fff', border:'none', borderRadius:2, cursor:'pointer' }}>
-            + New Post
-          </button>
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            <button onClick={resubmitToIndexNow} disabled={resubmitting}
+              title="Notify Bing/Yandex/etc of every URL in the sitemap — Google doesn't participate in this protocol"
+              style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:500, padding:'8px 16px', background:C.white, color:C.black, border:`1px solid ${C.border}`, borderRadius:2, cursor:resubmitting?'not-allowed':'pointer' }}>
+              {resubmitting ? 'Submitting…' : 'Resubmit to IndexNow'}
+            </button>
+            <button onClick={openNew}
+              style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 20px', background:C.red, color:'#fff', border:'none', borderRadius:2, cursor:'pointer' }}>
+              + New Post
+            </button>
+          </div>
         </div>
 
         <div style={{ maxWidth:900, margin:'0 auto', padding:'32px 24px' }}>

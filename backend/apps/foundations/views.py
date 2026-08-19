@@ -105,6 +105,10 @@ def class_to_dict(c):
         'is_upcoming':    c.is_upcoming,
         'has_recording':  c.has_recording,
         'pdfs':           _pdfs_for_class(c),
+        # Same gap as apps/fyq/views.py.question_to_dict — the model
+        # already had updated_at, just never exposed here. Added for
+        # sitemap.xml's <lastmod>.
+        'updated_at':     c.updated_at.isoformat() if c.updated_at else None,
     }
 
 

@@ -103,7 +103,10 @@ export async function getServerSideProps({ res }) {
     const data = await safeFetchJson(`${API}/fyq/?page=${fyqPage}&page_size=100`)
     const results = data?.results || []
     for (const q of results) {
-      entries.push(urlEntry(`${SITE}/fyqs/${q.slug}`, { changefreq: 'monthly', priority: '0.5' }))
+      entries.push(urlEntry(`${SITE}/fyqs/${q.slug}`, {
+        lastmod: (q.updated_at || '').slice(0, 10) || undefined,
+        changefreq: 'monthly', priority: '0.5',
+      }))
     }
     if (!data || fyqPage >= (data.num_pages || 1)) break
     fyqPage++
@@ -113,7 +116,10 @@ export async function getServerSideProps({ res }) {
   const tools = await safeFetchJson(`${API}/tools/`)
   const toolsList = tools?.results || (Array.isArray(tools) ? tools : [])
   for (const t of toolsList) {
-    entries.push(urlEntry(`${SITE}/tools/${t.slug}`, { changefreq: 'monthly', priority: '0.5' }))
+    entries.push(urlEntry(`${SITE}/tools/${t.slug}`, {
+      lastmod: (t.updated_at || '').slice(0, 10) || undefined,
+      changefreq: 'monthly', priority: '0.5',
+    }))
   }
 
   // Foundations classes — CAT and XAT (the two exams with genuine
@@ -124,7 +130,10 @@ export async function getServerSideProps({ res }) {
     for (const s of (series || [])) {
       for (const c of (s.classes || [])) {
         if (!c.slug) continue
-        entries.push(urlEntry(`${SITE}/foundations/${exam}/${c.slug}`, { changefreq: 'monthly', priority: '0.45' }))
+        entries.push(urlEntry(`${SITE}/foundations/${exam}/${c.slug}`, {
+          lastmod: (c.updated_at || '').slice(0, 10) || undefined,
+          changefreq: 'monthly', priority: '0.45',
+        }))
       }
     }
   }

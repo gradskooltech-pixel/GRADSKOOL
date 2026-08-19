@@ -87,6 +87,13 @@ class Tool(models.Model):
     og_image_url   = models.URLField(blank=True)
     meta_title     = models.CharField(max_length=160, blank=True)
     meta_desc      = models.CharField(max_length=320, blank=True)
+    # Added for sitemap.xml's <lastmod> — the model had no timestamp field
+    # of any kind before this, so Tool pages could never get an accurate
+    # lastmod for Google's crawl-scheduling (see sitemap.xml.js). auto_now
+    # on updated_at means any admin edit — name, description, active
+    # questions via the tag relation, etc — correctly bumps it.
+    created_at     = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at     = models.DateTimeField(auto_now=True, null=True)
 
     # Monetisation fields (for future premium/subscription model)
     ACCESS_FREE       = 'free'

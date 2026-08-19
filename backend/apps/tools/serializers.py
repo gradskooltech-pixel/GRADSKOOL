@@ -27,6 +27,7 @@ class ToolListSerializer(serializers.ModelSerializer):
             'id', 'slug', 'name', 'description', 'tool_type',
             'tags', 'question_count', 'requires_lead_gate',
             'og_image_url', 'meta_title', 'meta_desc', 'sort_order',
+            'updated_at',  # for sitemap.xml's <lastmod> — see the Tool model
         ]
 
 

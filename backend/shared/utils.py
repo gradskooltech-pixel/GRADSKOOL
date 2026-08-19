@@ -316,3 +316,47 @@ def verify_recaptcha(token: str, remote_ip: str = None) -> bool:
         # transient outage should degrade to "can't log in right now", not
         # "bot protection silently disabled".
         return False
+
+
+# ── INDEXNOW (instant crawl notification — Bing, Yandex, and other      ──
+# ── participating engines; Google does not participate in this protocol) ─
+
+INDEXNOW_KEY = '6e31fbb2a277a24ce4578a3afc65ff7a'
+
+
+def submit_urls_to_indexnow(urls: list) -> bool:
+    """
+    Pushes a list of URLs to IndexNow (api.indexnow.org), which shares the
+    submission with every participating search engine — Bing, Yandex, and
+    a few smaller ones. NOT Google — Google tested IndexNow in 2022 and
+    never adopted it (see apps/dashboard/views.py's SitemapView docstring
+    for the parallel Google-side story: they deprecated their own sitemap
+    ping endpoint in 2023 and now rely on lastmod in the sitemap instead).
+
+    The key file at /public/{INDEXNOW_KEY}.txt on the frontend proves
+    ownership — search engines fetch it to confirm the submission is
+    legitimate before acting on it. If that key ever needs rotating,
+    update it in both places together.
+
+    Silently returns False on any failure — this is a nice-to-have signal,
+    not something that should ever be allowed to break whatever call site
+    triggers it (e.g. a post-publish admin action).
+    """
+    if not urls:
+        return False
+    try:
+        resp = requests.post(
+            'https://api.indexnow.org/indexnow',
+            json={
+                'host': 'gradskool.in',
+                'key': INDEXNOW_KEY,
+                'keyLocation': f'https://gradskool.in/{INDEXNOW_KEY}.txt',
+                'urlList': urls[:10000],  # protocol's own stated max per submission
+            },
+            headers={'Content-Type': 'application/json; charset=utf-8'},
+            timeout=10,
+        )
+        return resp.status_code == 200
+    except Exception:
+        _utils_logger.warning('IndexNow submission failed', exc_info=True)
+        return False

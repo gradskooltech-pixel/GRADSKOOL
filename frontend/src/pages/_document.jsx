@@ -6,7 +6,6 @@ import { Html, Head, Main, NextScript } from 'next/document'
 
 const GA_ID    = 'G-NJ36GFWSP3'
 const PIXEL_ID = '1402263874970988'
-const GSC_VERIFICATION = 'wyHBCcPKkUXnwFVrDmP8WWer64Njy-PQG1mc3uLOHOY'
 
 export default function Document() {
   return (
@@ -25,9 +24,6 @@ export default function Document() {
 
         {/* ── Robots ── */}
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-
-        {/* ── Google Search Console verification ── */}
-        <meta name="google-site-verification" content={GSC_VERIFICATION} />
 
         {/* ── Fonts ── */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

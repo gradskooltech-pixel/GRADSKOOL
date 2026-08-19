@@ -75,6 +75,12 @@ def question_to_dict(q, include_body=True):
         'category_name':   topic.category.name if (topic and topic.category) else None,
         'section_id':      topic.section_id if topic else None,
         'section_name':    topic.section.name if topic else None,
+        # Wasn't exposed here at all before, despite existing on the model
+        # — added specifically so the sitemap generator can set an
+        # accurate <lastmod> for FYQ pages (Google's own guidance, since
+        # deprecating the sitemap ping endpoint in 2023, is that lastmod
+        # is what actually influences re-crawl scheduling now).
+        'updated_at':      q.updated_at.isoformat() if q.updated_at else None,
     }
     if include_body:
         d['long_description'] = q.long_description
