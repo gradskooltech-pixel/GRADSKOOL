@@ -299,8 +299,15 @@ function BlogManageInner() {
                   </div>
                   {/* tags */}
                   <div style={{ display:'flex', flexWrap:'wrap', gap:3 }}>
+                    {/* post.tags is an array of tag OBJECTS ({id, name, slug,
+                        post_count} — see BlogTagSerializer), not plain
+                        strings. Rendering `t` directly crashed with React
+                        error #31 ("Objects are not valid as a React child")
+                        on every page load — pre-existing bug, not something
+                        from recent changes; just hadn't been hit/reported
+                        before now. */}
                     {(post.tags || []).slice(0,3).map(t => (
-                      <span key={t} style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, padding:'2px 6px', borderRadius:2, background:'#fff5f5', color:C.red }}>{t}</span>
+                      <span key={t.id} style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:600, padding:'2px 6px', borderRadius:2, background:'#fff5f5', color:C.red }}>{t.name}</span>
                     ))}
                   </div>
                   {/* status */}

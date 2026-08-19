@@ -33,7 +33,6 @@ const NAV = [
       { href:'/admin-panel/fyq-categories', icon:'🗂️', label:'FYQ Categories',      sub:'Manage the Section → Category → Topic browse tree' },
       { href:'/admin-panel/pdfs',          icon:'📕', label:'PDF Library',          sub:'Cheat sheets, question banks, free + paid' },
       { href:'/admin-panel/blog-manage',   icon:'✍️', label:'Blog Posts',           sub:'Write and publish articles' },
-      { href:'/admin-panel/blog',          icon:'📰', label:'Blog Overview',        sub:'Blog list + management' },
       { href:'/admin-panel/pages',         icon:'📄', label:'Pages',                sub:'Dynamic CMS pages' },
       { href:'/admin-panel/faqs-manage',   icon:'❓', label:'FAQs',                 sub:'FAQ per exam' },
       { href:'/admin-panel/testimonials',  icon:'⭐', label:'Testimonials',         sub:'Student quotes' },
