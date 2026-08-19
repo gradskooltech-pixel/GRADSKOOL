@@ -21,6 +21,7 @@ import random
 import string
 import nh3
 import logging
+import requests
 from django.conf import settings
 from django.utils.text import slugify
 
@@ -266,3 +267,52 @@ def sanitize_html(html: str) -> str:
         url_schemes={'http', 'https', 'mailto'},
         link_rel='noopener noreferrer nofollow',
     )
+
+
+# ── BOT PROTECTION (Google reCAPTCHA) ─────────────────────────────────────────
+
+_utils_logger = logging.getLogger(__name__)
+
+
+def verify_recaptcha(token: str, remote_ip: str = None) -> bool:
+    """
+    Verifies a Google reCAPTCHA v2 token against Google's own siteverify
+    endpoint. Used on Register/Login/Password-reset-request to distinguish
+    real people from scripted/automated attempts — the existing per-IP rate
+    limits (see apps/accounts/views.py) only slow down one machine; they do
+    nothing against a real botnet spreading requests across many IPs, none
+    of which individually cross the per-IP threshold.
+
+    (Originally built against Cloudflare Turnstile — swapped to reCAPTCHA
+    2026-08-19 at the site owner's request, to avoid a Cloudflare account
+    dependency and reuse the Google Cloud project already in use for Google
+    OAuth login. Same verify-token-before-any-other-processing pattern.)
+
+    Gracefully returns True (skips the check) if RECAPTCHA_SECRET_KEY isn't
+    set — so this doesn't lock out local dev or a deploy that hasn't had the
+    Google keys configured yet. Once the key IS set in production, an
+    empty/missing token is always rejected.
+    """
+    if not settings.RECAPTCHA_SECRET_KEY:
+        return True
+
+    if not token:
+        return False
+
+    try:
+        resp = requests.post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            data={
+                'secret': settings.RECAPTCHA_SECRET_KEY,
+                'response': token,
+                **({'remoteip': remote_ip} if remote_ip else {}),
+            },
+            timeout=5,
+        )
+        return bool(resp.json().get('success'))
+    except Exception:
+        _utils_logger.warning('reCAPTCHA verification request failed', exc_info=True)
+        # Fail CLOSED (reject) on a network/timeout error, not open — a
+        # transient outage should degrade to "can't log in right now", not
+        # "bot protection silently disabled".
+        return False

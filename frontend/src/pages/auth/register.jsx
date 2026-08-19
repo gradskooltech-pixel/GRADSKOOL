@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { GoogleOAuthButton } from '../../components/auth/GoogleOAuthButton'
+import { RecaptchaWidget } from '../../components/auth/RecaptchaWidget'
 import { useAuth } from '../../hooks/useAuth'
 
 const EXAM_OPTIONS = [
@@ -42,6 +43,7 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [recaptchaToken, setRecaptchaToken] = useState('')
 
   // Prefill from ?email= — e.g. the "No account found, create one?" link on
   // the login page passes the email they already typed there, so they don't
@@ -65,7 +67,7 @@ export default function RegisterPage() {
     setGlobalError('')
 
     try {
-      const result = await register({ ...form, redirect: router.query.redirect })
+      const result = await register({ ...form, redirect: router.query.redirect, recaptchaToken })
       console.log('[REGISTER DEBUG] register() result:', result)
       if (result.success) {
         // Auto-login after registration (works in dev since email is auto-verified)
@@ -245,6 +247,8 @@ export default function RegisterPage() {
             required autoComplete="new-password" style={inp('passwordConfirm')} />
           {fieldErrors.passwordConfirm && <p style={s.fieldErr}>{fieldErrors.passwordConfirm}</p>}
         </div>
+
+        <RecaptchaWidget onVerify={setRecaptchaToken} />
 
         <button type="submit"
           style={{ ...s.submitBtn, opacity: isLoading ? 0.7 : 1, marginTop: '0.5rem' }}

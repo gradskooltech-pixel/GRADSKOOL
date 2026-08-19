@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { AuthLayout } from '../../components/auth/AuthLayout'
+import { RecaptchaWidget } from '../../components/auth/RecaptchaWidget'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function ForgotPasswordPage() {
@@ -12,11 +13,12 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [recaptchaToken, setRecaptchaToken] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    await requestPasswordReset(email.trim().toLowerCase())
+    await requestPasswordReset(email.trim().toLowerCase(), recaptchaToken)
     setLoading(false)
     setSubmitted(true)   // Always show success — no email enumeration
   }
@@ -64,6 +66,8 @@ export default function ForgotPasswordPage() {
               disabled={loading}>
               {loading ? 'Sending…' : 'Send reset link →'}
             </button>
+
+            <RecaptchaWidget onVerify={setRecaptchaToken} />
 
             <p style={{ textAlign:'center' }}>
               <Link href="/auth/login" style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', color:'#999', textDecoration:'none', borderBottom:'1px solid #e8e8e6' }}>

@@ -36,7 +36,7 @@ const useAuthStore = create(
       sessionReady: false,
 
       // ── REGISTER ────────────────────────────────────────────────────────────
-      register: async ({ firstName, lastName, email, password, passwordConfirm, targetExam, phone, redirect }) => {
+      register: async ({ firstName, lastName, email, password, passwordConfirm, targetExam, phone, redirect, recaptchaToken }) => {
         set({ isLoading: true, error: null })
         try {
           const { data } = await api.post('/auth/register/', {
@@ -48,6 +48,7 @@ const useAuthStore = create(
             target_exam: targetExam,
             phone,
             redirect,
+            recaptcha_token: recaptchaToken,
           })
           set({ isLoading: false })
           return { success: true, email, detail: data.detail }
@@ -59,10 +60,10 @@ const useAuthStore = create(
       },
 
       // ── LOGIN ────────────────────────────────────────────────────────────────
-      login: async (email, password) => {
+      login: async (email, password, recaptchaToken) => {
         set({ isLoading: true, error: null })
         try {
-          const { data } = await api.post('/auth/login/', { email, password })
+          const { data } = await api.post('/auth/login/', { email, password, recaptcha_token: recaptchaToken })
           _hydrateAuth(data)
           set({ user: data.user, isLoading: false, error: null })
           return { success: true, user: data.user }
@@ -133,9 +134,9 @@ const useAuthStore = create(
       },
 
       // ── PASSWORD RESET ───────────────────────────────────────────────────────
-      requestPasswordReset: async (email) => {
+      requestPasswordReset: async (email, recaptchaToken) => {
         try {
-          await api.post('/auth/password-reset/', { email })
+          await api.post('/auth/password-reset/', { email, recaptcha_token: recaptchaToken })
           return { success: true }
         } catch (err) {
           return { success: false, error: extractError(err) }

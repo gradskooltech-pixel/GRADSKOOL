@@ -231,6 +231,9 @@ OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
 # ── WHATSAPP (Interakt) ───────────────────────────────────────────────────────
 INTERAKT_API_KEY = config('INTERAKT_API_KEY', default='')
 
+# ── GOOGLE RECAPTCHA (bot protection on register/login/password-reset) ────────
+RECAPTCHA_SECRET_KEY = config('RECAPTCHA_SECRET_KEY', default='')
+
 
 # ── ZOOM ────────────────────────────────────────────────────────────────────
 ZOOM_SDK_KEY      = config('ZOOM_SDK_KEY', default='')

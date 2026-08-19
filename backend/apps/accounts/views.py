@@ -31,6 +31,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .emails import send_verification_email, send_welcome_email, send_password_reset_email
 from .models import User, EmailVerificationToken, PasswordResetToken, LoginAuditLog, PasswordResetRequestLog
+from shared.utils import verify_recaptcha
 from .serializers import (
     RegisterSerializer,
     UserProfileSerializer,
@@ -94,6 +95,9 @@ class RegisterView(APIView):
     throttle_classes = [RegisterRateThrottle]
 
     def post(self, request):
+        if not verify_recaptcha(request.data.get('recaptcha_token'), _get_client_ip(request)):
+            return Response({'detail': 'Verification failed. Please try again.', 'code': 'recaptcha_failed'}, status=400)
+
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -167,6 +171,9 @@ class LoginView(APIView):
         super().throttled(request, wait)
 
     def post(self, request):
+        if not verify_recaptcha(request.data.get('recaptcha_token'), _get_client_ip(request)):
+            return Response({'detail': 'Verification failed. Please try again.', 'code': 'recaptcha_failed'}, status=400)
+
         email = request.data.get('email', '').lower().strip()
         password = request.data.get('password', '')
         ip = _get_client_ip(request)
@@ -367,6 +374,9 @@ class PasswordResetRequestView(APIView):
     throttle_classes = [LoginRateThrottle]
 
     def post(self, request):
+        if not verify_recaptcha(request.data.get('recaptcha_token'), _get_client_ip(request)):
+            return Response({'detail': 'Verification failed. Please try again.', 'code': 'recaptcha_failed'}, status=400)
+
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

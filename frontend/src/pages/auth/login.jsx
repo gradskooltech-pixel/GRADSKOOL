@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { GoogleOAuthButton } from '../../components/auth/GoogleOAuthButton'
+import { RecaptchaWidget } from '../../components/auth/RecaptchaWidget'
 import { useAuth } from '../../hooks/useAuth'
 
 const C = {
@@ -22,6 +23,7 @@ export default function LoginPage() {
 
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
+  const [recaptchaToken, setRecaptchaToken] = useState('')
   const [showPwd, setShowPwd]           = useState(false)
   const [error, setError]               = useState('')
   const [noAccountEmail, setNoAccount]  = useState(null)
@@ -34,7 +36,7 @@ export default function LoginPage() {
     setError('')
     setNoAccount(null)
     setUnverified(null)
-    const result = await login(email.trim().toLowerCase(), password)
+    const result = await login(email.trim().toLowerCase(), password, recaptchaToken)
     if (result.success) {
       router.push(redirect || '/')
     } else {
@@ -181,6 +183,8 @@ export default function LoginPage() {
             </button>
           </div>
         </div>
+
+        <RecaptchaWidget onVerify={setRecaptchaToken} />
 
         <button
           type="submit"
