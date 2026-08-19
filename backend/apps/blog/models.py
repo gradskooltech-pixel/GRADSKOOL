@@ -20,6 +20,8 @@ import math
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
+
+from shared.utils import sanitize_html
 from rest_framework import generics, serializers
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -56,16 +58,16 @@ class BlogPost(models.Model):
     slug          = models.SlugField(unique=True, max_length=200)
     title         = models.CharField(max_length=200)
     excerpt       = models.CharField(max_length=400)
-    body          = models.TextField(help_text='Markdown supported')
+    body          = models.TextField(help_text='Rich HTML from the Quill admin editor (sanitized on save — see save())')
     tags          = models.ManyToManyField(BlogTag, blank=True, related_name='posts')
     author        = models.ForeignKey(
         'accounts.User', on_delete=models.SET_NULL,
         null=True, blank=True, related_name='blog_posts'
     )
     og_image_url        = models.URLField(blank=True,
-        help_text='Paste Bunny CDN image URL — shown as article header and OG share image')
+                                          help_text='Paste Bunny CDN image URL — shown as article header and OG share image')
     thumbnail_video_url = models.URLField(blank=True,
-        help_text='Optional YouTube or Bunny Stream URL — renders as video thumbnail on blog listing and article hero instead of static image')
+                                          help_text='Optional YouTube or Bunny Stream URL — renders as video thumbnail on blog listing and article hero instead of static image')
     meta_title    = models.CharField(max_length=160, blank=True)
     meta_desc     = models.CharField(max_length=320, blank=True)
     status        = models.CharField(max_length=20, choices=STATUS, default='draft')
@@ -90,6 +92,14 @@ class BlogPost(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+        # Rich HTML from the Quill admin editor, rendered raw via
+        # dangerouslySetInnerHTML on the public post page (pages/blog/
+        # [slug].jsx) — same pattern as FoundationSeries/FoundationClass/
+        # FYQQuestion/QATopic, sanitized there earlier; missed here at the
+        # time since this field's stale help_text ("Markdown supported")
+        # made it look like plain markdown text, not raw HTML, until the
+        # rendering bug that prompted this fix confirmed otherwise.
+        self.body = sanitize_html(self.body)
         if self.body and not self.read_time_mins:
             word_count = len(self.body.split())
             self.read_time_mins = max(1, math.ceil(word_count / 200))
@@ -223,4 +233,3 @@ app_name = 'blog'
 
 
 # ── ADMIN ─────────────────────────────────────────────────────────────────────
-

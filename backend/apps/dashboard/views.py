@@ -58,9 +58,9 @@ class DashboardSummaryView(APIView):
 
         # Payments
         total_spent = (
-            Order.objects
-            .filter(user=user, status='paid')
-            .aggregate(t=Sum('total_amount'))['t'] or 0
+                Order.objects
+                .filter(user=user, status='paid')
+                .aggregate(t=Sum('total_amount'))['t'] or 0
         )
 
         return Response({
@@ -209,8 +209,8 @@ class RecentActivityView(APIView):
 
         # Recent video progress
         for vp in VideoProgress.objects.filter(
-            user=request.user,
-            watched_secs__gt=30,
+                user=request.user,
+                watched_secs__gt=30,
         ).select_related('video__course__exam').order_by('-updated_at')[:10]:
             events.append({
                 'type':        'video',
@@ -223,8 +223,8 @@ class RecentActivityView(APIView):
 
         # Recent tool sessions
         for s in ToolSession.objects.filter(
-            lead__email=request.user.email,
-            ended_at__isnull=False,
+                lead__email=request.user.email,
+                ended_at__isnull=False,
         ).select_related('tool').order_by('-started_at')[:10]:
             events.append({
                 'type':      'tool_session',
@@ -976,6 +976,22 @@ class AdminBlogPostDetailView(APIView):
         for f in fields:
             if f in request.data: setattr(post, f, request.data[f])
 
+        # slug deliberately handled separately, not in the generic fields
+        # list above — this was the actual bug (2026-08-19): the admin
+        # panel's slug field silently did nothing on save, no matter what
+        # was typed in, because it was never included in that loop at all.
+        # Needs its own handling anyway, not just inclusion in the list —
+        # slugs are unique (that's how _get_post() looks posts up by URL),
+        # so a blind setattr() would let two posts collide and crash with
+        # a raw IntegrityError on save() instead of a clean error message.
+        if 'slug' in request.data:
+            new_slug = (request.data['slug'] or '').strip()
+            if not new_slug:
+                return Response({'error': 'Slug cannot be empty.'}, status=400)
+            if BlogPost.objects.exclude(pk=post.pk).filter(slug=new_slug).exists():
+                return Response({'error': f'The slug "{new_slug}" is already used by another post.'}, status=400)
+            post.slug = new_slug
+
         if 'status' in request.data:
             new_status = request.data['status']
             if new_status == 'published' and post.status != 'published':
@@ -1475,10 +1491,10 @@ class AdminHomepageContentView(APIView):
 class AdminManualEnrollView(APIView):
     """
     POST /api/v1/dashboard/manual-enroll/
-    
+
     Admin-only endpoint to manually enroll a student in a plan.
     Used for: testing, scholarship enrollments, demo access.
-    
+
     Body: { email, plan_id, note }
     """
     permission_classes = [IsAuthenticated]
@@ -2063,7 +2079,7 @@ class AdminVideoView(APIView):
                 )
 
             sort_order = d.get('sort_order',
-                TopicVideo.objects.filter(topic=topic).count() + 1)
+                               TopicVideo.objects.filter(topic=topic).count() + 1)
 
             tv = TopicVideo.objects.create(
                 topic=topic,
@@ -2352,8 +2368,8 @@ class AdminBulkEnrollView(APIView):
                 e, created = Enrollment.objects.get_or_create(user=user, plan=plan, defaults={'status':'active'})
                 if not created: e.status = 'active'; e.save()
                 CourseAccess.objects.get_or_create(user=user, exam=plan.exam,
-                    defaults={'can_watch_recordings':True,'can_attempt_quizzes':True,
-                              'can_view_cheat_sheets':True,'can_access_mocks':True})
+                                                   defaults={'can_watch_recordings':True,'can_attempt_quizzes':True,
+                                                             'can_view_cheat_sheets':True,'can_access_mocks':True})
                 results['enrolled'].append(email) if created else results['skipped'].append(email)
             except User.DoesNotExist:
                 results['not_found'].append(email)
@@ -2870,7 +2886,7 @@ class CourseComponentView(APIView):
             title=d.get('title', ''),
             description=d.get('description', ''),
             sort_order=d.get('sort_order',
-                CourseComponent.objects.filter(course=course).count()),
+                             CourseComponent.objects.filter(course=course).count()),
             is_enabled=bool(d.get('is_enabled', True)),
             is_mandatory=bool(d.get('is_mandatory', False)),
             config=d.get('config', {}),
@@ -3116,7 +3132,7 @@ class AttachVideoToTopicView(APIView):
             return Response({'error': 'Topic not found'}, status=404)
 
         sort_order = d.get('sort_order',
-            TopicVideo.objects.filter(topic=topic).count() + 1)
+                           TopicVideo.objects.filter(topic=topic).count() + 1)
 
         tv = TopicVideo.objects.create(
             topic=topic,

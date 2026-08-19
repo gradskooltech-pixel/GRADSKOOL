@@ -20,16 +20,30 @@ const C = {
 
 const FALLBACK_POSTS = []
 
-const ALL_TAGS = ['All', 'CAT', 'GMAT', 'GRE', 'IPMAT', 'XAT', 'Law UG', 'Mindset', 'VARC']
-
 export default function BlogPage() {
-  const [activeTag, setActiveTag] = useState('All')
-  const { posts, loading } = useBlogPosts(activeTag !== 'All' ? { tag: activeTag } : {})
-  const { tags }           = useBlogTags()
+  // Was: const ALL_TAGS = ['All', 'CAT', 'GMAT', 'GRE', 'IPMAT', 'XAT', 'Law UG', 'Mindset', 'VARC']
+  // — a hardcoded list, silently missing SNAP, NMAT, MHCET, CAT Strategy,
+  // DILR, QA, IIM, Placements, MBA Abroad, PI WAT GD (everything the admin
+  // panel's tag picker actually offers beyond whenever this list was first
+  // written). useBlogTags() below already existed and was already being
+  // called — just never actually used for anything, an unfinished refactor
+  // left half-done. Now driving the tab list from it directly, so a newly
+  // added tag just shows up here automatically instead of silently needing
+  // a second, easy-to-forget manual edit in this file.
+  const [activeTag, setActiveTag] = useState('all')
+  const { tags }   = useBlogTags()
+  const { posts, loading } = useBlogPosts(activeTag !== 'all' ? { tag: activeTag } : {})
 
-  const displayPosts = (posts || []).filter(p =>
-    activeTag === 'All' || (p.tag || p.category || '').toLowerCase().includes(activeTag.toLowerCase())
-  )
+  // Backend already filters correctly by tag slug (see BlogPostListView —
+  // qs.filter(tags__slug=tag)) — no need to re-filter client-side on top
+  // of that. The old code here compared activeTag (a display NAME like
+  // "Law UG") against p.tag/p.category as a lowercase substring match,
+  // which breaks once activeTag is a SLUG ("law-ug") instead — trusting
+  // the already-correct server-side filtering avoids that mismatch
+  // entirely rather than trying to reconcile slug-vs-name on the client.
+  const displayPosts = posts || []
+
+  const tabs = [{ name: 'All', slug: 'all' }, ...(tags || [])]
 
   return (
     <>
@@ -55,13 +69,13 @@ export default function BlogPage() {
       {/* FILTER TABS */}
       <div style={s.tabsWrap}>
         <div style={s.tabsInner}>
-          {ALL_TAGS.map(tag => (
+          {tabs.map(tag => (
             <button
-              key={tag}
-              onClick={() => setActiveTag(tag)}
-              style={{ ...s.tab, ...(activeTag === tag ? s.tabActive : {}) }}
+              key={tag.slug}
+              onClick={() => setActiveTag(tag.slug)}
+              style={{ ...s.tab, ...(activeTag === tag.slug ? s.tabActive : {}) }}
             >
-              {tag}
+              {tag.name}
             </button>
           ))}
         </div>
@@ -78,17 +92,17 @@ export default function BlogPage() {
             <div style={s.empty}>
               <p style={{ fontSize:'2rem', marginBottom:'0.75rem' }}>✍️</p>
               <p style={s.emptyTitle}>
-                {activeTag === 'All'
+                {activeTag === 'all'
                   ? 'No articles published yet.'
-                  : `No ${activeTag} articles yet.`}
+                  : `No ${tabs.find(t => t.slug === activeTag)?.name || activeTag} articles yet.`}
               </p>
               <p style={{ fontFamily:'Georgia,serif', fontSize:'0.875rem', color:'#999', lineHeight:'1.65', marginBottom:'1.25rem' }}>
-                {activeTag === 'All'
+                {activeTag === 'all'
                   ? 'Articles will appear here once published from the admin panel.'
                   : 'Try viewing all articles or check back later.'}
               </p>
-              {activeTag !== 'All' && (
-                <button onClick={() => setActiveTag('All')} style={s.emptyBtn}>
+              {activeTag !== 'all' && (
+                <button onClick={() => setActiveTag('all')} style={s.emptyBtn}>
                   View all articles →
                 </button>
               )}
@@ -129,6 +143,19 @@ function BlogCard({ post }) {
         boxSizing:      'border-box',
       }}
     >
+      {/* Thumbnail — og_image_url was already coming through in the API
+          response (BlogPostListSerializer includes it), just never
+          rendered anywhere on this page. Only takes up space in the card
+          layout when a post actually has one set, so posts without an
+          image don't get an empty gap. */}
+      {post.og_image_url && (
+        <img
+          src={post.og_image_url}
+          alt={post.title}
+          style={{ width:'100%', height:'160px', objectFit:'cover', borderRadius:'4px' }}
+        />
+      )}
+
       {/* Tag */}
       <span style={s.cardTag}>{post.tag || post.category}</span>
 

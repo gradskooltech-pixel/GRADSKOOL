@@ -47,6 +47,19 @@ export default function BlogPostPage() {
         <title>{post.title} — GRADSKOOL Blog</title>
         <meta name="description" content={post.meta_desc || post.excerpt || post.title} />
         <link rel="canonical" href={`https://gradskool.in/blog/${slug}`} />
+        {/* og_image_url existed as an admin-panel field but was never
+            actually used anywhere on the site — not here, not visually on
+            the page. Sharing a blog post on WhatsApp/social got the
+            generic site-wide fallback image regardless of what was set. */}
+        {post.og_image_url && (
+          <>
+            <meta property="og:image" content={post.og_image_url} />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:image" content={post.og_image_url} />
+          </>
+        )}
       </Head>
 
       <div style={s.layout}>
@@ -87,10 +100,21 @@ export default function BlogPostPage() {
             </div>
           </header>
 
+          {/* Hero image — the OG/Hero Image URL field existed in the admin
+              panel already, but nothing on the site actually displayed it
+              anywhere until now. */}
+          {post.og_image_url && (
+            <img
+              src={post.og_image_url}
+              alt={post.title}
+              style={{ width:'100%', maxHeight:'420px', objectFit:'cover', borderRadius:'6px', margin:'0 0 2rem' }}
+            />
+          )}
+
           {/* Article body */}
           <div style={s.body}>
             {post.body
-              ? <MarkdownBody content={post.body} />
+              ? <HtmlBody content={post.body} />
               : <p style={s.excerpt}>{post.excerpt || post.meta_desc}</p>
             }
           </div>
@@ -140,24 +164,51 @@ export default function BlogPostPage() {
 }
 
 // Simple markdown-to-HTML renderer for headings and paragraphs
-function MarkdownBody({ content }) {
-  const lines = content.split('\n')
+function HtmlBody({ content }) {
+  // Replaces the old MarkdownBody, which line-by-line parsed markdown
+  // syntax (## heading, - list item, split on \n). The admin CMS moved to
+  // Quill.js (a rich HTML editor) at some point — Quill outputs genuine,
+  // continuous HTML (<h2>, <p>, <strong> etc, no meaningful newlines
+  // between them) — but this page was never updated to match, so every
+  // post rendered as one giant literal-text blob of visible tags instead
+  // of actual formatted content. Styling below reproduces the exact same
+  // visual design MarkdownBody had (see bodyP/bodyH2/bodyH3/bodyLi/
+  // bodyBlockquote in the styles object further down) as scoped CSS
+  // targeting the real tags, since inline React styles can't target HTML
+  // that arrives as one dangerouslySetInnerHTML blob the way they could
+  // when each line was its own separately-styled React element.
   return (
-    <div>
-      {lines.map((line, i) => {
-        if (line.startsWith('## ')) return <h2 key={i} style={s.bodyH2}>{line.slice(3)}</h2>
-        if (line.startsWith('### ')) return <h3 key={i} style={s.bodyH3}>{line.slice(4)}</h3>
-        if (line.startsWith('# ')) return null // skip h1 — shown in header
-        if (line.startsWith('- ')) return (
-          <li key={i} style={s.bodyLi}>{line.slice(2)}</li>
-        )
-        if (line.startsWith('> ')) return (
-          <blockquote key={i} style={s.bodyBlockquote}>{line.slice(2)}</blockquote>
-        )
-        if (line.trim() === '') return <div key={i} style={{ height:'1em' }} />
-        return <p key={i} style={s.bodyP}>{line}</p>
-      })}
-    </div>
+    <>
+      <style jsx>{`
+        .blog-html-body :global(p) {
+          font-family: Georgia, serif; font-size: 1.05rem; color: #3a3a3a;
+          line-height: 1.85; margin-bottom: 1.5rem;
+        }
+        .blog-html-body :global(h1) { display: none; } /* shown in header already, same as MarkdownBody skipped # lines */
+        .blog-html-body :global(h2) {
+          font-family: Georgia, serif; font-size: 1.5rem; font-weight: 700; color: ${C.black};
+          line-height: 1.2; margin-top: 2.5rem; margin-bottom: 1rem;
+        }
+        .blog-html-body :global(h3) {
+          font-family: Georgia, serif; font-size: 1.2rem; font-weight: 700; color: ${C.black};
+          line-height: 1.2; margin-top: 2rem; margin-bottom: 0.75rem;
+        }
+        .blog-html-body :global(ul), .blog-html-body :global(ol) { margin-bottom: 1.5rem; padding-left: 1.25rem; }
+        .blog-html-body :global(li) {
+          font-family: Georgia, serif; font-size: 1.05rem; color: #3a3a3a;
+          line-height: 1.85; margin-bottom: 0.5rem;
+        }
+        .blog-html-body :global(blockquote) {
+          font-family: Georgia, serif; font-size: 1.05rem; color: ${C.gray600};
+          font-style: italic; border-left: 3px solid ${C.red}; padding-left: 1.25rem;
+          margin: 1.5rem 0; line-height: 1.85;
+        }
+        .blog-html-body :global(strong) { font-weight: 700; color: ${C.black}; }
+        .blog-html-body :global(a) { color: ${C.red}; text-decoration: underline; }
+        .blog-html-body :global(img) { max-width: 100%; border-radius: 4px; margin: 1.5rem 0; }
+      `}</style>
+      <div className="blog-html-body" dangerouslySetInnerHTML={{ __html: content }} />
+    </>
   )
 }
 
