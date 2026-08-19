@@ -10,7 +10,6 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import DOMPurify from 'isomorphic-dompurify'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -413,17 +412,33 @@ function extractVideoId(url) {
   return null
 }
 
+// Escapes raw HTML special characters BEFORE any markdown transformation
+// runs. This is the actual fix, not a sanitizer bolted on afterward —
+// a literal <script> tag typed into the source text becomes the inert
+// text "&lt;script&gt;" here, before any of the .replace() calls below
+// ever run. Every tag markdownToHtml() adds after this point is one of
+// its own hardcoded, safe tags — there's no way for the original raw
+// input to "become" real markup again once it's already been escaped.
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 function markdownToHtml(text) {
   if (!text) return ''
-  // This is a naive regex converter — it does NOT escape raw HTML in the
-  // source text before processing, so anything typed directly into this
-  // field (e.g. a literal <script> tag) would previously pass straight
-  // through to dangerouslySetInnerHTML untouched. Of every rich-text field
-  // on the site, this one had the least protection — not even a Quill
-  // allowlist stood in the way, just a plain text field. Sanitizing the
-  // OUTPUT here (isomorphic-dompurify — works in both Next.js SSR/SSG and
-  // the browser, unlike plain dompurify which needs a real DOM) closes it.
-  const raw = text
+  // (2026-08-19: previously ran DOMPurify — via isomorphic-dompurify, which
+  // pulls in jsdom — on the OUTPUT of this function instead of escaping the
+  // INPUT first. Broke the production build: one of jsdom's dependencies
+  // ships pure ESM, which Next.js's build-time require() can't load, and
+  // my own test only ran in a plain `node -e` script, not the actual Next
+  // build pipeline, so I didn't catch it before shipping. Escape-then-only-
+  // add-known-safe-tags is both simpler and more robust than generate-then-
+  // sanitize, and needs no dependency at all.)
+  return escapeHtml(text)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/\n\n/g, '</p><p>')
@@ -431,5 +446,4 @@ function markdownToHtml(text) {
     .replace(/^/, '<p>')
     .replace(/$/, '</p>')
     .replace(/<p><\/p>/g, '')
-  return DOMPurify.sanitize(raw)
 }
