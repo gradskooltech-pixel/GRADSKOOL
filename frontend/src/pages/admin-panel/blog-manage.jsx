@@ -11,6 +11,7 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Head from 'next/head'
+import Script from 'next/script'
 import Link from 'next/link'
 import api from '../../lib/api'
 import { AdminLayout } from '../../components/admin/AdminLayout'
@@ -69,13 +70,29 @@ function BlogManageInner() {
     setTimeout(() => setMsg(null), 3500)
   }
 
+  const [quillLoadFailed, setQuillLoadFailed] = useState(false)
+
   /* ── init Quill when editor view is shown ── */
   useEffect(() => {
     if (view !== 'editor') return
     if (typeof window === 'undefined') return
 
+    setQuillLoadFailed(false)
+    let attempts = 0
+
     const init = () => {
-      if (!window.Quill) { setTimeout(init, 80); return }
+      if (!window.Quill) {
+        attempts += 1
+        // Previously polled forever with zero feedback if the CDN script
+        // never actually loaded — the editor area just stayed permanently
+        // blank with nothing telling you why. ~4s of retries (80ms * 50)
+        // is generous for a CDN script that's genuinely just slow; past
+        // that, something is actually wrong and staying silent about it
+        // just wastes the admin's time wondering what's broken.
+        if (attempts > 50) { setQuillLoadFailed(true); return }
+        setTimeout(init, 80)
+        return
+      }
       if (quillRef.current) return   // already running
 
       const q = new window.Quill('#gs-blog-editor-body', {
@@ -353,8 +370,15 @@ function BlogManageInner() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" />
       </Head>
 
-      {/* Quill JS */}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js" />
+      {/* Quill JS — next/script instead of a raw <script> tag in JSX.
+          Raw script tags rendered via React are unreliable for actually
+          triggering execution (this is a known Next.js/React gotcha,
+          not specific to this file) — if it silently never ran,
+          window.Quill never became defined, and the init() polling loop
+          above just spun forever with zero visible feedback that
+          anything was wrong. next/script is Next.js's own mechanism
+          specifically built to load third-party scripts reliably. */}
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js" strategy="afterInteractive" />
 
       {/* Quill custom styles matching GRADSKOOL design */}
       <style>{`
@@ -471,10 +495,25 @@ function BlogManageInner() {
           </div>
 
           {/* ── QUILL EDITOR ── */}
-          <div id="gs-blog-editor">
-            <div id="quill-toolbar" />
-            <div id="gs-blog-editor-body" />
-          </div>
+          {quillLoadFailed ? (
+            <div style={{ padding:'32px 24px', textAlign:'center', border:`1px dashed ${C.red}`, borderRadius:3, background:'#fff5f5' }}>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:14, fontWeight:600, color:C.red, marginBottom:6 }}>
+                Editor failed to load
+              </div>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:C.gray, marginBottom:14 }}>
+                The Quill editor script didn't load from the CDN. Check your connection, or an ad-blocker/extension may be blocking cdnjs.cloudflare.com.
+              </div>
+              <button onClick={() => window.location.reload()}
+                style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 18px', background:C.red, color:'#fff', border:'none', borderRadius:2, cursor:'pointer' }}>
+                Reload page
+              </button>
+            </div>
+          ) : (
+            <div id="gs-blog-editor">
+              <div id="quill-toolbar" />
+              <div id="gs-blog-editor-body" />
+            </div>
+          )}
 
           {/* Image upload */}
           <div style={{ marginTop:12 }}>
