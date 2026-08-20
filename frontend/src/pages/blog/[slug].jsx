@@ -458,6 +458,17 @@ function HtmlBody({ content }) {
         .blog-html-body :global(strong) { font-weight: 700; color: ${C.black}; }
         .blog-html-body :global(a) { color: ${C.red}; text-decoration: underline; }
         .blog-html-body :global(img) { max-width: 100%; border-radius: 4px; margin: 1.5rem 0; }
+        .blog-html-body :global(table) {
+          width: 100%; border-collapse: collapse; margin: 1.5rem 0;
+          font-family: var(--font-sans, sans-serif); font-size: 0.92rem;
+        }
+        .blog-html-body :global(th), .blog-html-body :global(td) {
+          border: 1px solid ${C.border}; padding: 10px 14px; text-align: left;
+        }
+        .blog-html-body :global(th) {
+          background: ${C.gray50}; font-weight: 700; color: ${C.black};
+        }
+        .blog-html-body :global(tr:nth-child(even) td) { background: ${C.gray50}; }
       `}</style>
       <div className="blog-html-body" dangerouslySetInnerHTML={{ __html: content }} />
     </>

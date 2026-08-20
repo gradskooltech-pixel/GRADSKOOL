@@ -85,7 +85,10 @@ function BlogManageInner() {
     let attempts = 0
 
     const init = () => {
-      if (!window.Quill) {
+      // Also waits for QuillTableBetter now — its own CDN <script> tag
+      // (see below) is a separate load, and it must be registered via
+      // Quill.register() before `new window.Quill(...)` runs, not after.
+      if (!window.Quill || !window.QuillTableBetter) {
         attempts += 1
         // Previously polled forever with zero feedback if the CDN script
         // never actually loaded — the editor area just stayed permanently
@@ -99,9 +102,25 @@ function BlogManageInner() {
       }
       if (quillRef.current) return   // already running
 
+      window.Quill.register({ 'modules/table-better': window.QuillTableBetter }, true)
+
       const q = new window.Quill('#gs-blog-editor-body', {
         theme: 'snow',
         modules: {
+          table: false, // disabled in favor of table-better below — running both causes conflicts
+          // toolbarTable:true is required specifically for the insert-
+          // table BUTTON to appear in the toolbar at all — confirmed
+          // against the module's actual README (I'd initially assumed
+          // the plain ['table-better'] toolbar entry alone was enough,
+          // which the docs show is not the case).
+          'table-better': {
+            language: 'en_US',
+            menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'delete'],
+            toolbarTable: true,
+          },
+          keyboard: {
+            bindings: window.QuillTableBetter.keyboardBindings,
+          },
           toolbar: {
             container: [
               [{ header: [1, 2, 3, false] }],
@@ -110,6 +129,7 @@ function BlogManageInner() {
               [{ list: 'ordered' }, { list: 'bullet' }],
               [{ align: [] }],
               ['link', 'image'],
+              ['table-better'],
               ['clean'],
             ],
             handlers: {
@@ -498,18 +518,31 @@ function BlogManageInner() {
       <Head>
         <title>{editSlug ? 'Edit Post' : 'New Post'} — Blog Admin — GRADSKOOL</title>
         {/* Quill CSS */}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.css" />
       </Head>
 
-      {/* Quill JS — next/script instead of a raw <script> tag in JSX.
-          Raw script tags rendered via React are unreliable for actually
-          triggering execution (this is a known Next.js/React gotcha,
-          not specific to this file) — if it silently never ran,
-          window.Quill never became defined, and the init() polling loop
-          above just spun forever with zero visible feedback that
-          anything was wrong. next/script is Next.js's own mechanism
-          specifically built to load third-party scripts reliably. */}
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js" strategy="afterInteractive" />
+      {/* Quill JS — next/script instead of a raw <script> tag in JSX (raw
+          script tags rendered via React are unreliable for actually
+          triggering execution — a known Next.js/React gotcha; if it
+          silently never ran, window.Quill never became defined and the
+          init() polling loop below spun forever with zero feedback that
+          anything was wrong. next/script is Next.js's own mechanism built
+          specifically to load third-party scripts reliably).
+
+          Upgraded from 1.3.7 to 2.0.3 (2026-08-20), specifically to unlock
+          a real, actively-maintained table module (quill-table-better,
+          requires Quill 2.x). Content loading/saving deliberately KEPT
+          as q.root.innerHTML, not switched to getSemanticHTML() — checked
+          first: 2.0.3's getSemanticHTML has several open, real bugs
+          (strips list formatting, corrupts video iframes inserted via the
+          toolbar, a whitespace bug specific to 2.0.3), and there's no
+          official setHTML() at all in 2.x — Quill's own maintainers
+          confirm root.innerHTML remains the correct way to load HTML
+          content even in 2.x, so this specific pattern didn't need to
+          change with the version bump. */}
+      <Script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js" strategy="afterInteractive" />
+      <Script src="https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.js" strategy="afterInteractive" />
 
       {/* Quill custom styles matching GRADSKOOL design */}
       <style>{`

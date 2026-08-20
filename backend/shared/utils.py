@@ -258,6 +258,17 @@ def sanitize_html(html: str) -> str:
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
             'a', 'img', 'span', 'div',
+            # Missing until now — this function was originally built and
+            # tested against the five dangerouslySetInnerHTML spots that
+            # existed at the time (Foundations, FYQ, Tools, blog posts),
+            # none of which ever produced a table. The markdown-import
+            # feature genuinely does convert a markdown table into real
+            # <table> HTML (confirmed separately) — but every table tag
+            # was then being silently stripped right back out here,
+            # leaving only the loose cell text stacked as plain
+            # paragraphs. Confirmed and reproduced directly before this
+            # fix, not assumed.
+            'table', 'thead', 'tbody', 'tr', 'th', 'td',
         },
         attributes={
             'a': {'href', 'target'},
