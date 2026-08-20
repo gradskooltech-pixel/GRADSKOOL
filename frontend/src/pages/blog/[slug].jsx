@@ -390,7 +390,14 @@ function PostShell({ children, examCourse = null }) {
           </Link>
         </div>
       </div>
-      <div style={{ maxWidth:'1160px', margin:'0 auto', padding:'0 2rem' }}>
+      <div style={{ maxWidth:'1400px', margin:'0 auto', padding:'0 2rem' }}>
+        {/* Widened from 1160px — was leaving large empty gutters on both
+            sides on a wide monitor. Article text itself is protected
+            separately (s.body below has its own maxWidth:680px for
+            readable line length), so widening this outer wrapper doesn't
+            make paragraphs uncomfortably wide — it just gives the TOC and
+            sidebar columns (and the gaps between all three) more room,
+            and shrinks the wasted space outside the whole layout. */}
         {children}
       </div>
     </div>
