@@ -168,7 +168,15 @@ function BlogManageInner() {
         og_image_url:         data.og_image_url         || '',
         thumbnail_video_url:  data.thumbnail_video_url  || '',
         meta_title:       data.meta_title       || '',
-        meta_description: data.meta_description || '',
+        // Was meta_description — the actual model field (and every
+        // backend view touching it) is meta_desc. Same root cause as the
+        // slug and thumbnail_video_url bugs fixed earlier: whatever you
+        // typed here was silently discarded on save (backend's fields
+        // list only checked for 'meta_desc'), and loading an existing
+        // post for editing showed it as blank even when a value existed
+        // in the database, since the GET response returns meta_desc but
+        // this was reading data.meta_description.
+        meta_desc: data.meta_desc || '',
         // Was is_published (boolean) — the actual model field, and every
         // API response, is `status` ('draft'|'published'), not a boolean.
         // Meant is_published was always undefined here, always defaulting
@@ -672,12 +680,12 @@ function BlogManageInner() {
           {/* SEO */}
           <SideBox label="SEO" hint="Leave blank to use title & excerpt">
             <input value={form.meta_title} onChange={set('meta_title')} placeholder="SEO title (60 chars)" style={{ ...sideInput, marginBottom:6 }} />
-            <textarea value={form.meta_description} onChange={set('meta_description')} rows={2} placeholder="Meta description (160 chars)" style={sideInput} />
+            <textarea value={form.meta_desc} onChange={set('meta_desc')} rows={2} placeholder="Meta description (160 chars)" style={sideInput} />
             {form.meta_title && (
               <div style={{ marginTop:8, padding:10, background:C.g100, borderRadius:3 }}>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'#1a0dab', fontWeight:500 }}>{form.meta_title}</div>
                 <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'#006621' }}>gradskool.in/blog/{form.slug}</div>
-                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:C.gray, marginTop:2 }}>{form.meta_description || form.excerpt}</div>
+                <div style={{ fontFamily:'var(--font-sans)', fontSize:11, color:C.gray, marginTop:2 }}>{form.meta_desc || form.excerpt}</div>
               </div>
             )}
           </SideBox>
@@ -772,7 +780,7 @@ function getVideoEmbed(url) {
 }
 
 function emptyForm() {
-  return { title:'', slug:'', excerpt:'', body:'', tags:[], og_image_url:'', thumbnail_video_url:'', meta_title:'', meta_description:'', status:'draft', is_featured:false, related_posts:[] }
+  return { title:'', slug:'', excerpt:'', body:'', tags:[], og_image_url:'', thumbnail_video_url:'', meta_title:'', meta_desc:'', status:'draft', is_featured:false, related_posts:[] }
 }
 
 function SideBox({ label, hint, children }) {

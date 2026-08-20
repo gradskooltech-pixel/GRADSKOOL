@@ -60,9 +60,9 @@ class DashboardSummaryView(APIView):
 
         # Payments
         total_spent = (
-            Order.objects
-            .filter(user=user, status='paid')
-            .aggregate(t=Sum('total_amount'))['t'] or 0
+                Order.objects
+                .filter(user=user, status='paid')
+                .aggregate(t=Sum('total_amount'))['t'] or 0
         )
 
         return Response({
@@ -211,8 +211,8 @@ class RecentActivityView(APIView):
 
         # Recent video progress
         for vp in VideoProgress.objects.filter(
-            user=request.user,
-            watched_secs__gt=30,
+                user=request.user,
+                watched_secs__gt=30,
         ).select_related('video__course__exam').order_by('-updated_at')[:10]:
             events.append({
                 'type':        'video',
@@ -225,8 +225,8 @@ class RecentActivityView(APIView):
 
         # Recent tool sessions
         for s in ToolSession.objects.filter(
-            lead__email=request.user.email,
-            ended_at__isnull=False,
+                lead__email=request.user.email,
+                ended_at__isnull=False,
         ).select_related('tool').order_by('-started_at')[:10]:
             events.append({
                 'type':      'tool_session',
@@ -883,6 +883,7 @@ class AdminBlogPostListView(APIView):
             'status':      p.status,
             'is_featured': p.is_featured,
             'og_image_url':p.og_image_url,
+            'thumbnail_video_url': p.thumbnail_video_url,
             'tags':        [{'id':t.id,'name':t.name} for t in p.tags.all()],
             'published_at':p.published_at.isoformat() if p.published_at else None,
             'updated_at':  p.updated_at.isoformat(),
@@ -920,6 +921,7 @@ class AdminBlogPostListView(APIView):
             meta_title   = request.data.get('meta_title', title),
             meta_desc    = request.data.get('meta_desc',''),
             og_image_url = request.data.get('og_image_url',''),
+            thumbnail_video_url = request.data.get('thumbnail_video_url',''),
             status       = status,
             is_featured  = request.data.get('is_featured', False),
             read_time_mins = max(1, words // 200),
@@ -970,6 +972,7 @@ class AdminBlogPostDetailView(APIView):
             'meta_title':  post.meta_title,
             'meta_desc':   post.meta_desc,
             'og_image_url':post.og_image_url,
+            'thumbnail_video_url': post.thumbnail_video_url,
             'status':      post.status,
             'is_featured': post.is_featured,
             'tags':        [t.name for t in post.tags.all()],
@@ -987,7 +990,13 @@ class AdminBlogPostDetailView(APIView):
         post = self._get_post(slug)
         if not post: return Response({'error':'Not found'}, status=404)
 
-        fields = ['title','body','excerpt','meta_title','meta_desc','og_image_url','is_featured']
+        # thumbnail_video_url added — same root cause as the slug-not-
+        # saving bug fixed earlier this session: the model, the admin
+        # panel's UI, and the save payload all had it, but this specific
+        # fields list (the only thing the PATCH handler actually looks at)
+        # didn't, so it was silently discarded on every single save no
+        # matter what was typed into that field.
+        fields = ['title','body','excerpt','meta_title','meta_desc','og_image_url','thumbnail_video_url','is_featured']
         for f in fields:
             if f in request.data: setattr(post, f, request.data[f])
 
@@ -1526,10 +1535,10 @@ class AdminHomepageContentView(APIView):
 class AdminManualEnrollView(APIView):
     """
     POST /api/v1/dashboard/manual-enroll/
-    
+
     Admin-only endpoint to manually enroll a student in a plan.
     Used for: testing, scholarship enrollments, demo access.
-    
+
     Body: { email, plan_id, note }
     """
     permission_classes = [IsAuthenticated]
@@ -2114,7 +2123,7 @@ class AdminVideoView(APIView):
                 )
 
             sort_order = d.get('sort_order',
-                TopicVideo.objects.filter(topic=topic).count() + 1)
+                               TopicVideo.objects.filter(topic=topic).count() + 1)
 
             tv = TopicVideo.objects.create(
                 topic=topic,
@@ -2403,8 +2412,8 @@ class AdminBulkEnrollView(APIView):
                 e, created = Enrollment.objects.get_or_create(user=user, plan=plan, defaults={'status':'active'})
                 if not created: e.status = 'active'; e.save()
                 CourseAccess.objects.get_or_create(user=user, exam=plan.exam,
-                    defaults={'can_watch_recordings':True,'can_attempt_quizzes':True,
-                              'can_view_cheat_sheets':True,'can_access_mocks':True})
+                                                   defaults={'can_watch_recordings':True,'can_attempt_quizzes':True,
+                                                             'can_view_cheat_sheets':True,'can_access_mocks':True})
                 results['enrolled'].append(email) if created else results['skipped'].append(email)
             except User.DoesNotExist:
                 results['not_found'].append(email)
@@ -2961,7 +2970,7 @@ class CourseComponentView(APIView):
             title=d.get('title', ''),
             description=d.get('description', ''),
             sort_order=d.get('sort_order',
-                CourseComponent.objects.filter(course=course).count()),
+                             CourseComponent.objects.filter(course=course).count()),
             is_enabled=bool(d.get('is_enabled', True)),
             is_mandatory=bool(d.get('is_mandatory', False)),
             config=d.get('config', {}),
@@ -3207,7 +3216,7 @@ class AttachVideoToTopicView(APIView):
             return Response({'error': 'Topic not found'}, status=404)
 
         sort_order = d.get('sort_order',
-            TopicVideo.objects.filter(topic=topic).count() + 1)
+                           TopicVideo.objects.filter(topic=topic).count() + 1)
 
         tv = TopicVideo.objects.create(
             topic=topic,
