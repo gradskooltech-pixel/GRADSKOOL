@@ -64,7 +64,6 @@ function Inner() {
           </div>
         </div>
         <div style={{ display:'flex', gap:'1.5rem', alignItems:'center' }}>
-          <Link href="/tools" style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', color:'#666', textDecoration:'none' }}>Free Tools</Link>
           <Link href="/dashboard" style={s.dashLink}>Dashboard →</Link>
         </div>
       </div>

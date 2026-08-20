@@ -1,271 +1,310 @@
 /**
- * GRADSKOOL — Portal Topics List
- * Route: /learn/[examSlug]/[sectionSlug]
+ * GRADSKOOL — Learn Portal (Sidebar Navigation)
+ * Route: /learn/[examSlug]
  *
- * Lists all topics in a section (e.g. all QA topics).
- * Each topic shows: progress, video count, quiz score, status.
- * Student clicks a topic to enter the 4-tab topic page.
+ * Redesigned: persistent left sidebar shows all sections + topics.
+ * No more 3-click navigation — everything is one click away.
  */
-import { useState, useEffect } from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { ProtectedRoute } from '../../../../components/auth/ProtectedRoute'
-import api from '../../../../lib/api'
+import { useState, useEffect } from "react"
+import Head from "next/head"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { SoftRoute } from "../../../components/auth/SoftRoute"
+import { ProtectedRoute } from "../../../components/auth/ProtectedRoute"
+import api from "../../../lib/api"
 
-export default function SectionTopicsPage() {
-  return <ProtectedRoute><Inner /></ProtectedRoute>
+const C = { red:"#ff5e5f", black:"#0f0f0f", white:"#fff", bg:"#f7f6f3", border:"#e8e8e6", gray:"#999", green:"#22c55e", amber:"#f59e0b", blue:"#3b82f6", muted:"#f4f3f0" }
+
+export default function LearnIndex() {
+  return <SoftRoute><Inner /></SoftRoute>
 }
 
 function Inner() {
-  const router              = useRouter()
-  const { examSlug, sectionSlug } = router.query
-  const [data, setData]     = useState(null)
-  const [loading, setLoad]  = useState(true)
-  const [search, setSearch] = useState('')
+  const router = useRouter()
+  const { examSlug } = router.query
+
+  const [sections,  setSections]  = useState([])
+  const [gam,       setGam]       = useState(null)
+  const [loading,   setLoad]      = useState(true)
+  const [expanded,  setExpanded]  = useState({})
+  const [courseType,setCourseType]= useState("recorded")
+  const [components,setComponents]= useState([])
+  const [isEnrolled,setIsEnrolled]= useState(false)
 
   useEffect(() => {
-    if (!examSlug || !sectionSlug) return
-    api.get(`/learn/${examSlug}/sections/${sectionSlug}/topics/`)
-      .then(({ data }) => setData(data))
-      .catch(() => {})
-      .finally(() => setLoad(false))
-  }, [examSlug, sectionSlug])
+    if (!examSlug) return
+    setLoad(true)
+    Promise.all([
+      api.get(`/learn/${examSlug}/sections/`),
+      api.get(`/learn/gamification/?exam=${examSlug}`),
+    ]).then(([s, g]) => {
+      const secs = s.data.sections || []
+      setSections(secs)
+      setCourseType(s.data.course_type || "recorded")
+      setComponents(s.data.components || [])
+      setIsEnrolled(s.data.is_enrolled || false)
+      setGam(g.data)
+      // Auto-expand first section
+      if (secs.length > 0) setExpanded({ [secs[0].id]: true })
+    }).catch(() => {
+      setSections(DEMO_SECTIONS)
+      setGam(null)
+    }).finally(() => setLoad(false))
+  }, [examSlug])
 
-  const topics   = data?.topics || []
-  const section  = data?.section
+  const toggle = (id) => setExpanded(e => ({ ...e, [id]: !e[id] }))
 
-  const filtered = search
-    ? topics.filter(t => t.title.toLowerCase().includes(search.toLowerCase()))
-    : topics
-
-  const completed = topics.filter(t => t.status === 'completed').length
-  const inProgress = topics.filter(t => t.status === 'in_progress').length
+  const totalTopics    = sections.reduce((a, s) => a + (s.total_topics || 0), 0)
+  const completedTotal = sections.reduce((a, s) => a + (s.completed_topics || 0), 0)
+  const overallPct     = totalTopics ? Math.round(completedTotal / totalTopics * 100) : 0
 
   return (
-    <>
-      <Head>
-        <title>{section?.title} — {examSlug?.toUpperCase()} — GRADSKOOL</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+    <div style={{ minHeight:"100vh", background:C.bg, display:"flex", flexDirection:"column" }}>
+      <Head><title>Learn {(examSlug||"").toUpperCase()} — GRADSKOOL</title></Head>
 
       {/* Top bar */}
-      <div style={s.topBar}>
-        <div style={{ display:'flex', alignItems:'center', gap:'1.5rem' }}>
-          <Link href="/" style={{ fontFamily:'Georgia, serif', fontSize:'1.3rem', fontWeight:'700', letterSpacing:'0.04em', color:'#0f0f0f', textDecoration:'none' }}>
-            GRAD<span style={{ color:'#ff5e5f' }}>SKOOL</span>
-          </Link>
-          <div style={s.topLeft}>
-            <Link href={`/learn/${examSlug}`} style={s.topBack}>
-              {examSlug?.toUpperCase()}
-            </Link>
-            <span style={s.topSep}>/</span>
-            <span style={s.topSection}>{section?.short_title || section?.title}</span>
-          </div>
+      <div style={{ height:"52px", background:C.black, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 1.5rem", flexShrink:0 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
+          <Link href="/" style={{ fontFamily:"var(--font-sans)", fontSize:"0.68rem", color:"rgba(255,255,255,0.25)", textDecoration:"none", marginRight:"0.25rem" }}>Website</Link>
+          <span style={{ color:"rgba(255,255,255,0.15)", marginRight:"0.25rem" }}>/</span>
+          <Link href="/dashboard" style={{ fontFamily:"var(--font-sans)", fontSize:"0.75rem", color:"rgba(255,255,255,0.4)", textDecoration:"none" }}>Dashboard</Link>
+          <span style={{ color:"rgba(255,255,255,0.2)" }}>|</span>
+          <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.82rem", fontWeight:"700", color:"#fff" }}>
+            {(examSlug||"").toUpperCase()} Portal
+          </span>
         </div>
-        <div style={{ display:'flex', gap:'1.5rem', alignItems:'center' }}>
-          <Link href="/dashboard" style={s.dashLink}>Dashboard →</Link>
-        </div>
-      </div>
-
-      <div style={s.body}>
-
-        {/* Header */}
-        <div style={s.pageHeader}>
-          <div>
-            <p style={s.eyebrow}>{examSlug?.toUpperCase()}</p>
-            <h1 style={s.pageTitle}>{section?.title}</h1>
-          </div>
-          <div style={s.headerStats}>
-            <Stat value={completed}   label="Completed"   color="#10b981" />
-            <Stat value={inProgress}  label="In Progress" color="#f59e0b" />
-            <Stat value={topics.length - completed - inProgress}
-                  label="Not Started" color="var(--gray-400)" />
-          </div>
-        </div>
-
-        {/* Search */}
-        <div style={s.searchWrap}>
-          <input
-            type="text"
-            placeholder={`Search ${topics.length} topics…`}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={s.searchInput}
-          />
-        </div>
-
-        {/* Topics list */}
-        {loading ? (
-          <SkeletonList />
-        ) : filtered.length === 0 ? (
-          <p style={s.empty}>No topics found.</p>
-        ) : (
-          <div style={s.topicList}>
-            {filtered.map((topic, idx) => (
-              <TopicRow
-                key={topic.id}
-                topic={topic}
-                href={`/learn/${examSlug}/${sectionSlug}/${topic.slug}`}
-                idx={idx}
-              />
+        <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
+          {gam && (
+            <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
+              <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.72rem", color:C.amber, fontWeight:"700" }}>⚡{gam.xp} XP</span>
+              <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.75rem", color:"#f97316" }}>🔥{gam.streak}</span>
+            </div>
+          )}
+          <div style={{ display:"flex", gap:"0.375rem" }}>
+            {[
+              ["/learn/"+examSlug+"/notes",      "📚 Notes"
+              ["/learn/"+examSlug+"/glossary",    "📖 Glossary"],],
+              ["/learn/"+examSlug+"/recordings", "🎬 Recordings"],
+              ["/learn/"+examSlug+"/mastery",    "🗺 Mastery"],
+            ].map(([href, label]) => (
+              <Link key={href} href={href}
+                style={{ fontFamily:"var(--font-sans)", fontSize:"0.68rem", padding:"0.25rem 0.625rem", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"3px", color:"rgba(255,255,255,0.5)", textDecoration:"none" }}>
+                {label}
+              </Link>
             ))}
           </div>
-        )}
-      </div>
-    </>
-  )
-}
-
-function TopicRow({ topic, href, idx }) {
-  const [hov, setHov] = useState(false)
-  const STATUS_CONFIG = {
-    completed:   { icon: '✓', bg: '#dcfce7', color: '#166534', label: 'Completed' },
-    in_progress: { icon: '▶', bg: '#fef9c3', color: '#92400e', label: 'In Progress' },
-    not_started: { icon: '○', bg: '#f5f5f3', color: '#999',    label: 'Not Started' },
-  }
-  const cfg = STATUS_CONFIG[topic.status] || STATUS_CONFIG.not_started
-
-  return (
-    <Link href={href}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{ ...s.topicRow, background: hov ? '#fafaf9' : '#ffffff', borderColor: hov ? '#ff5e5f' : '#e8e8e6' }}>
-      {/* Number */}
-      <span style={s.topicNum}>{String(idx + 1).padStart(2, '0')}</span>
-
-      {/* Status icon */}
-      <div style={{ ...s.statusIcon, background: cfg.bg, color: cfg.color }}>
-        {cfg.icon}
+        </div>
       </div>
 
-      {/* Info */}
-      <div style={s.topicInfo}>
-        <p style={s.topicTitle}>{topic.title}</p>
-        <div style={s.topicMeta}>
-          <span style={s.metaItem}>
-            📹 {topic.total_videos} videos
-          </span>
-          {topic.completed_videos > 0 && (
-            <span style={s.metaItem}>
-              {topic.completed_videos}/{topic.total_videos} done
-            </span>
+      <div style={{ display:"grid", gridTemplateColumns:"280px 1fr", flex:1, overflow:"hidden" }}>
+        {/* ── SIDEBAR ───────────────────────────────────────────────── */}
+        <div style={{ background:C.white, borderRight:"1px solid "+C.border, overflowY:"auto", display:"flex", flexDirection:"column" }}>
+          {/* Overall progress */}
+          <div style={{ padding:"1rem 1.125rem", borderBottom:"1px solid "+C.border }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"0.4rem" }}>
+              <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.68rem", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.08em", color:C.gray }}>Overall Progress</span>
+              <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.72rem", fontWeight:"700", color:overallPct>=80?C.green:C.black }}>{overallPct}%</span>
+            </div>
+            <div style={{ height:"5px", background:C.muted, borderRadius:"100px", overflow:"hidden" }}>
+              <div style={{ height:"100%", width:overallPct+"%", background:overallPct>=80?C.green:C.red, borderRadius:"100px", transition:"width 0.5s" }} />
+            </div>
+            <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.62rem", color:C.gray, marginTop:"0.3rem" }}>
+              {completedTotal} / {totalTopics} topics done
+            </p>
+          </div>
+
+          {/* Spaced rep alert */}
+          {gam?.due_reviews?.length > 0 && (
+            <div style={{ margin:"0.75rem 1rem", padding:"0.625rem 0.875rem", background:"#fffbeb", border:"1px solid #fcd34d", borderRadius:"6px" }}>
+              <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.72rem", fontWeight:"700", color:"#92400e", marginBottom:"0.2rem" }}>⏰ {gam.due_reviews.length} topic{gam.due_reviews.length!==1?"s":""} due for review</p>
+              <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.62rem", color:"#a16207" }}>Based on your quiz scores</p>
+            </div>
           )}
-          {topic.has_quiz && (
-            <span style={s.metaItem}>🎯 Practice quiz</span>
-          )}
-          {topic.best_score != null && (
-            <span style={{ ...s.metaItem, color: topic.best_score >= 70 ? '#10b981' : '#f59e0b', fontWeight: '600' }}>
-              Best: {Math.round(topic.best_score)}%
-            </span>
-          )}
+
+          {/* Section accordion */}
+          {loading ? (
+            <p style={{ padding:"2rem", textAlign:"center", fontFamily:"Georgia,serif", color:C.gray, fontSize:"0.875rem" }}>Loading…</p>
+          ) : sections.map(sec => {
+            const isOpen  = !!expanded[sec.id]
+            const secPct  = sec.total_topics ? Math.round((sec.completed_topics||0)/sec.total_topics*100) : 0
+            return (
+              <div key={sec.id}>
+                {/* Section header */}
+                <div onClick={() => toggle(sec.id)}
+                  style={{ display:"flex", alignItems:"center", gap:"0.625rem", padding:"0.75rem 1rem", cursor:"pointer", borderBottom:"1px solid "+C.border, background:isOpen?"#fff5f5":C.white, transition:"background 0.1s" }}>
+                  <div style={{ width:"28px", height:"28px", borderRadius:"50%", background:secPct>=100?C.green:secPct>0?"#fff5f5":C.muted, border:"2px solid "+(secPct>=100?C.green:secPct>0?C.red:C.border), display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    {secPct >= 100
+                      ? <span style={{ color:C.green, fontSize:"0.75rem" }}>✓</span>
+                      : <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.6rem", fontWeight:"700", color:C.gray }}>{secPct}%</span>
+                    }
+                  </div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.78rem", fontWeight:"700", color:C.black, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                      {sec.short_title || sec.title}
+                    </p>
+                    <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.62rem", color:C.gray }}>
+                      {sec.completed_topics||0}/{sec.total_topics||0} topics
+                    </p>
+                  </div>
+                  <span style={{ color:C.gray, fontSize:"0.75rem", transform:isOpen?"rotate(180deg)":"none", transition:"transform 0.2s", flexShrink:0 }}>▼</span>
+                </div>
+
+                {/* Topics list */}
+                {isOpen && sec.topics?.map(topic => {
+                  const isDone  = (topic.completion_pct||0) >= 100
+                  const isWeak  = gam?.weak_topics?.some(w => w["topic_video__topic__slug"] === topic.slug)
+                  const isDue   = gam?.due_reviews?.some(r => r.slug === topic.slug)
+                  return (
+                    // isLocked = not enrolled AND video is not free preview
+                    (() => {
+                      const isLocked = !isEnrolled && !topic.is_free_preview && !topic.videos?.some(v => v.is_free_preview)
+                      if (isLocked) {
+                        return (
+                          <div key={topic.id}
+                            style={{ display:"flex", alignItems:"center", gap:"0.625rem", padding:"0.5rem 1rem 0.5rem 2rem", borderBottom:"1px solid "+C.border, opacity:0.45, cursor:"not-allowed", background:C.white }}>
+                            <div style={{ width:"14px", height:"14px", borderRadius:"50%", flexShrink:0, background:C.border, border:"1.5px solid "+C.border, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                              <span style={{ fontSize:"0.5rem" }}>🔒</span>
+                            </div>
+                            <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.75rem", color:C.gray, flex:1, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                              {topic.title}
+                            </span>
+                            <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.55rem", color:C.gray, flexShrink:0 }}>Enrol to unlock</span>
+                          </div>
+                        )
+                      }
+                      return (
+                    <Link key={topic.id}
+                      href={`/learn/${examSlug}/${sec.slug}/${topic.slug}`}
+                      style={{ display:"flex", alignItems:"center", gap:"0.625rem", padding:"0.5rem 1rem 0.5rem 2rem", borderBottom:"1px solid "+C.border, textDecoration:"none", background:C.white, transition:"background 0.1s" }}
+                      onMouseEnter={e=>e.currentTarget.style.background=C.muted}
+                      onMouseLeave={e=>e.currentTarget.style.background=C.white}>
+                      <div style={{ width:"14px", height:"14px", borderRadius:"50%", flexShrink:0, background:isDone?C.green:C.border, border:"1.5px solid "+(isDone?C.green:C.border), display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        {isDone && <span style={{ color:"#fff", fontSize:"0.5rem" }}>✓</span>}
+                      </div>
+                      <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.75rem", color:C.black, flex:1, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                        {topic.title}
+                      </span>
+                      <div style={{ display:"flex", gap:"3px", flexShrink:0 }}>
+                        {!isEnrolled && (topic.is_free_preview || topic.videos?.some(v => v.is_free_preview)) && (
+                          <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.5rem", fontWeight:"700", padding:"0.1rem 0.3rem", borderRadius:"2px", background:"#dcfce7", color:"#166534" }}>FREE</span>
+                        )}
+                        {isWeak && <span style={{ fontSize:"0.6rem" }}>⚠️</span>}
+                        {isDue  && <span style={{ fontSize:"0.6rem" }}>⏰</span>}
+                        {topic.has_live && <span style={{ fontSize:"0.6rem" }}>📡</span>}
+                      </div>
+                    </Link>
+                      )
+                    })()
+                  )
+                })}
+              </div>
+            )
+          })}
         </div>
 
-        {/* Progress bar */}
-        {topic.pct > 0 && (
-          <div style={s.topicBar}>
-            <div style={{ ...s.topicBarFill, width: `${topic.pct}%` }} />
+        {/* ── MAIN AREA ─────────────────────────────────────────────── */}
+        <div style={{ overflowY:"auto", padding:"2rem", display:"flex", flexDirection:"column", gap:"1.5rem" }}>
+          {/* Not enrolled banner */}
+          {!isEnrolled && (
+            <div style={{ background:"linear-gradient(135deg, #1d4ed8 0%, #7b2d8b 100%)", borderRadius:"8px", padding:"1.25rem 1.5rem", marginBottom:"1rem", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.75rem" }}>
+              <div>
+                <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.78rem", fontWeight:"700", color:"#fff", marginBottom:"0.2rem" }}>
+                  👀 You're viewing free preview content
+                </p>
+                <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.68rem", color:"rgba(255,255,255,0.65)" }}>
+                  🔒 Locked topics require enrollment. Enrol to unlock the full course.
+                </p>
+              </div>
+              <a href={"/courses/"+examSlug}
+                style={{ fontFamily:"var(--font-sans)", fontSize:"0.82rem", fontWeight:"700", padding:"0.625rem 1.25rem", background:"#fff", color:"#1d4ed8", borderRadius:"4px", textDecoration:"none", flexShrink:0, whiteSpace:"nowrap" }}>
+                Enrol Now →
+              </a>
+            </div>
+          )}
+
+          {/* Welcome card */}
+          <div style={{ background:"linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%)", borderRadius:"8px", padding:"2rem" }}>
+            <p style={{ fontFamily:"Georgia,serif", fontSize:"1.25rem", fontWeight:"700", color:"#fff", marginBottom:"0.5rem" }}>
+              {(examSlug||"").toUpperCase()} Preparation
+            </p>
+            <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.82rem", color:"rgba(255,255,255,0.5)", marginBottom:"1.25rem" }}>
+              {totalTopics} topics · {sections.length} sections · Pick up from where you left off
+            </p>
+            <div style={{ display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
+              {gam?.due_reviews?.[0] && (
+                <Link href={`/learn/${examSlug}/${gam.due_reviews[0].section}/${gam.due_reviews[0].slug}`}
+                  style={{ padding:"0.625rem 1.25rem", background:C.amber, color:"#fff", borderRadius:"4px", fontFamily:"var(--font-sans)", fontSize:"0.78rem", fontWeight:"700", textDecoration:"none" }}>
+                  ⏰ Review: {gam.due_reviews[0].title}
+                </Link>
+              )}
+              {gam?.weak_topics?.[0] && (
+                <Link href={`/learn/${examSlug}/${gam.weak_topics[0]["topic_video__topic__module__slug"]}/${gam.weak_topics[0]["topic_video__topic__slug"]}`}
+                  style={{ padding:"0.625rem 1.25rem", background:"rgba(255,255,255,0.1)", color:"#fff", borderRadius:"4px", fontFamily:"var(--font-sans)", fontSize:"0.78rem", fontWeight:"700", textDecoration:"none", border:"1px solid rgba(255,255,255,0.2)" }}>
+                  ⚠️ Weak: {gam.weak_topics[0]["topic_video__topic__title"]}
+                </Link>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Course components (what this course offers) */}
+          {components.length > 0 && (
+            <div>
+              <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.65rem", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:C.gray, marginBottom:"0.875rem" }}>This Course Includes</p>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(160px,1fr))", gap:"0.75rem" }}>
+                {components.map(comp => {
+                  const icons = { video:"📹", quiz:"📝", cheatsheet:"📄", live:"📡", mock_test:"🧪", pre_test:"🎯", assignment:"✏️", resources:"📚", notes:"📓", post_test:"🏁" }
+                  return (
+                    <div key={comp.id} style={{ background:C.white, border:"1px solid "+C.border, borderRadius:"6px", padding:"0.875rem", textAlign:"center" }}>
+                      <p style={{ fontSize:"1.25rem", marginBottom:"0.375rem" }}>{icons[comp.component_type]||"📌"}</p>
+                      <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.72rem", fontWeight:"700", color:C.black }}>{comp.title}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Section cards — click to expand/navigate */}
+          <div>
+            <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.65rem", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.1em", color:C.gray, marginBottom:"0.875rem" }}>All Sections</p>
+            <div style={{ display:"flex", flexDirection:"column", gap:"0.625rem" }}>
+              {sections.map(sec => {
+                const secPct = sec.total_topics ? Math.round((sec.completed_topics||0)/sec.total_topics*100) : 0
+                return (
+                  <div key={sec.id} style={{ background:C.white, border:"1px solid "+C.border, borderRadius:"8px", padding:"1rem 1.25rem", cursor:"pointer" }}
+                    onClick={() => { toggle(sec.id); document.querySelector(`[data-sec="${sec.id}"]`)?.scrollIntoView({behavior:"smooth"}) }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"0.5rem" }}>
+                      <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.875rem", fontWeight:"700", color:C.black }}>{sec.title}</p>
+                      <span style={{ fontFamily:"var(--font-sans)", fontSize:"0.72rem", fontWeight:"700", color:secPct>=80?C.green:C.black }}>{secPct}%</span>
+                    </div>
+                    <div style={{ height:"4px", background:C.muted, borderRadius:"100px", overflow:"hidden", marginBottom:"0.375rem" }}>
+                      <div style={{ height:"100%", width:secPct+"%", background:secPct>=80?C.green:C.red, borderRadius:"100px" }} />
+                    </div>
+                    <p style={{ fontFamily:"var(--font-sans)", fontSize:"0.65rem", color:C.gray }}>{sec.completed_topics||0}/{sec.total_topics||0} topics</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Arrow */}
-      <span style={{ ...s.rowArrow, color: hov ? '#ff5e5f' : '#ccc', transform: hov ? 'translateX(3px)' : 'none', transition:'color 0.15s, transform 0.15s' }}>→</span>
-    </Link>
-  )
-}
-
-function Stat({ value, label, color }) {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem',
-                  fontWeight: '700', color, lineHeight: '1' }}>{value}</p>
-      <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.7rem',
-                  color: 'var(--gray-400)', marginTop: '0.2rem' }}>{label}</p>
     </div>
   )
 }
 
-function SkeletonList() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} style={{
-          height: '72px', background: 'var(--gray-100)',
-          borderRadius: 'var(--radius)', animation: 'pulse 1.5s infinite',
-        }} />
-      ))}
-    </div>
-  )
-}
-
-const s = {
-  topBar: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '0 2rem', height: '56px',
-    background: '#ffffff', borderBottom: '1px solid #e8e8e6',
-    position: 'sticky', top: 0, zIndex: 100,
-  },
-  topLeft: { display: 'flex', alignItems: 'center', gap: '0.5rem' },
-  topBack: { fontFamily: 'var(--font-sans)', fontSize: '0.82rem', color: '#999', textDecoration: 'none' },
-  topSep: { color: '#ddd' },
-  topSection: { fontFamily: 'var(--font-sans)', fontSize: '0.82rem', fontWeight: '600', color: '#0f0f0f' },
-  dashLink: { fontFamily: 'var(--font-sans)', fontSize: '0.82rem', fontWeight: '600', color: '#ff5e5f', textDecoration: 'none' },
-  body: { maxWidth: '800px', margin: '0 auto', padding: '3rem 2rem', minHeight: 'calc(100vh - 56px)', background: '#fafaf9' },
-  pageHeader: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    marginBottom: '2rem',
-  },
-  eyebrow: {
-    fontFamily: 'var(--font-sans)', fontSize: '0.68rem', fontWeight: '700',
-    letterSpacing: '0.12em', textTransform: 'uppercase',
-    color: 'var(--red)', marginBottom: '0.3rem',
-  },
-  pageTitle: {
-    fontFamily: 'var(--font-serif)', fontSize: '2rem',
-    fontWeight: '700', color: 'var(--black)',
-  },
-  headerStats: { display: 'flex', gap: '2rem' },
-  searchWrap: { marginBottom: '1.5rem' },
-  searchInput: {
-    width: '100%', padding: '0.75rem 1rem',
-    fontFamily: 'var(--font-sans)', fontSize: '0.875rem',
-    border: '1.5px solid var(--gray-200)', borderRadius: 'var(--radius)',
-    background: 'var(--white)', outline: 'none',
-  },
-  topicList: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
-  topicRow: {
-    display: 'flex', alignItems: 'center', gap: '1rem',
-    padding: '1rem 1.25rem',
-    background: 'var(--white)',
-    border: '1px solid var(--gray-200)', borderRadius: 'var(--radius)',
-    textDecoration: 'none', transition: 'border-color 0.15s, box-shadow 0.15s',
-    cursor: 'pointer',
-  },
-  topicNum: {
-    fontFamily: 'var(--font-sans)', fontSize: '0.72rem',
-    fontWeight: '700', color: 'var(--gray-300)',
-    width: '24px', flexShrink: 0,
-  },
-  statusIcon: {
-    width: '28px', height: '28px', borderRadius: '50%',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: '0.8rem', fontWeight: '700', flexShrink: 0,
-  },
-  topicInfo: { flex: 1, minWidth: 0 },
-  topicTitle: {
-    fontFamily: 'Georgia, serif', fontSize: '0.95rem',
-    fontWeight: '500', color: '#0f0f0f', marginBottom: '0.3rem', lineHeight: '1.3',
-  },
-  topicMeta: { display: 'flex', gap: '0.75rem', flexWrap: 'wrap' },
-  metaItem: { fontFamily: 'var(--font-sans)', fontSize: '0.72rem', color: 'var(--gray-400)' },
-  topicBar: {
-    height: '3px', background: 'var(--gray-100)',
-    borderRadius: '2px', overflow: 'hidden', marginTop: '0.4rem',
-  },
-  topicBarFill: {
-    height: '100%', background: 'var(--red)', borderRadius: '2px',
-  },
-  rowArrow: { fontFamily: 'var(--font-sans)', fontSize: '1rem', color: 'var(--gray-300)', flexShrink: 0 },
-  empty: { fontFamily: 'var(--font-sans)', fontSize: '0.875rem', color: 'var(--gray-400)', textAlign: 'center', padding: '3rem' },
-}
+const DEMO_SECTIONS = [
+  { id:1, title:"Verbal Ability & Reading Comprehension", short_title:"VARC", slug:"cat-varc", total_topics:8, completed_topics:3, topics:[
+    { id:1, title:"Reading Comprehension Strategy", slug:"rc-strategy", completion_pct:100 },
+    { id:2, title:"Para Jumbles", slug:"para-jumbles", completion_pct:100 },
+    { id:3, title:"Para Summary", slug:"para-summary", completion_pct:100 },
+    { id:4, title:"Sentence Correction", slug:"sentence-correction", completion_pct:0 },
+  ]},
+  { id:2, title:"Data Interpretation & Logical Reasoning", short_title:"DILR", slug:"cat-dilr", total_topics:6, completed_topics:1, topics:[
+    { id:5, title:"Seating Arrangements", slug:"seating-arrangements", completion_pct:100 },
+    { id:6, title:"Grid Puzzles", slug:"grid-puzzles", completion_pct:0 },
+  ]},
+  { id:3, title:"Quantitative Aptitude", short_title:"QA", slug:"cat-qa", total_topics:10, completed_topics:0, topics:[
+    { id:7, title:"Percentages", slug:"percentages", completion_pct:0 },
+    { id:8, title:"Time & Work", slug:"time-work", completion_pct:0 },
+  ]},
+]
