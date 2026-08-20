@@ -24,6 +24,7 @@ import { useState } from 'react'
  */
 import Head from 'next/head'
 import Link from 'next/link'
+import { courseSchema, faqSchema, reviewsSchema } from '../seo/PageSEO'
 
 // ── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
@@ -88,12 +89,43 @@ Phone: ${formPhone}${formMsg ? '\nMessage: ' + formMsg : ''}`
     { id:'colleges',    label:'Top Colleges',     show: !!(colleges?.length) },
   ].filter(t => t.show)
 
+  // Real course/FAQ/review schema — this template (shared by GMAT, GRE,
+  // IPMAT, MHCET, CMAT, CUET, CLAT, PI WAT GD) had NONE of this despite
+  // every page already having genuine plans/faqs/testimonials data
+  // flowing through — the exact same content already rendered on the
+  // page, just never marked up as structured data. CAT/XAT/NMAT/SNAP use
+  // a separate, individually hand-written page (not this template) that
+  // already had this wired in.
+  const canonicalPath = meta?.canonical
+    ? meta.canonical.replace('https://gradskool.in', '')
+    : `/courses/${slug}`
+
+  const primaryPlan = (plans || []).find(p => p.featured) || (plans || [])[0]
+  // Plan prices are stored as display strings with commas ('27,999') —
+  // courseSchema's offers.price needs a clean numeric string.
+  const cleanPrice = primaryPlan?.price ? String(primaryPlan.price).replace(/,/g, '') : undefined
+
+  const schemaBlocks = [
+    courseSchema({
+      name,
+      description: description || tagline,
+      url: canonicalPath,
+      price: cleanPrice,
+    }),
+    ...(faqs?.length ? [faqSchema(faqs)] : []),
+    ...(testimonials?.length ? [reviewsSchema(testimonials)] : []),
+  ]
+
   return (
     <>
       <Head>
         <title>{meta?.title || `${name} — GRADSKOOL`}</title>
         <meta name="description" content={meta?.desc || description} />
         {meta?.canonical && <link rel="canonical" href={meta.canonical} />}
+        {schemaBlocks.map((schema, i) => (
+          <script key={i} type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        ))}
       </Head>
 
       <style>{`
