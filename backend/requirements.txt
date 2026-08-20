@@ -37,6 +37,14 @@ requests>=2.31.0,<2.33.0
 # anything outside an explicit tag/attribute allowlist before save.
 nh3==0.2.18
 
+# Markdown → HTML conversion for the admin panel's "Import from Markdown"
+# blog editor feature — real, well-tested parser (tables/fenced-code
+# extensions), not a hand-rolled regex converter (see the git history on
+# pages/p/[slug].jsx's markdownToHtml for why that's specifically avoided
+# here — a naive regex converter there had zero HTML-escaping of raw
+# input, a genuine security gap fixed earlier this session).
+Markdown==3.10.2
+
 # Error tracking
 sentry-sdk[django]==1.43.0
 

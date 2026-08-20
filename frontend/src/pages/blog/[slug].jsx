@@ -11,6 +11,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useBlogPost, useBlogPosts } from '../../hooks/useToolsBlogDashboard'
+import { blogSchema, faqSchema } from '../../components/seo/PageSEO'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -146,6 +147,46 @@ export default function BlogPostPage({ initialPost }) {
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:image" content={post.og_image_url} />
           </>
+        )}
+
+        {/* BlogPosting schema — applies to every post automatically, using
+            each post's own real title/dates/image (not hardcoded), so this
+            isn't a one-off for this specific article. datePublished uses
+            the post's actual published_at from the database — worth being
+            careful here specifically, since a schema date that doesn't
+            match the real publish date (checkable against crawl history)
+            can read as manipulation to Google, not just be "slightly off". */}
+        <script type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema({
+            url: `/blog/${slug}`,
+            title: post.title,
+            description: post.meta_desc || post.excerpt,
+            datePublished: post.published_at,
+            dateModified: post.updated_at || post.published_at,
+            ogImage: post.og_image_url,
+          })) }}
+        />
+
+        {/* FAQPage schema — scoped to this one post by slug, since the Q&A
+            content is hand-written for this specific article and there's
+            no admin-editable "FAQ items" field on BlogPost yet. If you want
+            this on future posts too, that's a real field/migration worth
+            building properly rather than growing this slug-list by hand. */}
+        {slug === 'snap-2026-ethics-morality-values' && (
+          <script type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema([
+              { q: 'What is the Ethics, Morality & Values (EMV) section in SNAP 2026?',
+                a: "EMV is a new section introduced in SNAP 2026 that tests ethical reasoning rather than definitions alone. It covers integrity, fairness, responsibility, business ethics, and short ethical dilemmas where candidates must choose the most defensible response." },
+              { q: 'What is the difference between ethics, morality, and values?',
+                a: "Morality is a person's belief about right and wrong. Values are the principles considered important, such as honesty and fairness. Ethics is the reasoning applied when values or responsibilities come into conflict." },
+              { q: 'Do I need to study philosophy to prepare for SNAP EMV?',
+                a: "No. Candidates don't need months of philosophical reading. Understanding a few core approaches to ethical reasoning, such as judging actions by consequences versus principles, is enough to build a usable framework." },
+              { q: 'What framework can be used to solve SNAP EMV ethical dilemmas?',
+                a: 'GRADSKOOL recommends a six-step framework: identify stakeholders, identify the conflict, determine the relevant principle, weigh consequences, eliminate unethical or extreme options, then choose the most defensible answer.' },
+              { q: 'What topics are likely to be covered in SNAP 2026 EMV?',
+                a: 'Likely topics include integrity, fairness and justice, responsibility, empathy, rights and duties, business and workplace ethics, conflict of interest, confidentiality, and consequences of ethical decisions.' },
+            ])) }}
+          />
         )}
       </Head>
 

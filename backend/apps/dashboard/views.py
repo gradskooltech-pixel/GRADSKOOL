@@ -1061,6 +1061,99 @@ class AdminBlogPostDetailView(APIView):
         return Response({'success': True})
 
 
+class AdminBlogMarkdownImportView(APIView):
+    """
+    POST /api/v1/dashboard/blog/import-markdown/
+    Body: { "markdown": "<raw .md file contents>" }
+
+    Converts a markdown file into ready-to-review blog post fields — does
+    NOT save/create anything itself, just returns {title, slug, excerpt,
+    body} for the frontend to drop into the existing editor form, so
+    whatever gets created still goes through the normal Draft review flow
+    (nothing here auto-publishes).
+
+    Uses the real `markdown` library (tables/fenced-code extensions), not
+    a hand-rolled regex converter — see requirements.txt for why that
+    matters here specifically (a naive regex converter elsewhere in this
+    codebase had a real HTML-escaping gap, fixed earlier this session).
+    Output is run through sanitize_html() regardless — a markdown file can
+    just as easily contain raw embedded HTML (a literal <script> tag,
+    say) as any other admin-authored content source already sanitized
+    this way (see shared/utils.py).
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not (request.user.is_staff or request.user.role == 'admin'):
+            return Response({'error': 'Forbidden'}, status=403)
+
+        import re
+        import markdown as md_lib
+        from django.utils.text import slugify
+        from shared.utils import sanitize_html
+
+        raw = (request.data.get('markdown') or '').strip()
+        if not raw:
+            return Response({'error': 'No markdown content provided'}, status=400)
+
+        lines = raw.split('\n')
+
+        # Title — the first H1 line, extracted out rather than left in the
+        # body. The page's own title field (and HtmlBody's h1-suppression
+        # rule — see pages/blog/[slug].jsx) already handles the title
+        # separately; leaving it in the body would show it twice.
+        title = ''
+        title_idx = None
+        for i, line in enumerate(lines):
+            if line.startswith('# '):
+                title = line[2:].strip()
+                title_idx = i
+                break
+
+        if not title:
+            return Response({'error': 'No H1 title (# Title) found in the markdown file.'}, status=400)
+
+        remaining = lines[title_idx + 1:]
+
+        # Strip a "*Last updated: ...*" style byline immediately after the
+        # title, if present — specifically matched on wording, not just
+        # "any bare italic line", since a genuine intro sentence written
+        # in italics is legitimate body content and shouldn't be silently
+        # deleted just because it resembles the same markdown shape.
+        while remaining and not remaining[0].strip():
+            remaining.pop(0)
+        if remaining and re.match(r'^[*_].*(?:last updated|updated:).*[*_]$', remaining[0].strip(), re.IGNORECASE):
+            remaining.pop(0)
+
+        body_md = '\n'.join(remaining).strip()
+        body_html = sanitize_html(md_lib.markdown(body_md, extensions=['tables', 'fenced_code']))
+
+        # Excerpt — first real paragraph, truncated. Genuinely best-effort:
+        # skips headings/tables/blank lines looking for the first plain
+        # paragraph, then strips any inline markdown (**bold**, *italic*,
+        # [link](url)) since this becomes plain excerpt/meta-description
+        # text, not rendered HTML.
+        excerpt = ''
+        for line in remaining:
+            stripped = line.strip()
+            if not stripped or stripped.startswith('#') or stripped.startswith('|') or stripped.startswith('-'):
+                continue
+            plain = re.sub(r'\*\*(.+?)\*\*', r'\1', stripped)
+            plain = re.sub(r'\*(.+?)\*', r'\1', plain)
+            plain = re.sub(r'\[(.+?)\]\(.+?\)', r'\1', plain)
+            excerpt = plain[:200].rsplit(' ', 1)[0] + ('…' if len(plain) > 200 else '')
+            break
+
+        slug = slugify(title)[:200]
+
+        return Response({
+            'title': title,
+            'slug': slug,
+            'excerpt': excerpt,
+            'body': body_html,
+        })
+
+
 class AdminBlogImageUploadView(APIView):
     """
     POST /api/v1/dashboard/blog/upload-image/

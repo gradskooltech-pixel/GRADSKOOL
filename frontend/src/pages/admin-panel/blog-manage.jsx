@@ -49,6 +49,9 @@ function BlogManageInner() {
   const [loading, setLoad]    = useState(true)
   const [saving,  setSaving]  = useState(false)
   const [resubmitting, setResubmitting] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importText, setImportText] = useState('')
+  const [importing, setImporting] = useState(false)
   const [msg,     setMsg]     = useState(null)
   const [editSlug,setEditSlug]= useState(null)        // null = new post
   const [form,    setForm]    = useState(emptyForm())
@@ -276,6 +279,40 @@ function BlogManageInner() {
     }
   }
 
+  /* ── import a .md file → new draft post ──
+     A separate entry point INTO the editor (mirroring openNew, not a
+     mid-edit action) — Quill only reads form.body into the visible
+     editor once, at initial mount (see the init effect above), so
+     pre-filling the form BEFORE the editor view ever mounts is what
+     makes the imported content actually show up correctly, rather than
+     needing to force a fragile re-init. Always lands as a Draft — never
+     auto-publishes, review/edit normally before hitting Publish. */
+  const importFromMarkdown = async () => {
+    if (!importText.trim()) { notify('Paste or upload a markdown file first', 'error'); return }
+    setImporting(true)
+    try {
+      const { data } = await api.post('/dashboard/blog/import-markdown/', { markdown: importText })
+      quillRef.current = null
+      setForm({ ...emptyForm(), title: data.title, slug: data.slug, excerpt: data.excerpt, body: data.body })
+      setEditSlug(null)
+      setShowImportModal(false)
+      setImportText('')
+      setView('editor')
+      notify('Imported — review before publishing ✓')
+    } catch (e) {
+      notify(e.response?.data?.error || 'Import failed', 'error')
+    } finally {
+      setImporting(false)
+    }
+  }
+
+  const handleImportFile = (file) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (e) => setImportText(e.target.result)
+    reader.readAsText(file)
+  }
+
   /* ── image upload to Bunny ── */
   const uploadImage = async (file) => {
     if (!file) return
@@ -336,6 +373,10 @@ function BlogManageInner() {
               title="Notify Bing/Yandex/etc of every URL in the sitemap — Google doesn't participate in this protocol"
               style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:500, padding:'8px 16px', background:C.white, color:C.black, border:`1px solid ${C.border}`, borderRadius:2, cursor:resubmitting?'not-allowed':'pointer' }}>
               {resubmitting ? 'Submitting…' : 'Resubmit to IndexNow'}
+            </button>
+            <button onClick={() => setShowImportModal(true)}
+              style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:500, padding:'8px 16px', background:C.white, color:C.black, border:`1px solid ${C.border}`, borderRadius:2, cursor:'pointer' }}>
+              Import from Markdown
             </button>
             <button onClick={openNew}
               style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 20px', background:C.red, color:'#fff', border:'none', borderRadius:2, cursor:'pointer' }}>
@@ -409,6 +450,42 @@ function BlogManageInner() {
             </div>
           )}
         </div>
+
+        {showImportModal && (
+          <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.5)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}
+            onClick={() => !importing && setShowImportModal(false)}>
+            <div style={{ background:C.white, borderRadius:4, padding:'28px 32px', maxWidth:560, width:'100%', maxHeight:'85vh', display:'flex', flexDirection:'column' }}
+              onClick={e => e.stopPropagation()}>
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:16, fontWeight:700, color:C.black, marginBottom:6 }}>
+                Import from Markdown
+              </div>
+              <p style={{ fontFamily:'var(--font-sans)', fontSize:12, color:C.gray, marginBottom:16, lineHeight:1.5 }}>
+                The file's first <code># Heading</code> becomes the title. Tables, bold/italic, and links are all supported.
+                Lands as a <strong>Draft</strong> — nothing publishes automatically, review it in the editor first.
+              </p>
+              <input type="file" accept=".md,.markdown,text/markdown,text/plain"
+                onChange={e => handleImportFile(e.target.files[0])}
+                style={{ fontFamily:'var(--font-sans)', fontSize:12, marginBottom:12 }} />
+              <textarea
+                value={importText}
+                onChange={e => setImportText(e.target.value)}
+                placeholder="…or paste the markdown content directly"
+                rows={12}
+                style={{ fontFamily:'ui-monospace, monospace', fontSize:12, padding:12, border:`1px solid ${C.border}`, borderRadius:2, resize:'vertical', width:'100%', boxSizing:'border-box', flex:1 }}
+              />
+              <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:16 }}>
+                <button onClick={() => { setShowImportModal(false); setImportText('') }} disabled={importing}
+                  style={{ fontFamily:'var(--font-sans)', fontSize:13, padding:'8px 16px', background:C.white, color:C.black, border:`1px solid ${C.border}`, borderRadius:2, cursor:'pointer' }}>
+                  Cancel
+                </button>
+                <button onClick={importFromMarkdown} disabled={importing}
+                  style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'8px 20px', background:C.red, color:'#fff', border:'none', borderRadius:2, cursor:importing?'not-allowed':'pointer' }}>
+                  {importing ? 'Importing…' : 'Import & Review →'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )
   }

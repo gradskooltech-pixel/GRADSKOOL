@@ -13,6 +13,7 @@ from .views import (
     AdminExamCohortSizeView,
     AdminToolListView, AdminToolQuestionsView, AdminToolQuestionDetailView,
     AdminBlogPostListView, AdminBlogPostDetailView, AdminBlogImageUploadView,
+    AdminBlogMarkdownImportView,
     AdminIndexNowResubmitView,
     AdminSiteSettingsView,
     AdminFAQListView, AdminFAQDetailView,
@@ -70,6 +71,7 @@ urlpatterns = [
     # Blog management
     path('blog/',                                     AdminBlogPostListView.as_view(),        name='admin-blog-list'),
     path('blog/upload-image/',                        AdminBlogImageUploadView.as_view(),     name='admin-blog-upload'),
+    path('blog/import-markdown/',                      AdminBlogMarkdownImportView.as_view(),  name='admin-blog-import-md'),
     path('indexnow/resubmit/',                         AdminIndexNowResubmitView.as_view(),    name='admin-indexnow-resubmit'),
     path('blog/<slug:slug>/',                         AdminBlogPostDetailView.as_view(),      name='admin-blog-detail'),
 
