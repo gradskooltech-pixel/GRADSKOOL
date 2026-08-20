@@ -145,9 +145,24 @@ function BlogManageInner() {
         placeholder: 'Write your blog post here…\n\nUse the toolbar above for headings, bold, lists, links, and images.',
       })
 
-      // Load existing content into editor
+      // Load existing content into editor — was q.root.innerHTML = form.body,
+      // which worked fine for plain text/formatting but is specifically
+      // NOT how quill-table-better expects content to be loaded. Its own
+      // README says exactly this under "Used when initializing data":
+      // raw innerHTML writes the table into the DOM, but Quill's internal
+      // Delta model (which table-better now owns table rendering through)
+      // never gets told the table exists, so the very next re-render
+      // collapses it back down to loose per-cell text — precisely what
+      // was happening. clipboard.convert() + updateContents() is the
+      // module's own documented fix, matched exactly to their Quickstart
+      // snippet (source: USER on updateContents, not SILENT — checked
+      // their actual example rather than guessing at which source makes
+      // more sense here).
       if (form.body) {
-        q.root.innerHTML = form.body
+        const delta = q.clipboard.convert({ html: form.body })
+        const [range] = q.selection.getRange() || [{ index: 0, length: 0 }]
+        q.updateContents(delta, window.Quill.sources.USER)
+        q.setSelection(delta.length() - (range?.length || 0), window.Quill.sources.SILENT)
       }
 
       // Sync editor → form state on every keystroke
