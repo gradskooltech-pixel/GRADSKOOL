@@ -27,7 +27,7 @@ const R = { color:'var(--red)' }
 // Paste the real Cloudinary video URL here when ready, e.g.
 // 'https://res.cloudinary.com/<cloud_name>/video/upload/<public_id>.mp4'
 // Leave blank to show the "coming soon" placeholder.
-const VIDEO_URL = ''
+const VIDEO_URL = 'https://www.youtube.com/watch?v=Myf0vghBQeI'
 
 const COVERAGE = [
   { sec:'Language Skills',     topics:['Reading Comprehension — short passages with inference','Verbal Reasoning — analogies, sentence completion','Grammar and usage — error identification','Para-jumbles and sentence correction','Vocabulary in context','Fill in the blanks'] },
