@@ -32,7 +32,6 @@ const STATIC_PAGES = [
   { path: '/results',                   priority: '0.7', changefreq: 'weekly' },
   { path: '/fyqs',                      priority: '0.8', changefreq: 'weekly' },
   { path: '/blog',                      priority: '0.7', changefreq: 'daily' },
-  { path: '/tools',                     priority: '0.6', changefreq: 'monthly' },
   { path: '/pdfs',                      priority: '0.6', changefreq: 'weekly' },
   { path: '/privacy-policy',            priority: '0.3', changefreq: 'yearly' },
   { path: '/refund-policy',             priority: '0.3', changefreq: 'yearly' },
@@ -110,16 +109,6 @@ export async function getServerSideProps({ res }) {
     }
     if (!data || fyqPage >= (data.num_pages || 1)) break
     fyqPage++
-  }
-
-  // Tools
-  const tools = await safeFetchJson(`${API}/tools/`)
-  const toolsList = tools?.results || (Array.isArray(tools) ? tools : [])
-  for (const t of toolsList) {
-    entries.push(urlEntry(`${SITE}/tools/${t.slug}`, {
-      lastmod: (t.updated_at || '').slice(0, 10) || undefined,
-      changefreq: 'monthly', priority: '0.5',
-    }))
   }
 
   // Foundations classes — CAT and XAT (the two exams with genuine

@@ -294,67 +294,6 @@ function WhyFeature({ num, title, body }) {
 
 // ── TOOLS GRID ────────────────────────────────────────────────────────────────
 
-const TOOLS = [
-  { slug:'rc99',            name:'RC 99 Passages',       exam:'CAT',        desc:'99 RC passages with detailed questions — by category and difficulty.' },
-  { slug:'rc111',           name:'RC 111 Passages',       exam:'CAT · XAT',  desc:'111 passages — the most comprehensive free RC tool available.' },
-  { slug:'cat-maths',       name:'CAT QA Tool',           exam:'CAT · IPMAT',desc:'34 topics, 2,178 questions with concept notes and explanations.' },
-  { slug:'rc-lexicon',      name:'RC Lexicon',             exam:'CAT · GMAT', desc:'160 vocabulary MCQs from RC passages across 8 topic categories.' },
-  { slug:'gre-vocab',       name:'GRE Vocab Forge',        exam:'GRE · GMAT', desc:'759 words with definitions, examples and contextual meaning.' },
-  { slug:'cat-grammar',     name:'Grammar Practice',       exam:'All Exams',  desc:'570 questions across 19 grammar topics for CAT, GMAT, CLAT.' },
-  { slug:'mba-gk',          name:'MBA GK — 450 Qs',       exam:'XAT · SNAP', desc:'Business, current affairs, static GK for XAT, SNAP, NMAT.' },
-  { slug:'legal-awareness', name:'CLAT Legal Reasoning',  exam:'Law UG',     desc:'60 principle-application cards for CLAT and AILET preparation.' },
-]
-
-export function HomeToolsGrid() {
-  return (
-    <section style={{ ...section }}>
-      <div style={{ ...sg.header }}>
-        <div>
-          <div style={sg.label}>Free Resources</div>
-          <h2 style={sg.title}>Practice Tools</h2>
-          <p style={sg.sub}>Purpose-built tools to sharpen every skill — free for all students. Leave your email and access instantly.</p>
-        </div>
-        <Link href="/tools" style={{ fontFamily:'var(--font-sans)', fontSize:'0.875rem', fontWeight:'500', color:C.red, display:'inline-flex', alignItems:'center', gap:'0.4rem', borderBottom:`1px solid ${C.red}`, paddingBottom:'1px', textDecoration:'none', whiteSpace:'nowrap' }}>
-          All tools →
-        </Link>
-      </div>
-
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'1rem' }}>
-        {TOOLS.map(tool => <ToolCard key={tool.slug} tool={tool} />)}
-      </div>
-    </section>
-  )
-}
-
-function ToolCard({ tool }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <Link
-      href={`/tools/${tool.slug}`}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        border:       `1px solid ${hov ? C.red : C.border}`,
-        borderRadius: '4px',
-        padding:      '1.4rem',
-        display:      'flex',
-        flexDirection:'column',
-        gap:          '0.5rem',
-        textDecoration:'none',
-        boxShadow:    hov ? '0 2px 16px rgba(255,94,95,0.07)' : 'none',
-        transition:   'border-color 0.2s, box-shadow 0.2s',
-      }}
-    >
-      <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.68rem', fontWeight:'500', letterSpacing:'0.07em', textTransform:'uppercase', color:C.red }}>{tool.exam}</div>
-      <div style={{ fontFamily:'Georgia,serif', fontSize:'0.92rem', fontWeight:'500', color:C.black, lineHeight:'1.4' }}>{tool.name}</div>
-      <p style={{ fontFamily:'Georgia,serif', fontSize:'0.82rem', color:C.gray600, lineHeight:'1.6', flex:1 }}>{tool.desc}</p>
-      <div style={{ fontFamily:'var(--font-sans)', fontSize:'0.78rem', color: hov ? C.red : C.gray400, marginTop:'auto', display:'flex', alignItems:'center', gap:'0.3rem', transition:'color 0.2s' }}>
-        Open tool →
-      </div>
-    </Link>
-  )
-}
-
 // ── TESTIMONIALS ──────────────────────────────────────────────────────────────
 
 const TESTIMONIALS_FB = [

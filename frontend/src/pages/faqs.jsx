@@ -54,7 +54,6 @@ He is the Founder of GRADSKOOL — an independent education venture built on fir
 • Foundation Series on YouTube
 • Selected GRADFLIX content
 • Introductory modules on the platform
-• Free tools at gradskool.in/tools
 
 This allows evaluation of the teaching philosophy before committing to a cohort. You can also book a demo session — WhatsApp us to schedule one.` },
 

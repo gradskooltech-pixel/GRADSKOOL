@@ -103,7 +103,6 @@ function Hero({ catSeats }) {
             </p>
             <div style={h.actions}>
               <Link href="/courses" style={h.btnPrimary}>Explore Courses →</Link>
-              <Link href="/tools" style={h.btnSecondary}>Free Tools ↗</Link>
             </div>
           </div>
 

@@ -47,7 +47,6 @@ const QUICK_LINKS = [
   { href: '/courses/xat',   label: 'XAT' },
   { href: '/courses/ipmat', label: 'IPMAT' },
   { href: '/courses/clat',  label: 'Law UG' },
-  { href: '/tools',         label: 'Free Tools' },
   { href: '/blog',          label: 'Blog' },
 ]
 

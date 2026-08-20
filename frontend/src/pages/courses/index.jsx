@@ -72,7 +72,7 @@ export default function CoursesPage() {
             <em style={{ fontStyle:'italic', color:'var(--red)' }}>Structured preparation.</em>
           </h1>
           <p style={{ fontFamily:'Georgia,serif', fontSize:'1.05rem', color:'#777', lineHeight:'1.75', maxWidth:'520px' }}>
-            13 exams. Live cohorts. Printed books. Free tools. Every programme follows the same 9-stage learning framework.
+            13 exams. Live cohorts. Printed books. Every programme follows the same 9-stage learning framework.
           </p>
         </div>
       </div>
