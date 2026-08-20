@@ -145,7 +145,7 @@ class BlogPostListSerializer(serializers.ModelSerializer):
         model  = BlogPost
         fields = [
             'id', 'slug', 'title', 'excerpt', 'tags',
-            'og_image_url', 'published_at', 'read_time_mins',
+            'og_image_url', 'thumbnail_video_url', 'published_at', 'read_time_mins',
             'author_name', 'is_featured',
         ]
 

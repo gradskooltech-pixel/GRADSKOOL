@@ -225,16 +225,15 @@ export default function BlogPostPage({ initialPost }) {
             </div>
           </header>
 
-          {/* Hero image — the OG/Hero Image URL field existed in the admin
-              panel already, but nothing on the site actually displayed it
-              anywhere until now. */}
-          {post.og_image_url && (
-            <img
-              src={post.og_image_url}
-              alt={post.title}
-              style={{ width:'100%', maxHeight:'420px', objectFit:'cover', borderRadius:'6px', margin:'0 0 2rem' }}
-            />
-          )}
+          {/* Was og_image_url only — a real thumbnail_video_url field
+              existed on the model (with its own help_text explicitly
+              describing this exact intended behavior) but was never
+              exposed by the public serializer or read anywhere on this
+              page, so a set video always silently fell back to the
+              static image regardless. PostHero checks for the video
+              first now, only falling back to the image when there
+              isn't one. */}
+          <PostHero post={post} />
 
           {/* Article body */}
           <div style={s.body}>
@@ -322,6 +321,58 @@ function extractTocAndInjectIds(html) {
     return `<h${level} id="${id}">${inner}</h${level}>`
   })
   return { html: newHtml, toc }
+}
+
+// Same YouTube/Bunny URL parsing as the admin panel's getVideoEmbed
+// (pages/admin-panel/blog-manage.jsx) — kept as a second, independent
+// copy rather than a shared import since one lives in /pages/admin-panel
+// (a completely different route tree/bundle) and this one needs to be
+// lean for the public-facing page's initial load. If this ever needs a
+// third case added (a new URL format), update both together.
+function PostHero({ post }) {
+  const videoUrl = post.thumbnail_video_url
+  if (videoUrl) {
+    const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([a-zA-Z0-9_-]{11})/)
+    if (ytMatch) {
+      return (
+        <div style={{ borderRadius:'6px', overflow:'hidden', margin:'0 0 2rem' }}>
+          <iframe
+            src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+            style={{ width:'100%', aspectRatio:'16/9', border:'none', display:'block' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={post.title}
+          />
+        </div>
+      )
+    }
+    if (videoUrl.includes('mediadelivery.net') || videoUrl.includes('b-cdn.net')) {
+      const embedUrl = videoUrl.includes('/embed/') ? videoUrl : videoUrl.replace('stream.', 'iframe.')
+      return (
+        <div style={{ borderRadius:'6px', overflow:'hidden', margin:'0 0 2rem' }}>
+          <iframe
+            src={embedUrl}
+            style={{ width:'100%', aspectRatio:'16/9', border:'none', display:'block' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={post.title}
+          />
+        </div>
+      )
+    }
+    // Set but unrecognized format — fall through to the static image
+    // below rather than show nothing.
+  }
+  if (post.og_image_url) {
+    return (
+      <img
+        src={post.og_image_url}
+        alt={post.title}
+        style={{ width:'100%', maxHeight:'420px', objectFit:'cover', borderRadius:'6px', margin:'0 0 2rem' }}
+      />
+    )
+  }
+  return null
 }
 
 function HtmlBody({ content }) {
