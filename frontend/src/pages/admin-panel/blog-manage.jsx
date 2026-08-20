@@ -719,8 +719,14 @@ function BlogManageInner() {
 function getVideoEmbed(url) {
   if (!url) return null
 
-  // YouTube — youtu.be/ID or youtube.com/watch?v=ID or youtube.com/embed/ID
-  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/)
+  // YouTube — youtu.be/ID, youtube.com/watch?v=ID, /embed/ID, /shorts/ID,
+  // or /live/ID (live-stream URLs — a real, increasingly common format
+  // this regex never covered, which is why a valid YouTube Live link
+  // fell all the way through to the raw-link fallback below instead of
+  // rendering an embed. Same gap already fixed once this session in
+  // components/foundations/FoundationsListing.jsx's YTThumb — that was a
+  // separate regex in a different file, never carried over to this one).
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([a-zA-Z0-9_-]{11})/)
   if (ytMatch) {
     return (
       <iframe
