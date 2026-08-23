@@ -50,9 +50,9 @@ const BUNDLE_TIERS = { 1: 29, 5: 27, 10: 25, 15: 23, 20: 21, 25: 19, 30: 17, 34:
 // something other than cat) falls into a plain "Other" group rather than
 // being silently dropped.
 const TOPIC_CATEGORIES = [
-  { name: 'Number System', topics: ['Base System', 'Classification of Numbers', 'Divisibility Rules', 'Factors and Multiples', 'HCF and LCM', 'Remainders'] },
-  { name: 'Algebra', topics: ['Diophantine Equations', 'Functions', 'Inequalities', 'Linear Equations', 'Logarithms', 'Maxima and Minima', 'Modulus', 'Polynomials', 'Quadratic Equations', 'Sequences and Series', 'Surds & Indices'] },
   { name: 'Arithmetic', topics: ['Averages', 'Mixture & Alligations', 'Percentages', 'Profit, Loss & Discount', 'Ratio & Proportion', 'Simple & Compound Interest', 'Time & Work', 'Time, Speed & Distance'] },
+  { name: 'Algebra', topics: ['Diophantine Equations', 'Functions', 'Inequalities', 'Linear Equations', 'Logarithms', 'Maxima and Minima', 'Modulus', 'Polynomials', 'Quadratic Equations', 'Sequences and Series', 'Surds & Indices'] },
+  { name: 'Number System', topics: ['Base System', 'Classification of Numbers', 'Divisibility Rules', 'Factors and Multiples', 'HCF and LCM', 'Remainders'] },
   { name: 'Geometry', topics: ['Circles', 'Coordinate Geometry', 'Lines and Angles', 'Mensuration', 'Polygons', 'Quadrilaterals', 'Triangles'] },
   { name: 'PnC & Probability', topics: ['Permutation and Combination', 'Probability'] },
 ]
