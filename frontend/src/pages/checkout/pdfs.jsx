@@ -18,7 +18,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import Head from 'next/head'
+import PageSEO, { faqSchema } from '../../components/seo/PageSEO'
 import { usePdfList, useCreatePdfBundleOrder, useVerifyPdfPayment, useRazorpay } from '../../hooks/usePdfs'
 import { useAuth } from '../../hooks/useAuth'
 
@@ -27,6 +27,16 @@ import { useAuth } from '../../hooks/useAuth'
 // of what this shows.
 const BUNDLE_TIERS = { 1: 29, 10: 25, 20: 21, 30: 17, 40: 13, 50: 9 }
 const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
+
+// Real Q&A content, not filler — the exact shape AI answer engines
+// (ChatGPT, Perplexity, Google AI Overviews) most reliably pull from and
+// cite directly, which is what GS meant by AEO/GEO here specifically.
+const FAQS = [
+  { q: 'What are FYQ PDFs?', a: 'FYQ stands for Future Year Question — GRADSKOOL\'s own topic-wise practice sets for CAT, solved and explained by ALP Sir, going beyond what\'s available in official past papers.' },
+  { q: 'How does bundle pricing work?', a: 'Each PDF costs ₹29 on its own. Buying in a bundle of 10, 20, 30, 40, or 50 lowers the per-PDF price to ₹25, ₹21, ₹17, ₹13, or ₹9 respectively. Bundles must be exactly one of these sizes — there is no partial-tier pricing.' },
+  { q: 'Can I pick which topics I want?', a: 'Yes. After choosing a bundle size, you select exactly that many topics from the full FYQ library — Percentages, Ratios, Time & Work, and more.' },
+  { q: 'Do I get access immediately after payment?', a: 'Yes. Once payment is confirmed, every selected PDF becomes available to read in your GRADSKOOL account right away.' },
+]
 
 export default function PdfBundleCheckout() {
   const router = useRouter()
@@ -135,10 +145,14 @@ export default function PdfBundleCheckout() {
 
   return (
     <>
-      <Head>
-        <title>Buy FYQ PDFs in Bulk — GRADSKOOL</title>
-        <meta name="robots" content="noindex" />
-      </Head>
+      <PageSEO
+        title="Buy CAT FYQ PDFs in Bulk — Save up to 69% | GRADSKOOL"
+        description="Buy GRADSKOOL's CAT Future Year Question (FYQ) PDFs in bulk. Prices drop from ₹29 to ₹9 per PDF as bundle size increases — 1, 10, 20, 30, 40, or 50 PDFs."
+        canonical={`https://gradskool.in/checkout/pdfs?exam=${examSlug}`}
+        breadcrumbs={[{ name:'Home', url:'/' }, { name:'FYQ Library', url:`/pdfs/exam/${examSlug}-fyqs` }, { name:'Buy in Bulk', url:`/checkout/pdfs?exam=${examSlug}` }]}
+        schema={[faqSchema(FAQS)]}
+        speakableSelectors={['h1', '.bco-sub', '.bco-content']}
+      />
 
       <style>{`
         .bco-wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
@@ -156,6 +170,15 @@ export default function PdfBundleCheckout() {
         .bco-item:last-child { border-bottom:none; }
         .bco-item:hover { background:var(--off); }
         .bco-summary { position:sticky; bottom:0; margin-top:24px; padding:20px 24px; background:var(--off); border:var(--border); border-radius:var(--radius); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+        .bco-content { margin-top:56px; padding-top:40px; border-top:var(--border); }
+        .bco-content h2 { font-family:var(--font-serif); font-size:20px; font-weight:400; color:var(--black); margin-bottom:14px; }
+        .bco-content p { font-family:var(--font-sans); font-size:14px; color:var(--g700); line-height:1.75; margin-bottom:16px; }
+        .bco-features { display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; margin:16px 0 32px; list-style:none; padding:0; }
+        .bco-features li { font-family:var(--font-sans); font-size:13.5px; color:var(--g700); display:flex; gap:8px; align-items:flex-start; }
+        .bco-features li::before { content:'✓'; color:var(--red); flex-shrink:0; font-weight:700; }
+        .bco-faq-item { border-bottom:var(--border); padding:16px 0; }
+        .bco-faq-item h3 { font-family:var(--font-serif); font-size:15px; font-weight:400; color:var(--black); margin-bottom:6px; }
+        @media(max-width:600px){ .bco-features{grid-template-columns:1fr} }
       `}</style>
 
       <div className="bco-wrap">
@@ -224,6 +247,31 @@ export default function PdfBundleCheckout() {
             </button>
           </div>
         )}
+
+        <div className="bco-content">
+          <h2>What's in the CAT FYQ Library</h2>
+          <p>
+            GRADSKOOL's Future Year Question (FYQ) PDFs are topic-wise CAT practice sets, each solved
+            and explained step by step by ALP Sir. Every PDF covers one specific topic in depth — the
+            kind of focused practice that's hard to find in generic mock-test bundles.
+          </p>
+          <ul className="bco-features">
+            <li>Topic-wise, not exam-wise — practice exactly what you're weak on</li>
+            <li>Every question solved and explained by ALP Sir</li>
+            <li>Read directly in your GRADSKOOL account, no downloads needed</li>
+            <li>Cheaper per PDF the larger your bundle — down to ₹9/PDF at 50</li>
+            <li>Instant access the moment payment is confirmed</li>
+            <li>Same content used inside GRADSKOOL's live cohorts</li>
+          </ul>
+
+          <h2>Frequently Asked Questions</h2>
+          {FAQS.map(faq => (
+            <div key={faq.q} className="bco-faq-item">
+              <h3>{faq.q}</h3>
+              <p style={{ marginBottom:0 }}>{faq.a}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   )
