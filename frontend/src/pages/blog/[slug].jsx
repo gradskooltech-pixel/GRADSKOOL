@@ -65,6 +65,26 @@ function getPrimaryTag(post) {
 // real course page, so the sidebar/topbar CTA can point somewhere genuinely
 // relevant instead of the generic /courses listing.
 function getExamCourseForPost(post) {
+  // The SNAP EMV post specifically links to its real Learnyst course
+  // (courses.gradskool.in) instead of the general /courses/snap page —
+  // that product is genuinely fulfilled through Learnyst directly, not
+  // GRADSKOOL's own checkout (see the payments/services.py enrollment-
+  // email branching built earlier this session for the same distinction).
+  // Keyed on the post's own slug, not its SNAP tag, since every OTHER
+  // SNAP-tagged post should still link to the normal /courses/snap page.
+  if (post.slug === 'snap-2026-ethics-morality-values') {
+    return {
+      label: 'EMV',
+      externalHref: 'https://courses.gradskool.in/learn/snap-2026-ethics-morality-values',
+      // Real product description, matching pages/courses/snap.jsx's own
+      // EMV card exactly — self-paced recorded module + 150+ practice
+      // questions, not a live cohort. The default cohort copy right
+      // below (27 students, live sessions) is genuinely inaccurate for
+      // this specific product.
+      ctaTitle: 'Get the GRADSKOOL EMV Course',
+      ctaBody: 'Complete recorded module + 150+ practice questions covering ethical frameworks, business ethics case studies, and situational dilemma practice.',
+    }
+  }
   for (const tag of post.tags || []) {
     const match = EXAM_TAG_TO_COURSE[(tag.name || '').toLowerCase()]
     if (match) return match
@@ -320,14 +340,20 @@ export default function BlogPostPage({ initialPost }) {
           <div style={s.ctaBox}>
             <p style={s.ctaEyebrow}>Ready to prepare?</p>
             <p style={s.ctaTitle}>
-              {examCourse ? `Join a GRADSKOOL ${examCourse.label} Cohort` : 'Join a GRADSKOOL Cohort'}
+              {examCourse?.ctaTitle || (examCourse ? `Join a GRADSKOOL ${examCourse.label} Cohort` : 'Join a GRADSKOOL Cohort')}
             </p>
             <p style={s.ctaBody}>
-              Live two-way sessions. 27 students per cohort. Taught by ALP Sir himself.
+              {examCourse?.ctaBody || 'Live two-way sessions. 27 students per cohort. Taught by ALP Sir himself.'}
             </p>
-            <Link href={examCourse ? `/courses/${examCourse.slug}` : '/courses'} style={s.ctaBtn}>
-              {examCourse ? `Explore ${examCourse.label} Course →` : 'Explore Courses →'}
-            </Link>
+            {examCourse?.externalHref ? (
+              <a href={examCourse.externalHref} target="_blank" rel="noopener noreferrer" style={s.ctaBtn}>
+                Explore {examCourse.label} Course →
+              </a>
+            ) : (
+              <Link href={examCourse ? `/courses/${examCourse.slug}` : '/courses'} style={s.ctaBtn}>
+                {examCourse ? `Explore ${examCourse.label} Course →` : 'Explore Courses →'}
+              </Link>
+            )}
             <a href="https://wa.me/916360597966" target="_blank" rel="noreferrer" style={s.ctaWa}>
               💬 WhatsApp Us
             </a>
@@ -497,21 +523,6 @@ function HtmlBody({ content }) {
 function PostShell({ children, examCourse = null }) {
   return (
     <div style={{ minHeight:'100vh', background:C.white }}>
-      {/* Topbar */}
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-        padding:'0 2rem', height:'56px', background:C.white,
-        borderBottom:`1px solid ${C.border}`, position:'sticky', top:0, zIndex:100 }}>
-        <Link href="/" style={{ fontFamily:'Georgia, serif', fontSize:'1.3rem',
-          fontWeight:'700', letterSpacing:'0.04em', color:C.black, textDecoration:'none' }}>
-          GRAD<span style={{ color:C.red }}>SKOOL</span>
-        </Link>
-        <div style={{ display:'flex', gap:'1.5rem', alignItems:'center' }}>
-          <Link href="/blog" style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', color:C.gray500, textDecoration:'none' }}>← All Articles</Link>
-          <Link href={examCourse ? `/courses/${examCourse.slug}` : '/courses'} style={{ fontFamily:'var(--font-sans)', fontSize:'0.82rem', fontWeight:'600', color:C.red, textDecoration:'none' }}>
-            {examCourse ? `Explore ${examCourse.label} Course →` : 'Explore Courses →'}
-          </Link>
-        </div>
-      </div>
       <div style={{ maxWidth:'1400px', margin:'0 auto', padding:'0 2rem' }}>
         {/* Widened from 1160px — was leaving large empty gutters on both
             sides on a wide monitor. Article text itself is protected
