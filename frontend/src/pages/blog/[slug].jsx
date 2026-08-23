@@ -27,7 +27,11 @@ const C = {
 // no dedicated course page a "Placements" tag should point to). Only tags
 // that map to one of the actual pages/courses/*.jsx files.
 const EXAM_TAG_TO_COURSE = {
-  cat:   { slug: 'cat',   label: 'CAT' },
+  // CAT specifically points to CAThlete (the actual crash-course product,
+  // /courses/cat/cathlete) rather than the general /courses/cat overview
+  // page — every other exam still links to its general course page since
+  // only CAT has this more specific "which exact product" distinction.
+  cat:   { slug: 'cat/cathlete', label: 'CAT' },
   xat:   { slug: 'xat',   label: 'XAT' },
   snap:  { slug: 'snap',  label: 'SNAP' },
   nmat:  { slug: 'nmat',  label: 'NMAT' },
@@ -257,10 +261,25 @@ export default function BlogPostPage({ initialPost }) {
                   ? new Date(post.published_at).toLocaleDateString('en-IN', { month:'long', year:'numeric' })
                   : post.date || ''}
               </span>
-              {post.reading_mins && (
+              {/* Was post.reading_mins — doesn't match the real field name
+                  (read_time_mins, per BlogPostListSerializer) anywhere on
+                  the API response. Silently undefined this whole time, so
+                  reading time has never actually rendered on this page
+                  despite the code looking like it should. */}
+              {post.read_time_mins && (
                 <>
                   <span style={s.metaDot}>·</span>
-                  <span style={s.metaDate}>{post.reading_mins} min read</span>
+                  <span style={s.metaDate}>{post.read_time_mins} min read</span>
+                </>
+              )}
+              {/* view_count was already tracked correctly server-side this
+                  whole time (atomic F() increment on every real page view,
+                  see BlogPostDetailView.retrieve()) and already exposed in
+                  the API response — just never displayed anywhere. */}
+              {typeof post.view_count === 'number' && (
+                <>
+                  <span style={s.metaDot}>·</span>
+                  <span style={s.metaDate}>{post.view_count.toLocaleString('en-IN')} views</span>
                 </>
               )}
             </div>

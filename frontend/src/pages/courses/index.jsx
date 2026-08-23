@@ -13,22 +13,23 @@ const COURSES = [
   { slug:'xat',       short:'XAT',              cat:'mba_india',  tag:'MBA India · XLRI',             tagline:"Decision Making. The section every student fears.",                desc:"XLRI Jamshedpur, XIMB, GIM and 150+ institutes. Dedicated Decision Making module — the section no CAT coaching covers.",                               price:'₹2,999',  s1:'6',    s1l:'Full-Length Mocks',    s2:'12',   s2l:'Sectional Tests' },
   { slug:'snap',      short:'SNAP',             cat:'mba_india',  tag:'MBA India · Symbiosis',        tagline:"60 questions. 60 minutes. No sectional time limit.",               desc:"SIBM Pune, SCMHRD, SIIB and all 17 Symbiosis institutes. 3 attempts per year.",                                                                        price:'₹2,999',  s1:'20',   s1l:'Full-Length Mocks',    s2:'3',    s2l:'Attempts Per Year' },
   { slug:'nmat',      short:'NMAT',             cat:'mba_india',  tag:'MBA India · NMIMS',            tagline:"3 attempts. No negative marking. Section order choice.",           desc:"NMIMS Mumbai, Hyderabad, Bangalore. No negative marking changes strategy completely.",                                                                    price:'₹3,999',  s1:'10',   s1l:'Full-Length Mocks',    s2:'0',    s2l:'Negative Marking' },
-  { slug:'cmat',      short:'CMAT',             cat:'mba_india',  tag:'MBA India · JBIMS',            tagline:"India's best value MBA. ₹5L fees, ₹30L+ placements.",             desc:"JBIMS, SIMSREE, PUMBA and 1,000+ AICTE institutes. Includes Innovation & Entrepreneurship — unique to CMAT.",                                         price:'₹2,999',  s1:'12',   s1l:'Full-Length Mocks',    s2:'15',   s2l:'Sectional Tests' },
   { slug:'mhcet',     short:'MH CET MBA',       cat:'mba_india',  tag:'MBA Maharashtra',              tagline:"200 questions. 150 minutes. No negative marking.",                 desc:"Fastest route to JBIMS, SIMSREE and KJ Somaiya. Two attempts per year. Maharashtra domicile advantage.",                                             price:'₹7,999',  s1:'200',  s1l:'Questions',            s2:'2',    s2l:'Attempts Per Year' },
+  // Added — was completely missing from this list before, despite being
+  // a real, live course (pages/courses/gmat.jsx, data/examData.js's
+  // GMAT_DATA). Tagline/description/price pulled directly from that real
+  // data, matching the pattern every other card here already follows.
+  { slug:'gmat',      short:'GMAT',             cat:'mba_global', tag:'MBA Global · GMAC',            tagline:"ISB, INSEAD, LBS, Wharton. Target 645–715+.",                       desc:"Accepted by 7,700+ programs across 110+ countries. Live two-way sessions across Quant, Verbal and Data Insights, plus full-length GMAT Focus Edition mocks.", price:'₹34,999', s1:'Live',  s1l:'Two-Way Sessions',    s2:'Focus', s2l:'Edition Mocks' },
   { slug:'ipmat',     short:'IPMAT',            cat:'ug',         tag:'UG Management · IIM',          tagline:"The only direct route to an IIM without CAT.",                     desc:"89 full-length mocks across 12 programmes — IIM Indore, Rohtak, JIPMAT, NPAT, SET, Xaviers, Christ and more.",                                        price:'₹2,499',  s1:'89',   s1l:'Full-Length Mocks',    s2:'12',   s2l:'Programmes Covered' },
-  { slug:'clat',      short:'CLAT / AILET / LNAT', cat:'ug',      tag:'Law Entrance · NLUs + UK',     tagline:"24 NLUs. NLU Delhi. Oxford and UCL.",                              desc:"10 CLAT + 5 AILET + 3 LNAT mocks. 21 printed books. All three exams prepared simultaneously.",                                                         price:'₹1,999',  s1:'18',   s1l:'Full-Length Tests',    s2:'21',   s2l:'Printed Books' },
-  { slug:'cuet',      short:'CUET UG',          cat:'ug',         tag:'University UG · DU · BHU · JNU',tagline:"Replaced boards. Now the only thing that matters for DU.",        desc:"Delhi University, BHU, JNU and 250+ central universities. 40 online mocks across all sections.",                                                       price:'₹999',    s1:'40',   s1l:'Online Mocks',         s2:'250+', s2l:'Universities Accept' },
-  { slug:'pi-wat-gd', short:'PI WAT GD',        cat:'interview',  tag:'Interview Prep · All B-Schools',tagline:"Convert your call. The room is a different exam.",                desc:"Mock PIs, GD simulation, WAT essays and AWT for IIM-A. 10+ B-school formats covered.",                                                               price:'₹5,999',  s1:'10+',  s1l:'B-School Formats',     s2:'5K+',  s2l:'IIM Converts' },
 ]
 
 const FILTERS = [
   { key:'all',       label:'All Programmes' },
   { key:'mba_india', label:'MBA India' },
+  { key:'mba_global', label:'MBA Global' },
   { key:'ug',        label:'Undergraduate' },
-  { key:'interview', label:'Interview Prep' },
 ]
 
-const ACCENT = { mba_india:'#ff5e5f', ug:'#10b981', interview:'#8b5cf6' }
+const ACCENT = { mba_india:'#ff5e5f', mba_global:'#3b82f6', ug:'#10b981' }
 
 export default function CoursesPage() {
   const router = useRouter()
@@ -47,8 +48,8 @@ export default function CoursesPage() {
   return (
     <>
       <Head>
-        <title>Courses — CAT, XAT, SNAP, NMAT, IPMAT, CLAT and more — GRADSKOOL</title>
-        <meta name="description" content="Live two-way MBA and UG entrance preparation. CAT, XAT, SNAP, NMAT, CMAT, MH CET, IPMAT, CLAT, CUET and PI WAT GD. 27 students per cohort." />
+        <title>Courses — CAT, XAT, SNAP, NMAT, MH CET, GMAT, IPMAT — GRADSKOOL</title>
+        <meta name="description" content="Live two-way MBA and UG entrance preparation. CAT, XAT, SNAP, NMAT, MH CET, GMAT and IPMAT. 27 students per cohort." />
       </Head>
 
       <style>{`
