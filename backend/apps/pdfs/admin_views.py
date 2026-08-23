@@ -46,6 +46,10 @@ class AdminPdfSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'description', 'cover_image_url', 'card_label',
             'price_inr', 'is_free', 'page_count', 'status', 'is_published',
             'sort_order', 'exam', 'exam_slug', 'foundation_class', 'fyq_question', 'fyq_category', 'created_at',
+            # Exposed so the new /admin-panel/pdfs/[slug]/edit page can show
+            # "this is an upcoming placeholder" clearly, and so finalize
+            # (below) can correctly clear it once real content is uploaded.
+            'is_upcoming',
         ]
         read_only_fields = ['id', 'slug', 'page_count', 'status', 'created_at']
 
@@ -156,7 +160,14 @@ class AdminPdfFinalizeView(APIView):
         pdf.page_count = page_count
         pdf.status = 'ready'
         pdf.is_published = bool(request.data.get('publish', True))
-        pdf.save(update_fields=['page_count', 'status', 'is_published'])
+        # Was left True forever otherwise — finalize already correctly
+        # moves status from 'upcoming'/'draft' to 'ready', but is_upcoming
+        # is a genuinely separate boolean field (see seed_upcoming_quant_
+        # pdfs) that finalize never touched. A PDF with real pages and
+        # status='ready' should never still show an "Upcoming" badge on
+        # the public library page.
+        pdf.is_upcoming = False
+        pdf.save(update_fields=['page_count', 'status', 'is_published', 'is_upcoming'])
 
         return Response({'saved': True, 'page_count': page_count, 'is_published': pdf.is_published})
 

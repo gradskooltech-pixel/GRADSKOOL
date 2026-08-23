@@ -30,6 +30,15 @@ export function usePdfList(examSlug, fyqOnly, { enabled = true } = {}) {
     if (!enabled) return
     const params = examSlug ? { exam: examSlug } : {}
     if (fyqOnly) params.fyq_only = '1'
+    // page_size=100 added — same real gap as the admin PDF listing page
+    // (pages/admin-panel/pdfs.jsx): the backend paginates at 20/page by
+    // default (shared.pagination.StandardPagination), and this call never
+    // requested more, silently truncating any exam/FYQ list past the
+    // first 20 results. With 34 real CAT Quant FYQ PDFs now existing
+    // (see seed_upcoming_quant_pdfs), this was a real, public-facing bug
+    // — up to 14 purchasable topics could be invisible to actual
+    // students on the library page, not just an admin-panel display gap.
+    params.page_size = 100
     api.get('/pdfs/', { params })
       .then(({ data }) => setPdfs(data.results || data || []))
       .catch(() => setPdfs([]))

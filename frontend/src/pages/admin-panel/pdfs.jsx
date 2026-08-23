@@ -38,7 +38,17 @@ export default function AdminPdfsPage() {
 
   const load = () => {
     setLoading(true)
-    api.get('/pdfs/admin/pdfs/')
+    // Was api.get('/pdfs/admin/pdfs/') with no page_size — the real
+    // backend paginates at 20/page (shared.pagination.StandardPagination),
+    // and this only ever read the first page's results, never fetching
+    // more. With 34 real rows now (1 real PDF + 33 upcoming placeholders,
+    // see seed_upcoming_quant_pdfs), anything past the first 20 by
+    // sort_order/-created_at silently never showed here — which is
+    // exactly what happened to the original Percentages PDF, the oldest
+    // row, once 33 newer ones pushed it past page 1. page_size=100 (the
+    // real max_page_size on the backend) covers this comfortably for the
+    // foreseeable future without needing real multi-page fetching logic.
+    api.get('/pdfs/admin/pdfs/?page_size=100')
       .then(({ data }) => setPdfs(data.results || data || []))
       .catch(() => setPdfs([]))
       .finally(() => setLoading(false))
@@ -110,6 +120,7 @@ export default function AdminPdfsPage() {
                   </button>
                 </td>
                 <td style={{ ...td, textAlign: 'right' }}>
+                  <Link href={`/admin-panel/pdfs/${pdf.slug}/edit`} style={{ ...editLink, marginRight: 12 }}>Edit</Link>
                   <button onClick={() => remove(pdf)} style={dangerBtn}>Delete</button>
                 </td>
               </tr>
@@ -124,6 +135,7 @@ export default function AdminPdfsPage() {
 const th = { padding: '10px 14px', fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700, letterSpacing: '.05em', textTransform: 'uppercase', color: '#666' }
 const td = { padding: '10px 14px', fontFamily: 'var(--font-sans)', fontSize: 13, color: '#0f0f0f' }
 const dangerBtn = { background: 'none', border: '1px solid #eee', borderRadius: 4, padding: '4px 10px', fontFamily: 'var(--font-sans)', fontSize: 12, color: '#b3261e', cursor: 'pointer' }
+const editLink = { display: 'inline-block', border: '1px solid #e8e8e6', borderRadius: 4, padding: '4px 10px', fontFamily: 'var(--font-sans)', fontSize: 12, color: '#0f0f0f', textDecoration: 'none' }
 const pillBtn = (active) => ({
   background: active ? 'rgba(34,197,94,0.12)' : 'rgba(0,0,0,0.06)',
   color: active ? '#16a34a' : '#666',
