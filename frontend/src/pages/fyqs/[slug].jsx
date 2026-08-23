@@ -1,229 +1,256 @@
 /**
- * GRADSKOOL — PDF Bundle Checkout
- * Route: /checkout/pdfs?exam=<examSlug>
+ * GRADSKOOL — FYQ Detail Page
+ * Route: /fyqs/[slug]
  *
- * A real, standalone checkout page for FYQ PDF bundles — replaces the
- * in-page right-hand panel that used to live on /pdfs/exam/[examSlug].
- * Every entry point (the FYQ library page's "Buy in bulk" button, an
- * individual PDF detail page's "Buy in bulk" link, and an individual
- * FYQ question page) now sends people here instead of duplicating the
- * tier/selection/checkout logic in three different places.
- *
- * ?exam=cat scopes the PDF list to that exam's FYQs (matches the real
- * backend restriction — fyq_category=True PDFs only, see apps.pdfs.
- * services.create_pdf_bundle_order). Without ?exam=, defaults to 'cat'
- * since that's the only exam with a confirmed-real FYQ library today —
- * update this default if/when other exams get their own FYQ PDFs.
+ * Same two-column layout pattern as FoundationsClassDetail (video + content
+ * on the left, sticky PDF sidebar on the right) — kept as its own component
+ * rather than reusing that one directly, since the underlying data shape is
+ * different (no scheduled_at/series/duration here, just question_number/topic).
  */
-import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { usePdfList, useCreatePdfBundleOrder, useVerifyPdfPayment, useRazorpay } from '../../hooks/usePdfs'
-import { useAuth } from '../../hooks/useAuth'
+import Link from 'next/link'
 
-// Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly. Kept in sync
-// manually — the real charge is always calculated server-side regardless
-// of what this shows.
-const BUNDLE_TIERS = { 1: 29, 10: 25, 20: 21, 30: 17, 40: 13, 50: 9 }
-const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
 
-export default function PdfBundleCheckout() {
-  const router = useRouter()
-  const examSlug = (router.query.exam || 'cat').toString()
+function getYoutubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
 
-  const { pdfs, isLoading } = usePdfList(examSlug, true, { enabled: router.isReady })
-  const { isLoggedIn, user } = useAuth()
+function htmlExcerpt(html, maxLen = 160) {
+  if (!html) return ''
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  return text.length > maxLen ? text.slice(0, maxLen).trim() + '…' : text
+}
 
-  const [tier, setTier] = useState(null)
-  const [selected, setSelected] = useState(new Set())
-  const [search, setSearch] = useState('')
-  const [checkoutState, setCheckoutState] = useState('idle')
-  const [checkoutError, setCheckoutError] = useState('')
+function VideoEmbed({ url }) {
+  const yt = getYoutubeId(url)
+  if (!yt) return null
+  return (
+    <div style={{ position:'relative', paddingTop:'56.25%', background:'#000', borderRadius:4, overflow:'hidden' }}>
+      <iframe
+        src={`https://www.youtube.com/embed/${yt}?rel=0`}
+        style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none' }}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen title="Solution video"
+      />
+    </div>
+  )
+}
 
-  const { createBundleOrder } = useCreatePdfBundleOrder()
-  const { verify } = useVerifyPdfPayment()
-  const { loadRazorpay } = useRazorpay()
+function PdfCard({ pdf }) {
+  return (
+    <div style={{ border:'1px solid var(--g200)', borderRadius:8, overflow:'hidden', background:'#fff' }}>
+      <div style={{ padding:'22px 18px', background:'#d94f50', textAlign:'center' }}>
+        <div style={{ fontFamily:'var(--font-sans)', fontSize:22, fontWeight:800, letterSpacing:'.04em', color:'#fff' }}>{pdf.card_label || 'PDF'}</div>
+      </div>
+      <div style={{ padding:'16px 18px' }}>
+        <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', marginBottom:6, lineHeight:1.3 }}>{pdf.title}</div>
+        <div style={{ fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)', marginBottom:14 }}>
+          {pdf.is_free ? 'Free — claim with your account' : `₹${Number(pdf.price_inr).toLocaleString('en-IN')}`}
+        </div>
+        <Link href={`/pdfs/${pdf.slug}`}
+          style={{ display:'block', textAlign:'center', fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px', background:'#d94f50', color:'#fff', borderRadius:4, textDecoration:'none' }}>
+          {pdf.is_free ? 'Get free →' : 'View →'}
+        </Link>
+      </div>
+    </div>
+  )
+}
 
-  const toggleSelect = (pdf) => {
-    if (pdf.is_owned) return
-    setSelected(prev => {
-      const next = new Set(prev)
-      if (next.has(pdf.id)) next.delete(pdf.id)
-      else next.add(pdf.id)
-      return next
-    })
+// Scoped to CAT specifically — this page's data (question_to_dict, see
+// backend apps.fyq.views.py) doesn't carry an exam slug the way the PDF
+// library pages do, only a topic/section name. CAT is the only exam
+// confirmed to have a real FYQ PDF library right now (cat-fyqs) — update
+// this if/when other exams get their own.
+// Static card, deliberately independent of whether THIS specific question
+// has a linked PDF (pdf.fyq_question) — that's a separate, per-question
+// admin field that may or may not be set. This card always points to the
+// real CAT FYQs library page instead, matching the blog post's sidebar
+// CTA card styling exactly (black bg, red eyebrow, white serif title).
+function BulkBuyLink() {
+  return (
+    <div style={{ background:'#0f0f0f', borderRadius:4, padding:'2rem', display:'flex', flexDirection:'column', gap:'0.75rem' }}>
+      <p style={{ fontFamily:'var(--font-sans)', fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'#d94f50' }}>
+        More Practice
+      </p>
+      <p style={{ fontFamily:'Georgia, serif', fontSize:'1.2rem', fontWeight:700, color:'#fff', lineHeight:1.25 }}>
+        Explore the Full CAT FYQs Library
+      </p>
+      <p style={{ fontFamily:'Georgia, serif', fontSize:'0.875rem', color:'#999', lineHeight:1.65 }}>
+        50+ topic-wise Future Year Question PDFs, solved and explained by ALP Sir. Buy individually or save up to 69% with a bundle.
+      </p>
+      <Link
+        href="https://www.gradskool.in/pdfs/exam/cat-fyqs"
+        style={{
+          display:'block', background:'#d94f50', color:'#fff', padding:'0.75rem 1rem', borderRadius:3,
+          fontFamily:'var(--font-sans)', fontSize:'0.875rem', fontWeight:700, textDecoration:'none',
+          textAlign:'center', marginTop:'0.25rem',
+        }}
+      >
+        Explore FYQs PDFs →
+      </Link>
+    </div>
+  )
+}
+
+export async function getServerSideProps({ params, req }) {
+  try {
+    const res = await fetch(`${API}/fyq/question/${params.slug}/`)
+    if (!res.ok) return { notFound: true }
+    const q = await res.json()
+    const protocol = req.headers['x-forwarded-proto'] || 'https'
+    const canonicalUrl = `${protocol}://${req.headers.host}/fyqs/${params.slug}`
+    return { props: { q, slug: params.slug, canonicalUrl } }
+  } catch {
+    return { notFound: true }
   }
+}
 
-  const count = selected.size
-  const rate = tier ? BUNDLE_TIERS[tier] : undefined
-  const total = rate ? rate * count : null
-  const atCapacity = tier !== null && count >= tier
+export default function FYQDetail({ q, slug, canonicalUrl }) {
+  const ytId = getYoutubeId(q.youtube_url)
+  const metaDescription = htmlExcerpt(q.long_description) || `Future Year Question ${q.question_number} — ${q.title}, solved by ${q.instructor_name}.`
+  const pdfs = q.pdfs || []
 
-  const handleTierChange = (newTier) => {
-    setTier(newTier)
-    setSelected(new Set())
-  }
-
-  const handleItemClick = (pdf) => {
-    const alreadySelected = selected.has(pdf.id)
-    if (!alreadySelected && atCapacity) return
-    toggleSelect(pdf)
-  }
-
-  const selectableList = pdfs
-    .filter(p => !p.is_owned && !p.is_free)
-    .filter(p => p.title.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => a.title.localeCompare(b.title))
-
-  const startBundleCheckout = async () => {
-    if (!isLoggedIn) {
-      router.push(`/auth/login?redirect=${encodeURIComponent(router.asPath)}`)
-      return
-    }
-    if (count !== tier) return
-
-    const phone = user?.phone
-    if (!phone) {
-      const entered = window.prompt('Enter your phone number to continue:')
-      if (!entered || entered.trim().length < 10) return
-      await runCheckout(entered.trim())
-      return
-    }
-    await runCheckout(phone)
-  }
-
-  const runCheckout = async (phone) => {
-    setCheckoutState('loading')
-    setCheckoutError('')
-
-    const orderResult = await createBundleOrder(Array.from(selected), phone)
-    if (!orderResult.success) {
-      setCheckoutState('error')
-      setCheckoutError(orderResult.error)
-      return
-    }
-
-    let Razorpay
-    try {
-      Razorpay = await loadRazorpay()
-    } catch {
-      setCheckoutState('error')
-      setCheckoutError('Payment gateway unavailable. Please try again.')
-      return
-    }
-
-    const rzp = new Razorpay({
-      ...orderResult.data,
-      handler: async (response) => {
-        await verify(response)
-        setCheckoutState('idle')
-        setSelected(new Set())
-        setTier(null)
-        router.push('/dashboard?purchased=bundle')
-      },
-      modal: { ondismiss: () => setCheckoutState('idle') },
-    })
-
-    rzp.on('payment.failed', (response) => {
-      setCheckoutState('error')
-      setCheckoutError(response.error?.description || 'Payment failed. Please try again.')
-    })
-
-    rzp.open()
-  }
+  const videoSchema = ytId ? {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: q.title,
+    description: metaDescription,
+    thumbnailUrl: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,
+    embedUrl: `https://www.youtube.com/embed/${ytId}`,
+    isFamilyFriendly: true,
+    inLanguage: 'en',
+    publisher: { '@type': 'Organization', name: 'GRADSKOOL', url: 'https://gradskool.in' },
+  } : null
 
   return (
     <>
       <Head>
-        <title>Buy FYQ PDFs in Bulk — GRADSKOOL</title>
-        <meta name="robots" content="noindex" />
+        <title>FYQ {q.question_number} — {q.title} — GRADSKOOL</title>
+        <meta name="description" content={metaDescription} />
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+        <meta property="og:title" content={`FYQ ${q.question_number} — ${q.title} — GRADSKOOL`} />
+        <meta property="og:description" content={metaDescription} />
+        {ytId && <meta property="og:image" content={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} />}
+        {videoSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }} />}
       </Head>
 
       <style>{`
-        .bco-wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
-        .bco-back { font-family:var(--font-sans); font-size:12px; color:var(--g500); text-decoration:none; }
-        .bco-h1 { font-family:var(--font-serif); font-size:clamp(26px,3.5vw,34px); font-weight:400; color:var(--black); margin:14px 0 8px; }
-        .bco-sub { font-family:var(--font-sans); font-size:14px; color:var(--g700); margin-bottom:32px; }
-        .bco-tier-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
-        .bco-tier-btn { font-family:var(--font-sans); font-size:13px; font-weight:600; padding:10px 18px; border-radius:24px; cursor:pointer; border:1.5px solid var(--g300); background:#fff; color:var(--g700); }
-        .bco-tier-btn.active { border:2px solid var(--red); background:var(--red); color:#fff; }
-        .bco-box { border:var(--border); border-radius:var(--radius); background:#fff; }
-        .bco-search { padding:14px 18px; border-bottom:var(--border); }
-        .bco-search input { width:100%; padding:10px 12px; font-family:var(--font-sans); font-size:14px; border:var(--border); border-radius:var(--radius); outline:none; }
-        .bco-list { max-height:420px; overflow-y:auto; }
-        .bco-item { display:flex; align-items:center; gap:12px; padding:13px 18px; cursor:pointer; border-bottom:1px solid var(--g100); }
-        .bco-item:last-child { border-bottom:none; }
-        .bco-item:hover { background:var(--off); }
-        .bco-summary { position:sticky; bottom:0; margin-top:24px; padding:20px 24px; background:var(--off); border:var(--border); border-radius:var(--radius); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+        .pg-wide{max-width:1140px;margin:0 auto;padding:0 40px}
+        @media(max-width:960px){.pg-wide{padding:0 24px}}
+        .layout-grid{max-width:1140px;margin:0 auto;padding:0 40px 48px;display:grid;grid-template-columns:1fr 300px;gap:40px;align-items:start}
+        @media(max-width:960px){.layout-grid{grid-template-columns:1fr;padding:0 24px 40px}}
+        .sidebar-sticky{position:sticky;top:24px;display:flex;flex-direction:column;gap:16px}
+        @media(max-width:960px){.sidebar-sticky{display:none}.mobile-only-pdfs{display:flex!important}}
+        .fyq-body h1,.fyq-body h2,.fyq-body h3{font-family:var(--font-serif);font-weight:400;line-height:1.25;color:var(--black);margin:24px 0 10px}
+        .fyq-body h1{font-size:28px} .fyq-body h2{font-size:22px} .fyq-body h3{font-size:18px}
+        .fyq-body p{font-family:var(--font-body);font-size:16px;line-height:1.9;color:var(--g700);margin-bottom:14px}
+        .fyq-body ul,.fyq-body ol{font-family:var(--font-body);font-size:16px;line-height:1.9;color:var(--g700);margin-bottom:14px;padding-left:24px}
+        .fyq-body li{margin-bottom:5px}
+        .fyq-body blockquote{border-left:3px solid var(--red);padding-left:16px;margin:18px 0;font-style:italic;color:var(--g700)}
+        .fyq-body pre{background:var(--g100);border:1px solid var(--g200);border-radius:3px;padding:12px 16px;font-size:13px;overflow-x:auto;margin-bottom:14px}
+        .fyq-body img{max-width:100%;border-radius:4px;margin:18px 0;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+        .fyq-body a{color:var(--red);border-bottom:1px solid rgba(217,79,80,.3)}
+        .fyq-body strong{font-weight:600;color:var(--black)}
+        .fyq-body u{text-decoration:underline} .fyq-body s{text-decoration:line-through}
+        .fyq-body sub{vertical-align:sub;font-size:.75em} .fyq-body sup{vertical-align:super;font-size:.75em}
       `}</style>
 
-      <div className="bco-wrap">
-        <Link href={`/pdfs/exam/${examSlug}-fyqs`} className="bco-back">← Back to {examSlug.toUpperCase()} FYQ Library</Link>
-        <h1 className="bco-h1">Buy FYQ PDFs in bulk</h1>
-        <p className="bco-sub">Pick a bundle size, then choose exactly that many topics. The more you buy, the less each PDF costs.</p>
+      {/* breadcrumb */}
+      <div style={{ padding:'12px 0', borderBottom:'1px solid var(--g200)', background:'var(--off)' }}>
+        <div className="pg-wide">
+          <div style={{ display:'flex', alignItems:'center', gap:8, fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)' }}>
+            <Link href="/fyqs">FYQs</Link><span>·</span>
+            <span style={{ color:'var(--black)' }}>FYQ {q.question_number}</span>
+          </div>
+        </div>
+      </div>
 
-        <div className="bco-tier-row">
-          {TIER_SIZES.map(t => (
-            <button key={t} className={`bco-tier-btn${tier === t ? ' active' : ''}`} onClick={() => handleTierChange(t)}>
-              Buy {t} — ₹{BUNDLE_TIERS[t]}/PDF
-            </button>
-          ))}
+      {/* header */}
+      <section style={{ padding:'36px 0 24px' }}>
+        <div className="pg-wide">
+          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+            <span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#d94f50' }}>
+              Future Year Question {String(q.question_number).padStart(3,'0')}
+            </span>
+            {q.section_name && (<><span style={{ color:'#d94f50', fontSize:10 }}>·</span><span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#d94f50' }}>{q.section_name}</span></>)}
+            {q.category_name && (<><span style={{ color:'#d94f50', fontSize:10 }}>·</span><span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#d94f50' }}>{q.category_name}</span></>)}
+            {q.topic_name && (<><span style={{ color:'#d94f50', fontSize:10 }}>·</span><span style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#d94f50' }}>{q.topic_name}</span></>)}
+          </div>
+          <h1 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(22px,4vw,36px)', fontWeight:400, lineHeight:1.15, color:'var(--black)', marginBottom:12 }}>{q.title}</h1>
+          <div style={{ display:'flex', alignItems:'center', gap:16, fontFamily:'var(--font-sans)', fontSize:12, color:'var(--g500)', flexWrap:'wrap' }}>
+            <span>{q.instructor_name}</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="layout-grid">
+        <div style={{ display:'flex', flexDirection:'column', gap:28 }}>
+          {q.youtube_url ? (
+            <VideoEmbed url={q.youtube_url} />
+          ) : (
+            <div style={{ padding:'24px', background:'var(--off)', borderRadius:4, textAlign:'center' }}>
+              <p style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>Video solution coming soon.</p>
+            </div>
+          )}
+
+          {(q.prev || q.next) && (
+            <div className="fyq-prevnext">
+              <style>{`
+                .fyq-prevnext { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+                @media(max-width:500px){ .fyq-prevnext{ grid-template-columns:1fr!important; } }
+                .fyq-nav-card { display:flex; flex-direction:column; gap:4px; padding:14px 16px; border:1px solid var(--g200); border-radius:6px; text-decoration:none; background:#fff; transition:transform .15s, box-shadow .15s; }
+                .fyq-nav-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); }
+                .fyq-nav-card.next { text-align:right; align-items:flex-end; }
+                .fyq-nav-label { font-family:var(--font-sans); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--red); }
+                .fyq-nav-title { font-family:var(--font-serif); font-size:14px; color:var(--black); line-height:1.3; }
+              `}</style>
+              {q.prev ? (
+                <Link href={`/fyqs/${q.prev.slug}`} className="fyq-nav-card prev">
+                  <span className="fyq-nav-label">← FYQ {String(q.prev.question_number).padStart(3,'0')}</span>
+                  <span className="fyq-nav-title">{q.prev.title}</span>
+                </Link>
+              ) : <div />}
+              {q.next ? (
+                <Link href={`/fyqs/${q.next.slug}`} className="fyq-nav-card next">
+                  <span className="fyq-nav-label">FYQ {String(q.next.question_number).padStart(3,'0')} →</span>
+                  <span className="fyq-nav-title">{q.next.title}</span>
+                </Link>
+              ) : <div />}
+            </div>
+          )}
+
+          {q.long_description && (
+            <div className="fyq-body" dangerouslySetInnerHTML={{ __html: q.long_description }} />
+          )}
+          {q.notes && (
+            <div className="fyq-body" dangerouslySetInnerHTML={{ __html: q.notes }} />
+          )}
+
+          <div className="mobile-only-pdfs" style={{ display:'none', flexDirection:'column', gap:16 }}>
+            {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} />)}
+            <BulkBuyLink />
+          </div>
         </div>
 
-        {tier !== null && (
-          <div className="bco-box">
-            <div className="bco-search">
-              <input type="text" placeholder="Search topics…" value={search} onChange={e => setSearch(e.target.value)} />
-            </div>
-            <div className="bco-list">
-              {isLoading ? (
-                <p style={{ padding:20, fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>Loading PDFs…</p>
-              ) : selectableList.length === 0 ? (
-                <p style={{ padding:20, fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>
-                  {search ? 'No topics match your search.' : 'Nothing available to bundle right now.'}
-                </p>
-              ) : (
-                selectableList.map(pdf => {
-                  const isSelected = selected.has(pdf.id)
-                  const disabled = !isSelected && atCapacity
-                  return (
-                    <label key={pdf.id} className="bco-item" style={{ opacity: disabled ? 0.4 : 1, cursor: disabled ? 'default' : 'pointer' }}
-                      onClick={(e) => { e.preventDefault(); handleItemClick(pdf) }}>
-                      <input type="checkbox" checked={isSelected} readOnly disabled={disabled} style={{ width:18, height:18, flexShrink:0, accentColor:'var(--red)' }} />
-                      <span style={{ fontFamily:'var(--font-sans)', fontSize:14, color:'var(--black)' }}>{pdf.title}</span>
-                    </label>
-                  )
-                })
-              )}
-            </div>
-          </div>
-        )}
+        <div className="sidebar-sticky">
+          {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} />)}
+          <BulkBuyLink />
+        </div>
+      </div>
 
-        {tier !== null && (
-          <div className="bco-summary">
-            <div>
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g700)', marginBottom:4 }}>{count} of {tier} selected</div>
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:24, color:'var(--black)' }}>
-                ₹{(total ?? rate * tier).toLocaleString('en-IN')} <span style={{ fontSize:12, fontFamily:'var(--font-sans)', color:'var(--g500)', fontWeight:400 }}>(₹{rate}/PDF)</span>
-              </div>
-              {checkoutState === 'error' && (
-                <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', marginTop:6 }}>{checkoutError}</div>
-              )}
-            </div>
-            <button
-              onClick={startBundleCheckout}
-              disabled={count !== tier || checkoutState === 'loading'}
-              style={{
-                fontFamily:'var(--font-sans)', fontSize:14, fontWeight:700, padding:'14px 32px',
-                borderRadius:'var(--radius)', border:'none', cursor: count === tier ? 'pointer' : 'not-allowed',
-                background: count === tier ? 'var(--red)' : 'var(--g300)', color:'#fff',
-              }}
-            >
-              {checkoutState === 'loading' ? 'Preparing checkout…' : `Buy ${tier} PDFs →`}
-            </button>
+      <div style={{ background:'var(--black)', padding:'36px 0' }}>
+        <div className="pg-wide" style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16 }}>
+          <div>
+            <div style={{ fontFamily:'var(--font-sans)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#d94f50', marginBottom:6 }}>More questions</div>
+            <div style={{ fontFamily:'var(--font-serif)', fontSize:20, color:'#fff' }}>Browse the full FYQ bank.</div>
           </div>
-        )}
+          <Link href="/fyqs" style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, padding:'10px 18px', background:'#d94f50', color:'#fff', borderRadius:2, textDecoration:'none' }}>
+            All FYQs →
+          </Link>
+        </div>
       </div>
     </>
   )
