@@ -25,7 +25,16 @@ import { useAuth } from '../../hooks/useAuth'
 // Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly. Kept in sync
 // manually — the real charge is always calculated server-side regardless
 // of what this shows.
-const BUNDLE_TIERS = { 1: 29, 10: 25, 20: 21, 30: 17, 40: 13, 50: 9 }
+// Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly (-₹2/PDF every 5
+// PDFs). Kept in sync manually — the real charge is always calculated
+// server-side regardless of what this shows.
+// Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly. 34 is the real
+// ceiling — the CAT Quant FYQ library has exactly 34 topics total, so
+// "Buy 34" means "buy everything." Its rate (₹13) is deliberately not the
+// straight -₹2/5 continuation from 30 (which would tie its total with
+// the 30-tier) — confirmed with GS to keep "buy everything" a genuinely
+// better total, not an accidental tie.
+const BUNDLE_TIERS = { 1: 29, 5: 27, 10: 25, 15: 23, 20: 21, 25: 19, 30: 17, 34: 13 }
 const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
 
 // Real Q&A content, not filler — the exact shape AI answer engines
@@ -33,7 +42,7 @@ const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
 // cite directly, which is what GS meant by AEO/GEO here specifically.
 const FAQS = [
   { q: 'What are FYQ PDFs?', a: 'FYQ stands for Future Year Question — GRADSKOOL\'s own topic-wise practice sets for CAT, solved and explained by ALP Sir, going beyond what\'s available in official past papers.' },
-  { q: 'How does bundle pricing work?', a: 'Each PDF costs ₹29 on its own. Buying in a bundle of 10, 20, 30, 40, or 50 lowers the per-PDF price to ₹25, ₹21, ₹17, ₹13, or ₹9 respectively. Bundles must be exactly one of these sizes — there is no partial-tier pricing.' },
+  { q: 'How does bundle pricing work?', a: 'Each PDF costs ₹29 on its own. The price per PDF drops by ₹2 for every 5 PDFs in your bundle. The largest bundle, 34 PDFs — every CAT Quant FYQ topic — is priced at ₹13/PDF as a genuine "buy everything" discount.' },
   { q: 'Can I pick which topics I want?', a: 'Yes. After choosing a bundle size, you select exactly that many topics from the full FYQ library — Percentages, Ratios, Time & Work, and more.' },
   { q: 'Do I get access immediately after payment?', a: 'Yes. Once payment is confirmed, every selected PDF becomes available to read in your GRADSKOOL account right away.' },
 ]
@@ -72,7 +81,18 @@ export default function PdfBundleCheckout() {
 
   const handleTierChange = (newTier) => {
     setTier(newTier)
-    setSelected(new Set())
+    // Selecting the top tier (34 — genuinely all real CAT Quant FYQ
+    // topics that exist) skips the "which ones do you want" step
+    // entirely and auto-selects every eligible PDF. Asking someone to
+    // manually check 34 boxes when the only valid answer is "all of
+    // them" is pointless friction — confirmed with GS this is exactly
+    // the intent.
+    if (newTier === Math.max(...TIER_SIZES)) {
+      const allEligible = pdfs.filter(p => !p.is_owned && !p.is_free).map(p => p.id)
+      setSelected(new Set(allEligible))
+    } else {
+      setSelected(new Set())
+    }
   }
 
   const handleItemClick = (pdf) => {
@@ -147,7 +167,7 @@ export default function PdfBundleCheckout() {
     <>
       <PageSEO
         title="Buy CAT FYQ PDFs in Bulk — Save up to 69% | GRADSKOOL"
-        description="Buy GRADSKOOL's CAT Future Year Question (FYQ) PDFs in bulk. Prices drop from ₹29 to ₹9 per PDF as bundle size increases — 1, 10, 20, 30, 40, or 50 PDFs."
+        description="Buy GRADSKOOL's CAT Future Year Question (FYQ) PDFs in bulk. Prices drop from ₹29 to ₹13 per PDF as bundle size increases, up to all 34 CAT Quant FYQ topics."
         canonical={`https://gradskool.in/checkout/pdfs?exam=${examSlug}`}
         breadcrumbs={[{ name:'Home', url:'/' }, { name:'FYQ Library', url:`/pdfs/exam/${examSlug}-fyqs` }, { name:'Buy in Bulk', url:`/checkout/pdfs?exam=${examSlug}` }]}
         schema={[faqSchema(FAQS)]}
@@ -214,7 +234,14 @@ export default function PdfBundleCheckout() {
                     <label key={pdf.id} className="bco-item" style={{ opacity: disabled ? 0.4 : 1, cursor: disabled ? 'default' : 'pointer' }}
                       onClick={(e) => { e.preventDefault(); handleItemClick(pdf) }}>
                       <input type="checkbox" checked={isSelected} readOnly disabled={disabled} style={{ width:18, height:18, flexShrink:0, accentColor:'var(--red)' }} />
-                      <span style={{ fontFamily:'var(--font-sans)', fontSize:14, color:'var(--black)' }}>{pdf.title}</span>
+                      <span style={{ fontFamily:'var(--font-sans)', fontSize:14, color:'var(--black)' }}>
+                        {pdf.title}
+                        {pdf.is_upcoming && (
+                          <span style={{ marginLeft:8, fontSize:10, fontWeight:700, letterSpacing:'.06em', textTransform:'uppercase', color:'#8a8a85', border:'1px solid #d4d4d1', borderRadius:3, padding:'2px 6px' }}>
+                            Upcoming
+                          </span>
+                        )}
+                      </span>
                     </label>
                   )
                 })

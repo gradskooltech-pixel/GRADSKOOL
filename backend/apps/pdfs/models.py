@@ -25,6 +25,14 @@ class Pdf(models.Model):
         ('draft', 'Draft'),            # created, no pages uploaded yet
         ('processing', 'Processing'),  # admin is mid-upload
         ('ready', 'Ready'),            # finalized, page_count set
+        # A genuinely new, distinct status — NOT reusing 'ready' (which
+        # means "finalized, page_count set," which an upcoming placeholder
+        # isn't) and NOT 'draft' (which is correctly invisible in the
+        # public list, defeating the whole point of selling it now).
+        # Purchasable exactly like 'ready' PDFs; content just isn't
+        # uploaded yet. See seed_upcoming_quant_pdfs and the is_upcoming
+        # field below.
+        ('upcoming', 'Upcoming — sellable, content not yet uploaded'),
         ('failed', 'Failed'),
     ]
 
@@ -74,6 +82,14 @@ class Pdf(models.Model):
 
     price_inr        = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     is_free          = models.BooleanField(default=False)
+    # A real Pdf row that can be selected and paid for like any other —
+    # just has no actual file/pages attached yet. Confirmed with GS as
+    # the intended approach specifically so upcoming topics can be
+    # included in a bundle purchase right away, not as a separate
+    # "coming soon" list bolted onto the frontend. Access is granted the
+    # same way a normal purchase is; fulfilment (actually uploading the
+    # PDF pages) happens later, on GS's own timeline.
+    is_upcoming      = models.BooleanField(default=False)
 
     page_count       = models.PositiveIntegerField(default=0)
     status           = models.CharField(max_length=20, choices=STATUS, default='draft')
@@ -175,15 +191,26 @@ class PdfPurchase(models.Model):
 
 # ── BUNDLE PRICING ──────────────────────────────────────────────────────────
 # Fixed tiers only — no arbitrary quantity gets a discount, must match one of
-# these counts exactly. Confirmed with GS: ₹9/PDF is a permanent floor for
-# anything past the 50-tier, not a continuing slide.
+# these counts exactly. Rule: -₹2/PDF for every 5 PDFs, 1/5/10/15/20/25/30
+# steps normally — but the top tier is 34, not 35+, because the CAT Quant
+# FYQ library has exactly 34 real topics total (see
+# seed_upcoming_quant_pdfs's QUANT_TOPICS, sourced directly from
+# apps.tools.models.QATopic's real 34-topic taxonomy). "Buy 34" IS "buy
+# everything" — genuinely no reason for a 35+ tier to exist, since there's
+# nothing beyond 34 to sell. The 34-tier's rate (₹13/PDF) is deliberately
+# NOT the straight-line continuation of the -₹2/5 rule (which would land
+# on ₹15/PDF, making its total identical to the 30-tier's total, ₹510) —
+# confirmed with GS to give the "buy everything" tier a genuinely lower
+# total (₹442) as a real incentive, not an accidental tie.
 BUNDLE_TIERS = {
     1:  29,
+    5:  27,
     10: 25,
+    15: 23,
     20: 21,
+    25: 19,
     30: 17,
-    40: 13,
-    50: 9,
+    34: 13,
 }
 
 

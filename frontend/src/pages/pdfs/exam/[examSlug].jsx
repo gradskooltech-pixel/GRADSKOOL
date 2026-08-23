@@ -134,8 +134,8 @@ function PdfCard({ pdf }) {
   return (
     <Link href={`/pdfs/${pdf.slug}`} className="pdf-card" style={{ textDecoration: 'none' }}>
       <div className="pdf-cover" style={pdf.cover_image_url ? { backgroundImage: `url(${pdf.cover_image_url})` } : undefined}>
-        <span className={`pdf-badge${isFree ? ' free' : ''}`}>
-          {isFree ? 'Free' : `${pdf.page_count || ''} pages`.trim()}
+        <span className={`pdf-badge${isFree ? ' free' : ''}`} style={pdf.is_upcoming ? { background:'#8a8a85' } : undefined}>
+          {pdf.is_upcoming ? 'Upcoming' : isFree ? 'Free' : `${pdf.page_count || ''} pages`.trim()}
         </span>
       </div>
       <div className="pdf-body">
@@ -145,7 +145,10 @@ function PdfCard({ pdf }) {
             {isFree ? 'Free' : `₹${Number(pdf.price_inr).toLocaleString('en-IN')}`}
           </span>
           <span className={`pdf-btn${owned ? ' owned' : ''}`}>
-            {owned ? 'Read →' : isFree ? 'Get Free →' : 'View →'}
+            {/* Upcoming PDFs are still genuinely purchasable — same
+                checkout, same price — the label just sets honest
+                expectations that content isn't uploaded yet. */}
+            {owned ? 'Read →' : pdf.is_upcoming ? 'Reserve now →' : isFree ? 'Get Free →' : 'View →'}
           </span>
         </div>
       </div>

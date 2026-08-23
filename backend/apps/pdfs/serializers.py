@@ -19,6 +19,11 @@ class PdfListSerializer(serializers.ModelSerializer):
             # flag, so the frontend should check the same thing rather
             # than a proxy for it.
             'fyq_category',
+            # So the frontend can show an "Upcoming" badge and still allow
+            # selection in bundle checkout — is_upcoming PDFs are real,
+            # published, purchasable rows (see seed_upcoming_quant_pdfs),
+            # just without actual page content attached yet.
+            'is_upcoming',
         ]
 
     def get_is_owned(self, obj):

@@ -31,7 +31,7 @@ from rest_framework.views import APIView
 # cost every time.
 PREVIEW_CACHE_SECONDS = 6 * 60 * 60   # 6h — not user-specific, safe to hold longer
 PAGE_CACHE_SECONDS = 15 * 60          # 15m — watermark bakes in the user's email,
-                                       # so this is per-user and kept shorter
+# so this is per-user and kept shorter
 
 from .models import Pdf, PdfPage, PdfPurchase
 from .serializers import PdfListSerializer, PdfPurchaseSerializer
@@ -62,7 +62,10 @@ class PdfListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        qs = Pdf.objects.filter(is_published=True, status='ready').select_related(
+        # 'upcoming' included alongside 'ready' — genuinely sellable rows
+        # (see Pdf.STATUS), just without content uploaded yet. Everything
+        # else (draft, processing, failed) correctly stays invisible.
+        qs = Pdf.objects.filter(is_published=True, status__in=['ready', 'upcoming']).select_related(
             'exam', 'foundation_class__series', 'fyq_question'
         )
         exam_slug = self.request.query_params.get('exam')
@@ -79,7 +82,7 @@ class PdfListView(generics.ListAPIView):
                 items = [
                     p for p in items
                     if (p.fyq_question and exam_slug in (p.fyq_question.exams or []))
-                    or (p.fyq_category and p.exam and p.exam.slug == exam_slug)
+                       or (p.fyq_category and p.exam and p.exam.slug == exam_slug)
                 ]
             return items
 
