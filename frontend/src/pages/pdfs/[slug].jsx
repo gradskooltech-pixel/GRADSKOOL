@@ -251,6 +251,24 @@ export default function PdfDetailPage({ initialPdf }) {
               </button>
             )}
           </div>
+
+          {/* Bulk-buy link — only for PDFs the backend actually allows in
+              a bundle (fyq_category=True, see apps.pdfs.services.
+              create_pdf_bundle_order). Links to that exam's FYQ library
+              page rather than duplicating the whole tier/selection UI
+              here — one real bundle picker, not two to keep in sync.
+              Assumes {examSlug}-fyqs as the URL pattern, matching the
+              only one confirmed to exist (cat-fyqs) — if another exam's
+              FYQ library page uses a different slug, update this. */}
+          {!owned && !isFree && pdf.fyq_category && pdf.exam_slug && (
+            <p style={{ fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)', marginTop:10 }}>
+              Need more than one?{' '}
+              <Link href={`/pdfs/exam/${pdf.exam_slug}-fyqs`} style={{ color:'var(--red)', fontWeight:600, textDecoration:'underline' }}>
+                Buy in bulk and save up to 69% →
+              </Link>
+            </p>
+          )}
+
           {state === 'error' && error && <p className="pdfd-error">{error}</p>}
 
           {showPhoneForm && (

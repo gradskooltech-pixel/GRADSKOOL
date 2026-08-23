@@ -11,6 +11,14 @@ class PdfListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'slug', 'description', 'cover_image_url',
             'price_inr', 'is_free', 'page_count', 'exam_slug', 'is_owned',
+            # Added so the frontend (both the library grid and the
+            # individual PDF detail page) can know whether THIS specific
+            # PDF is bundle-eligible, without hardcoding "only on the
+            # cat-fyqs page" logic — the real backend restriction (see
+            # apps.pdfs.services.create_pdf_bundle_order) is this exact
+            # flag, so the frontend should check the same thing rather
+            # than a proxy for it.
+            'fyq_category',
         ]
 
     def get_is_owned(self, obj):
