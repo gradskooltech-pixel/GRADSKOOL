@@ -31,7 +31,7 @@ from rest_framework.views import APIView
 # cost every time.
 PREVIEW_CACHE_SECONDS = 6 * 60 * 60   # 6h — not user-specific, safe to hold longer
 PAGE_CACHE_SECONDS = 15 * 60          # 15m — watermark bakes in the user's email,
-# so this is per-user and kept shorter
+                                       # so this is per-user and kept shorter
 
 from .models import Pdf, PdfPage, PdfPurchase
 from .serializers import PdfListSerializer, PdfPurchaseSerializer
@@ -79,7 +79,7 @@ class PdfListView(generics.ListAPIView):
                 items = [
                     p for p in items
                     if (p.fyq_question and exam_slug in (p.fyq_question.exams or []))
-                       or (p.fyq_category and p.exam and p.exam.slug == exam_slug)
+                    or (p.fyq_category and p.exam and p.exam.slug == exam_slug)
                 ]
             return items
 
@@ -245,6 +245,43 @@ class CreatePdfOrderView(APIView):
             return Response({'error': {'message': str(e)}}, status=400)
         except Exception as e:
             logger.exception(f'PDF order creation failed: {e}')
+            return Response(
+                {'error': {'message': 'Payment gateway error. Please try again.'}}, status=503
+            )
+
+        return Response(order_data, status=201)
+
+
+class CreatePdfBundleOrderView(APIView):
+    """
+    POST /api/v1/pdfs/bundle/order/
+    Body: { "pdf_ids": [1, 2, 3, ...], "phone": "9876543210" }
+
+    Bundle equivalent of CreatePdfOrderView above. tier_count is derived
+    from len(pdf_ids) server-side (see services.create_pdf_bundle_order) —
+    never trust a client-sent price or tier label directly, since that's
+    exactly the kind of value a modified request could tamper with.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        pdf_ids = request.data.get('pdf_ids') or []
+        if not isinstance(pdf_ids, list) or not pdf_ids:
+            return Response({'error': {'message': 'Select at least one PDF.'}}, status=400)
+
+        phone = (request.data.get('phone') or getattr(request.user, 'phone', '') or '').strip()
+        if not phone or len(phone) < 10:
+            return Response({'error': {'message': 'A valid phone number is required.'}}, status=400)
+        if getattr(request.user, 'phone', '') != phone:
+            request.user.phone = phone
+            request.user.save(update_fields=['phone'])
+
+        try:
+            order_data = services.create_pdf_bundle_order(request.user, pdf_ids, phone)
+        except ValueError as e:
+            return Response({'error': {'message': str(e)}}, status=400)
+        except Exception as e:
+            logger.exception(f'PDF bundle order creation failed: {e}')
             return Response(
                 {'error': {'message': 'Payment gateway error. Please try again.'}}, status=503
             )

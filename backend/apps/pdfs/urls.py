@@ -7,6 +7,7 @@ urlpatterns = [
     # ── Public ───────────────────────────────────────────────────────────────
     path('', views.PdfListView.as_view(), name='list'),
     path('my-library/', views.MyPdfLibraryView.as_view(), name='my-library'),
+    path('bundle/order/', views.CreatePdfBundleOrderView.as_view(), name='create-bundle-order'),
     path('verify/', views.VerifyPdfPaymentView.as_view(), name='verify'),
     path('webhook/', views.PdfWebhookView.as_view(), name='webhook'),
 
