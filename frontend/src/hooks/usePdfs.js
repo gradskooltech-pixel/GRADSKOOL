@@ -108,6 +108,34 @@ export function useCreatePdfOrder() {
   return { createOrder, isLoading, error }
 }
 
+// Bundle equivalent of useCreatePdfOrder above — same shape, hits the
+// new POST /pdfs/bundle/order/ endpoint (see backend apps.pdfs.views.
+// CreatePdfBundleOrderView) instead of the per-slug single-PDF one.
+// Reuses useVerifyPdfPayment as-is afterward — that endpoint only checks
+// the three Razorpay response fields against whatever order they match,
+// so it already works for bundle orders with zero changes needed there.
+export function useCreatePdfBundleOrder() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const createBundleOrder = async (pdfIds, phone) => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { data } = await api.post('/pdfs/bundle/order/', { pdf_ids: pdfIds, phone })
+      return { success: true, data }
+    } catch (err) {
+      const msg = err.response?.data?.error?.message || 'Failed to create bundle order.'
+      setError(msg)
+      return { success: false, error: msg }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { createBundleOrder, isLoading, error }
+}
+
 // Free PDFs still require login (enforced server-side) AND a phone number —
 // this is the ONLY way a free PDF's access record ever gets created.
 export function useClaimFreePdf() {
