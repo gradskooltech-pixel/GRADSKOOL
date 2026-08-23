@@ -30,8 +30,18 @@ export async function getStaticProps() {
         const res = await fetch(`${API}/pdfs/?${params.toString()}`)
         if (!res.ok) return 0
         const data = await res.json()
-        const list = data.results || data || []
-        return Array.isArray(list) ? list.length : (data.count ?? 0)
+        // Was: reading list.length after unwrapping data.results — that's
+        // only ONE PAGE's worth (20, the real backend page size — see
+        // shared.pagination.StandardPagination), never the true total.
+        // The Array.isArray(list) check right after was actually a no-op:
+        // data.results is always an array once present, so it always hit
+        // the .length branch and never reached data.count at all, even
+        // though the real total was sitting right there in the same
+        // response the whole time. Same root cause as the exact bug
+        // already fixed in usePdfList/the admin PDF listing (both were
+        // silently capped at 20 results) — this page just computes a
+        // COUNT rather than fetching the list, so it needed its own fix.
+        return typeof data.count === 'number' ? data.count : (Array.isArray(data) ? data.length : (data.results?.length ?? 0))
       } catch { return 0 }
     })
   )
