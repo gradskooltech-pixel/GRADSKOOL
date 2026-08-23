@@ -14,6 +14,7 @@ const COURSES = [
   { slug:'snap',      short:'SNAP',             cat:'mba_india',  tag:'MBA India · Symbiosis',        tagline:"60 questions. 60 minutes. No sectional time limit.",               desc:"SIBM Pune, SCMHRD, SIIB and all 17 Symbiosis institutes. 3 attempts per year.",                                                                        price:'₹2,999',  s1:'20',   s1l:'Full-Length Mocks',    s2:'3',    s2l:'Attempts Per Year' },
   { slug:'nmat',      short:'NMAT',             cat:'mba_india',  tag:'MBA India · NMIMS',            tagline:"3 attempts. No negative marking. Section order choice.",           desc:"NMIMS Mumbai, Hyderabad, Bangalore. No negative marking changes strategy completely.",                                                                    price:'₹3,999',  s1:'10',   s1l:'Full-Length Mocks',    s2:'0',    s2l:'Negative Marking' },
   { slug:'mhcet',     short:'MH CET MBA',       cat:'mba_india',  tag:'MBA Maharashtra',              tagline:"200 questions. 150 minutes. No negative marking.",                 desc:"Fastest route to JBIMS, SIMSREE and KJ Somaiya. Two attempts per year. Maharashtra domicile advantage.",                                             price:'₹7,999',  s1:'200',  s1l:'Questions',            s2:'2',    s2l:'Attempts Per Year' },
+  { slug:'cmat',      short:'CMAT',             cat:'mba_india',  tag:'MBA India · JBIMS',            tagline:"India's best value MBA. ₹5L fees, ₹30L+ placements.",             desc:"JBIMS, SIMSREE, PUMBA and 1,000+ AICTE institutes. Includes Innovation & Entrepreneurship — unique to CMAT.",                                         price:'₹2,999',  s1:'12',   s1l:'Full-Length Mocks',    s2:'15',   s2l:'Sectional Tests' },
   // Added — was completely missing from this list before, despite being
   // a real, live course (pages/courses/gmat.jsx, data/examData.js's
   // GMAT_DATA). Tagline/description/price pulled directly from that real
@@ -48,8 +49,8 @@ export default function CoursesPage() {
   return (
     <>
       <Head>
-        <title>Courses — CAT, XAT, SNAP, NMAT, MH CET, GMAT, IPMAT — GRADSKOOL</title>
-        <meta name="description" content="Live two-way MBA and UG entrance preparation. CAT, XAT, SNAP, NMAT, MH CET, GMAT and IPMAT. 27 students per cohort." />
+        <title>Courses — CAT, XAT, SNAP, NMAT, MH CET, CMAT, GMAT, IPMAT — GRADSKOOL</title>
+        <meta name="description" content="Live two-way MBA and UG entrance preparation. CAT, XAT, SNAP, NMAT, MH CET, CMAT, GMAT and IPMAT. 27 students per cohort." />
       </Head>
 
       <style>{`
