@@ -94,7 +94,6 @@ export default function PdfLibraryByExam({ examSlug, meta }) {
   const rate = BUNDLE_TIERS[count]
   const total = rate ? rate * count : null
 
-  const nextTierUp = TIER_SIZES.find(t => t > count)
   const validSelection = count > 0 && rate !== undefined
 
   const startBundleCheckout = async () => {
@@ -175,7 +174,8 @@ export default function PdfLibraryByExam({ examSlug, meta }) {
         .pdf-eyebrow { font-family:var(--font-sans); font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; margin-bottom:14px; }
         .pdf-h1 { font-family:var(--font-serif); font-size:clamp(28px,4.5vw,42px); font-weight:400; color:var(--black); line-height:1.15; }
         .pdf-back { font-family:var(--font-sans); font-size:12px; color:var(--g500); text-decoration:none; }
-        .pdf-grid { max-width:1200px; margin:0 auto; padding:24px 40px 96px; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:24px; }
+        .pdf-layout { max-width:1200px; margin:0 auto; padding:24px 40px 96px; display:flex; gap:32px; align-items:flex-start; }
+        .pdf-grid { flex:1; display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:24px; }
         .pdf-card { border:var(--border); border-radius:var(--radius); background:#fff; overflow:hidden; transition:box-shadow var(--t), transform var(--t); display:flex; flex-direction:column; }
         .pdf-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
         .pdf-cover { width:100%; aspect-ratio:3/4; background:var(--off) center/cover no-repeat; border-bottom:var(--border); position:relative; }
@@ -192,6 +192,15 @@ export default function PdfLibraryByExam({ examSlug, meta }) {
         .pdf-btn.owned { border-color:var(--black); color:var(--black); }
         .pdf-btn.owned:hover { background:var(--black); color:#fff; }
         .pdf-empty { text-align:center; padding:80px 20px; font-family:var(--font-body); color:var(--g500); }
+        /* Bundle side panel */
+        .bundle-panel { width:300px; flex-shrink:0; position:sticky; top:88px; border:var(--border); border-radius:var(--radius); background:#fff; display:flex; flex-direction:column; max-height:calc(100vh - 120px); }
+        .bundle-panel-head { padding:18px 20px; border-bottom:var(--border); }
+        .bundle-panel-list { overflow-y:auto; flex:1; padding:6px 0; }
+        .bundle-panel-item { display:flex; align-items:center; gap:10px; padding:11px 20px; cursor:pointer; }
+        .bundle-panel-item:hover { background:var(--off); }
+        .bundle-panel-item.disabled { opacity:.45; cursor:default; }
+        .bundle-panel-foot { padding:16px 20px; border-top:var(--border); background:var(--off); }
+        @media(max-width:900px){ .pdf-layout{flex-direction:column} .bundle-panel{position:static; width:100%; max-height:none} }
       `}</style>
 
       <div className="pdf-hero">
@@ -212,106 +221,201 @@ export default function PdfLibraryByExam({ examSlug, meta }) {
               color: bundleMode ? '#fff' : 'var(--red)',
             }}
           >
-            {bundleMode ? '✕ Cancel bundle selection' : '📦 Buy in bulk — save up to 69%'}
+            {bundleMode ? '✕ Close bundle picker' : '📦 Buy in bulk — save up to 69%'}
           </button>
         )}
       </div>
 
-      {bundleMode && (
-        <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 40px 24px' }}>
-          <div style={{ background:'var(--off)', border:'var(--border)', borderRadius:'var(--radius)', padding:'16px 20px', fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g700)' }}>
-            Pick PDFs below — bundles only work at exact sizes: {TIER_SIZES.map(t => `${t}`).join(', ')}.
-            Price per PDF drops the bigger your bundle: {TIER_SIZES.map(t => `${t}=₹${BUNDLE_TIERS[t]}`).join(' · ')}.
-          </div>
-        </div>
-      )}
-
       {isLoading ? (
-        <div className="pdf-grid">{Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}</div>
+        <div className="pdf-layout"><div className="pdf-grid">{Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}</div></div>
       ) : pdfs.length === 0 ? (
         <p className="pdf-empty">No {meta.label} PDFs yet — check back soon.</p>
       ) : (
-        <div className="pdf-grid" style={bundleMode ? { paddingBottom: 140 } : undefined}>
-          {pdfs.map((pdf) => (
-            <PdfCard
-              key={pdf.id}
-              pdf={pdf}
-              isLoggedIn={isLoggedIn}
-              bundleMode={bundleMode}
-              isSelected={selected.has(pdf.id)}
-              onToggleSelect={toggleSelect}
-            />
-          ))}
-        </div>
-      )}
-
-      {bundleMode && count > 0 && (
-        <div style={{
-          position:'fixed', bottom:0, left:0, right:0, zIndex:200,
-          background:'#fff', borderTop:'var(--border)', boxShadow:'0 -4px 24px rgba(0,0,0,.08)',
-          padding:'16px 40px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:16,
-        }}>
-          <div>
-            <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g700)' }}>
-              {count} PDF{count !== 1 ? 's' : ''} selected
-              {!validSelection && (
-                <span style={{ color:'var(--red)', fontWeight:600 }}>
-                  {' '}— not a valid bundle size{nextTierUp ? `, select ${nextTierUp - count} more to reach ${nextTierUp}` : ''}
-                </span>
-              )}
-            </div>
-            {validSelection && (
-              <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)' }}>
-                ₹{total.toLocaleString('en-IN')} <span style={{ fontSize:13, fontFamily:'var(--font-sans)', color:'var(--g500)', fontWeight:400 }}>(₹{rate}/PDF)</span>
-              </div>
-            )}
-            {checkoutState === 'error' && (
-              <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', marginTop:4 }}>{checkoutError}</div>
-            )}
+        <div className="pdf-layout">
+          <div className="pdf-grid">
+            {pdfs.map((pdf) => <PdfCard key={pdf.id} pdf={pdf} />)}
           </div>
-          <button
-            onClick={startBundleCheckout}
-            disabled={!validSelection || checkoutState === 'loading'}
-            style={{
-              fontFamily:'var(--font-sans)', fontSize:14, fontWeight:700, padding:'13px 30px',
-              borderRadius:'var(--radius)', border:'none', cursor: validSelection ? 'pointer' : 'not-allowed',
-              background: validSelection ? 'var(--red)' : 'var(--g300)', color:'#fff',
-            }}
-          >
-            {checkoutState === 'loading' ? 'Preparing checkout…' : `Buy ${count > 0 ? count : ''} PDFs →`}
-          </button>
+
+          {bundleMode && (
+            <BundlePanel
+              pdfs={pdfs}
+              selected={selected}
+              onToggleSelect={toggleSelect}
+              onResetSelection={() => setSelected(new Set())}
+              count={count}
+              rate={rate}
+              total={total}
+              checkoutState={checkoutState}
+              checkoutError={checkoutError}
+              onCheckout={startBundleCheckout}
+            />
+          )}
         </div>
       )}
     </>
   )
 }
 
-function PdfCard({ pdf, bundleMode, isSelected, onToggleSelect }) {
+// Genuinely separate right-hand panel — replaces the earlier approach of
+// checkbox overlays on every card plus a bottom sticky bar, which read as
+// fussy. Selection now lives entirely in one scrollable list; the main
+// grid on the left is untouched, browsable exactly like before.
+function BundlePanel({ pdfs, selected, onToggleSelect, onResetSelection, count, rate, total, checkoutState, checkoutError, onCheckout }) {
+  // Tier-first flow: pick a size, THEN pick exactly that many PDFs — no
+  // more "you're between two valid sizes" friction, since the count is
+  // locked in from the start. null = no tier chosen yet, dropdown stays
+  // closed/disabled.
+  const [tier, setTier] = useState(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [search, setSearch] = useState('')
+
+  const selectableList = pdfs
+    .filter(p => !p.is_owned && !p.is_free)
+    .filter(p => p.title.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => a.title.localeCompare(b.title))
+
+  const atCapacity = tier !== null && count >= tier
+
+  const handleTierChange = (newTier) => {
+    setTier(newTier)
+    onResetSelection()
+    setDropdownOpen(true)
+  }
+
+  const handleItemClick = (pdf) => {
+    const alreadySelected = selected.has(pdf.id)
+    // Once at capacity, only allow un-selecting — never silently ignore a
+    // click, since a click that visibly does nothing reads as broken.
+    if (!alreadySelected && atCapacity) return
+    onToggleSelect(pdf)
+  }
+
+  return (
+    <div className="bundle-panel">
+      <div className="bundle-panel-head">
+        <div style={{ fontFamily:'var(--font-serif)', fontSize:16, color:'var(--black)', marginBottom:14 }}>Build your bundle</div>
+
+        {/* Step 1 — pick a size. Plain buttons, not a dropdown itself, so
+            all six options are visible at once with no extra click. */}
+        <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+          {TIER_SIZES.map(t => (
+            <button
+              key={t}
+              onClick={() => handleTierChange(t)}
+              style={{
+                fontFamily:'var(--font-sans)', fontSize:12.5, fontWeight:600, padding:'7px 13px',
+                borderRadius:20, cursor:'pointer',
+                border: tier === t ? '2px solid var(--red)' : '1.5px solid var(--g300)',
+                background: tier === t ? 'var(--red)' : '#fff',
+                color: tier === t ? '#fff' : 'var(--g700)',
+              }}
+            >
+              Buy {t} — ₹{BUNDLE_TIERS[t]}/PDF
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Step 2 — only appears once a size is picked. A closed dropdown
+          rather than the list sitting permanently open, since with 50
+          real items an always-open list is exactly the clutter GS asked
+          to avoid — this keeps the panel short until you actually want
+          to browse and pick. */}
+      {tier !== null && (
+        <div style={{ padding:'14px 20px', borderTop:'var(--border)' }}>
+          <button
+            onClick={() => setDropdownOpen(v => !v)}
+            style={{
+              width:'100%', display:'flex', alignItems:'center', justifyContent:'space-between',
+              fontFamily:'var(--font-sans)', fontSize:13, padding:'10px 14px', cursor:'pointer',
+              border:'var(--border)', borderRadius:'var(--radius)', background: dropdownOpen ? 'var(--off)' : '#fff',
+              color:'var(--black)',
+            }}
+          >
+            <span>{count === 0 ? `Choose ${tier} PDF${tier !== 1 ? 's' : ''}` : `${count} of ${tier} selected`}</span>
+            <span style={{ color:'var(--g500)', transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition:'transform .15s' }}>▾</span>
+          </button>
+
+          {dropdownOpen && (
+            <div style={{ border:'var(--border)', borderTop:'none', borderRadius:'0 0 var(--radius) var(--radius)', maxHeight:320, display:'flex', flexDirection:'column' }}>
+              <div style={{ padding:'10px 14px', borderBottom:'var(--border)' }}>
+                <input
+                  type="text"
+                  placeholder="Search topics…"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  style={{ width:'100%', padding:'8px 10px', fontFamily:'var(--font-sans)', fontSize:13, border:'var(--border)', borderRadius:'var(--radius)', outline:'none' }}
+                />
+              </div>
+              <div style={{ overflowY:'auto', flex:1 }}>
+                {selectableList.length === 0 ? (
+                  <p style={{ padding:'16px', fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g500)' }}>
+                    {search ? 'No topics match your search.' : 'Everything here is already free or owned.'}
+                  </p>
+                ) : (
+                  selectableList.map(pdf => {
+                    const isSelected = selected.has(pdf.id)
+                    const disabled = !isSelected && atCapacity
+                    return (
+                      <label
+                        key={pdf.id}
+                        className="bundle-panel-item"
+                        style={{ opacity: disabled ? 0.4 : 1, cursor: disabled ? 'default' : 'pointer' }}
+                        onClick={(e) => { e.preventDefault(); handleItemClick(pdf) }}
+                      >
+                        <input type="checkbox" checked={isSelected} readOnly disabled={disabled} style={{ width:17, height:17, flexShrink:0, accentColor:'var(--red)' }} />
+                        <span style={{ fontFamily:'var(--font-sans)', fontSize:13.5, color:'var(--black)', lineHeight:1.4 }}>{pdf.title}</span>
+                      </label>
+                    )
+                  })
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="bundle-panel-foot">
+        {tier === null ? (
+          <p style={{ fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)' }}>Pick a bundle size above to get started.</p>
+        ) : (
+          <>
+            <div style={{ fontFamily:'var(--font-sans)', fontSize:13, color:'var(--g700)', marginBottom:6 }}>
+              {count} of {tier} selected
+            </div>
+            <div style={{ fontFamily:'var(--font-serif)', fontSize:22, color:'var(--black)', marginBottom:12 }}>
+              ₹{total ? total.toLocaleString('en-IN') : (rate * tier).toLocaleString('en-IN')} <span style={{ fontSize:12, fontFamily:'var(--font-sans)', color:'var(--g500)', fontWeight:400 }}>(₹{rate ?? BUNDLE_TIERS[tier]}/PDF)</span>
+            </div>
+            {checkoutState === 'error' && (
+              <div style={{ fontFamily:'var(--font-sans)', fontSize:12, color:'var(--red)', marginBottom:10 }}>{checkoutError}</div>
+            )}
+            <button
+              onClick={onCheckout}
+              disabled={count !== tier || checkoutState === 'loading'}
+              style={{
+                width:'100%', fontFamily:'var(--font-sans)', fontSize:14, fontWeight:700, padding:'12px 20px',
+                borderRadius:'var(--radius)', border:'none', cursor: count === tier ? 'pointer' : 'not-allowed',
+                background: count === tier ? 'var(--red)' : 'var(--g300)', color:'#fff',
+              }}
+            >
+              {checkoutState === 'loading' ? 'Preparing checkout…' : `Buy ${tier} PDFs →`}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function PdfCard({ pdf }) {
   const isFree = pdf.is_free
   const owned = pdf.is_owned
-
-  // In bundle mode, an already-owned or free PDF can't be added to a
-  // bundle (nothing to buy) — shown greyed out with an explanatory badge
-  // rather than just silently doing nothing on click.
-  const selectable = bundleMode && !owned && !isFree
-
-  const cardContent = (
-    <>
+  return (
+    <Link href={`/pdfs/${pdf.slug}`} className="pdf-card" style={{ textDecoration: 'none' }}>
       <div className="pdf-cover" style={pdf.cover_image_url ? { backgroundImage: `url(${pdf.cover_image_url})` } : undefined}>
         <span className={`pdf-badge${isFree ? ' free' : ''}`}>
           {isFree ? 'Free' : `${pdf.page_count || ''} pages`.trim()}
         </span>
-        {bundleMode && selectable && (
-          <span style={{
-            position:'absolute', top:10, left:10, width:24, height:24, borderRadius:5,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            border: isSelected ? 'none' : '2px solid #fff',
-            background: isSelected ? 'var(--red)' : 'rgba(0,0,0,.35)',
-            color:'#fff', fontSize:14, fontWeight:700,
-          }}>
-            {isSelected ? '✓' : ''}
-          </span>
-        )}
       </div>
       <div className="pdf-body">
         <h3 className="pdf-title">{pdf.title}</h3>
@@ -319,41 +423,11 @@ function PdfCard({ pdf, bundleMode, isSelected, onToggleSelect }) {
           <span className={`pdf-price${isFree ? ' free' : ''}`}>
             {isFree ? 'Free' : `₹${Number(pdf.price_inr).toLocaleString('en-IN')}`}
           </span>
-          {!bundleMode && (
-            <span className={`pdf-btn${owned ? ' owned' : ''}`}>
-              {owned ? 'Read →' : isFree ? 'Get Free →' : 'View →'}
-            </span>
-          )}
-          {bundleMode && !selectable && (
-            <span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>
-              {owned ? 'Already owned' : 'Free — no bundle needed'}
-            </span>
-          )}
+          <span className={`pdf-btn${owned ? ' owned' : ''}`}>
+            {owned ? 'Read →' : isFree ? 'Get Free →' : 'View →'}
+          </span>
         </div>
       </div>
-    </>
-  )
-
-  if (bundleMode) {
-    return (
-      <div
-        onClick={() => selectable && onToggleSelect(pdf)}
-        className="pdf-card"
-        style={{
-          cursor: selectable ? 'pointer' : 'default',
-          opacity: selectable ? 1 : 0.55,
-          outline: isSelected ? '2px solid var(--red)' : 'none',
-          outlineOffset: -2,
-        }}
-      >
-        {cardContent}
-      </div>
-    )
-  }
-
-  return (
-    <Link href={`/pdfs/${pdf.slug}`} className="pdf-card" style={{ textDecoration: 'none' }}>
-      {cardContent}
     </Link>
   )
 }
