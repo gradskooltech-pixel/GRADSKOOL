@@ -259,11 +259,14 @@ export default function PdfDetailPage({ initialPdf }) {
               here — one real bundle picker, not two to keep in sync.
               Assumes {examSlug}-fyqs as the URL pattern, matching the
               only one confirmed to exist (cat-fyqs) — if another exam's
-              FYQ library page uses a different slug, update this. */}
+              FYQ library page uses a different slug, update this.
+              Now links to the dedicated /checkout/pdfs page rather than
+              the library page — same real checkout flow every entry
+              point uses. */}
           {!owned && !isFree && pdf.fyq_category && pdf.exam_slug && (
             <p style={{ fontFamily:'var(--font-sans)', fontSize:12.5, color:'var(--g500)', marginTop:10 }}>
               Need more than one?{' '}
-              <Link href={`/pdfs/exam/${pdf.exam_slug}-fyqs`} style={{ color:'var(--red)', fontWeight:600, textDecoration:'underline' }}>
+              <Link href={`/checkout/pdfs?exam=${pdf.exam_slug}`} style={{ color:'var(--red)', fontWeight:600, textDecoration:'underline' }}>
                 Buy in bulk and save up to 69% →
               </Link>
             </p>

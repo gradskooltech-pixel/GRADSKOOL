@@ -59,6 +59,25 @@ function PdfCard({ pdf }) {
   )
 }
 
+// Scoped to CAT specifically — this page's data (question_to_dict, see
+// backend apps.fyq.views.py) doesn't carry an exam slug the way the PDF
+// library pages do, only a topic/section name. CAT is the only exam
+// confirmed to have a real FYQ PDF library right now (cat-fyqs) — update
+// this if/when other exams get their own.
+function BulkBuyLink() {
+  return (
+    <Link
+      href="/checkout/pdfs?exam=cat"
+      style={{
+        display:'block', textAlign:'center', fontFamily:'var(--font-sans)', fontSize:12.5, fontWeight:600,
+        padding:'11px', border:'2px solid #d94f50', color:'#d94f50', borderRadius:4, textDecoration:'none',
+      }}
+    >
+      📦 Buy in bulk — save up to 69% →
+    </Link>
+  )
+}
+
 export async function getServerSideProps({ params, req }) {
   try {
     const res = await fetch(`${API}/fyq/question/${params.slug}/`)
@@ -196,6 +215,7 @@ export default function FYQDetail({ q, slug, canonicalUrl }) {
           {pdfs.length > 0 && (
             <div className="mobile-only-pdfs" style={{ display:'none', flexDirection:'column', gap:16 }}>
               {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} />)}
+              <BulkBuyLink />
             </div>
           )}
         </div>
@@ -203,6 +223,7 @@ export default function FYQDetail({ q, slug, canonicalUrl }) {
         {pdfs.length > 0 && (
           <div className="sidebar-sticky">
             {pdfs.map(pdf => <PdfCard key={pdf.id} pdf={pdf} />)}
+            <BulkBuyLink />
           </div>
         )}
       </div>

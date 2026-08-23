@@ -648,8 +648,8 @@ export const CMAT_DATA = {
   tagline:'Crack JBIMS. India\'s best value-for-money MBA.',
   description:'Common Management Admission Test — conducted by NTA for 1,000+ AICTE-approved MBA institutes. Primary gateway to JBIMS, SIMSREE, PUMBA — among India\'s best value-for-money MBA colleges.',
   badge:'Enrolments Open',
-  enrolPrice:'2,999',
-  enrolNote:'With Interview Prep: ₹4,999',
+  enrolPrice:'4,999',
+  enrolNote:'With Mocks: ₹6,999',
   enrolFeatures:['Live two-way CMAT sessions','All 5 sections — full coverage','12 Full-Length CMAT Mocks','15 Sectional Tests','60 Area-wise Tests','Post-test analysis every mock','Recorded session access'],
   heroStats:[['12','Full-Length CMAT Mocks'],['15','Sectional Tests'],['100+','Hours Live Teaching'],['27','Students Per Cohort']],
   overview_cards:[
@@ -692,8 +692,8 @@ export const CMAT_DATA = {
   ],
   howSteps:HOW_STEPS_DEFAULT,
   plans:[
-    {featured:true,badge:'Live Programme',name:'CMAT Live + Mocks',price:'2,999',note:'Live sessions + 12 CMAT mocks + 15 sectional + 60 area-wise',features:[{t:'Live two-way CMAT sessions with ALP',ok:true},{t:'All 5 sections — full coverage',ok:true},{t:'Innovation & Entrepreneurship module',ok:true},{t:'12 Full-Length CMAT Mocks',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'Interview Prep',ok:false}]},
-    {featured:false,badge:'With Interview',name:'CMAT Live + Mocks + Interview',price:'4,999',note:'Live + mocks + JBIMS / SIMSREE GD-PI preparation',features:[{t:'Live two-way CMAT sessions',ok:true},{t:'12 Full-Length CMAT Mocks',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'JBIMS / SIMSREE GD-PI preparation',ok:true},{t:'WAT essay writing',ok:true}]},
+    {featured:true,badge:'Live Programme',name:'CMAT Live + Mocks',price:'4,999',note:'Live sessions + 12 CMAT mocks + 15 sectional + 60 area-wise',features:[{t:'Live two-way CMAT sessions with ALP',ok:true},{t:'All 5 sections — full coverage',ok:true},{t:'Innovation & Entrepreneurship module',ok:true},{t:'12 Full-Length CMAT Mocks',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'Interview Prep',ok:false}]},
+    {featured:false,badge:'With Interview',name:'CMAT Live + Mocks + Interview',price:'6,999',note:'Live + 12 CMAT mocks + JBIMS / SIMSREE GD-PI preparation',features:[{t:'Live two-way CMAT sessions',ok:true},{t:'12 Full-Length CMAT Mocks',ok:true},{t:'Post-test strategic analysis',ok:true},{t:'JBIMS / SIMSREE GD-PI preparation',ok:true},{t:'WAT essay writing',ok:true}]},
   ],
   colleges:[{
     label:'Top CMAT-Accepting Colleges',
