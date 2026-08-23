@@ -87,6 +87,20 @@ export default function PdfBundleCheckout() {
   const { pdfs, isLoading } = usePdfList(examSlug, true, { enabled: router.isReady })
   const { isLoggedIn, user } = useAuth()
 
+  // How many PDFs are actually possible to buy right now — a tier
+  // someone can never reach (because they already own enough of the
+  // library that fewer than that many unowned PDFs remain) shouldn't be
+  // offered as a real button at all. Confirmed with GS: hide the tier
+  // entirely rather than silently redefining "34" to mean "however many
+  // are left" — that would be quietly changing what the button promises.
+  const buyableCount = pdfs.filter(p => !p.is_owned && !p.is_free).length
+  // While still loading, pdfs is empty and buyableCount is 0 — showing
+  // every tier during that brief window (rather than filtering against a
+  // count that hasn't arrived yet) avoids every button flashing
+  // hidden→visible on first paint. Once loaded, only tiers that are
+  // actually reachable given what's left to buy are shown.
+  const availableTierSizes = isLoading ? TIER_SIZES : TIER_SIZES.filter(t => t <= buyableCount)
+
   const [tier, setTier] = useState(null)
   const [selected, setSelected] = useState(new Set())
   const [search, setSearch] = useState('')
@@ -114,13 +128,14 @@ export default function PdfBundleCheckout() {
 
   const handleTierChange = (newTier) => {
     setTier(newTier)
-    // Selecting the top tier (34 — genuinely all real CAT Quant FYQ
-    // topics that exist) skips the "which ones do you want" step
-    // entirely and auto-selects every eligible PDF. Asking someone to
-    // manually check 34 boxes when the only valid answer is "all of
-    // them" is pointless friction — confirmed with GS this is exactly
-    // the intent.
-    if (newTier === Math.max(...TIER_SIZES)) {
+    // Selecting the highest currently-AVAILABLE tier (not always 34 —
+    // see availableTierSizes above, which hides 34 once even one PDF is
+    // owned) auto-selects every eligible PDF, skipping the "which ones"
+    // step entirely. Using Math.max(...availableTierSizes) rather than a
+    // hardcoded 34 matters specifically once ownership has shrunk what's
+    // actually buyable — the "select everything" tier should always mean
+    // whatever the current top button really represents.
+    if (newTier === Math.max(...availableTierSizes)) {
       const allEligible = pdfs.filter(p => !p.is_owned && !p.is_free).map(p => p.id)
       setSelected(new Set(allEligible))
     } else {
@@ -253,7 +268,7 @@ export default function PdfBundleCheckout() {
         <p className="bco-sub">Pick a bundle size, then choose exactly that many topics. The more you buy, the less each PDF costs.</p>
 
         <div className="bco-tier-row">
-          {TIER_SIZES.map(t => (
+          {availableTierSizes.map(t => (
             <button key={t} className={`bco-tier-btn${tier === t ? ' active' : ''}`} onClick={() => handleTierChange(t)}>
               Buy {t} — ₹{BUNDLE_TIERS[t]}/PDF
             </button>
@@ -262,15 +277,19 @@ export default function PdfBundleCheckout() {
 
         {tier !== null && (
           <div className="bco-box">
-            {/* When the top tier (34 = everything) is selected, this
-                confirms it up front — no need to scroll through 34
-                checked rows just to verify nothing's wrong. Genuinely
-                helps once all 34 real topics exist (currently only 1 —
-                seed_upcoming_quant_pdfs hasn't been run in production
-                yet), not just a cosmetic addition. */}
-            {tier === Math.max(...TIER_SIZES) && (
+            {/* Confirms "you've selected everything currently buyable" up
+                front — no need to scroll through a long checked list to
+                verify nothing's wrong. Uses availableTierSizes' real max,
+                not a hardcoded 34, and the wording itself accounts for
+                already-owned PDFs rather than always claiming "all 34" —
+                someone who owns 1 and selects the top tier (33) has
+                genuinely selected everything THEY can buy, which isn't
+                the same claim as "all 34 exist and are yours now." */}
+            {tier === Math.max(...availableTierSizes) && (
               <div style={{ padding:'14px 18px', background:'#f0f9f4', borderBottom:'var(--border)', fontFamily:'var(--font-sans)', fontSize:13, color:'#166534', fontWeight:600 }}>
-                ✓ All {tier} CAT Quant FYQ topics selected — nothing more to choose.
+                ✓ {buyableCount < TIER_SIZES[TIER_SIZES.length - 1]
+                  ? `All ${tier} remaining topics selected — you already own the rest.`
+                  : `All ${tier} CAT Quant FYQ topics selected — nothing more to choose.`}
               </div>
             )}
             <div className="bco-search">
