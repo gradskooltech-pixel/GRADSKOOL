@@ -346,6 +346,7 @@ function Inner() {
             ['🏆 Leaderboard',   '/dashboard/leaderboard'],
             ['📊 Mock Scores',    '/dashboard/mock-scores'],
             ['🧪 My Mocks',       '/dashboard/mocks'],
+            ['📄 My PDFs',        '/dashboard/pdfs'],
           ].map(([label, href]) => (
             <Link key={href} href={href}
               style={{ fontFamily: 'var(--font-sans)', fontSize: '0.78rem', padding: '0.5rem 0.875rem', background: C.white, border: '1px solid ' + C.border, borderRadius: '6px', textDecoration: 'none', color: C.black }}>

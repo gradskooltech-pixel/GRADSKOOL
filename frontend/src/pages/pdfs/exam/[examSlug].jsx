@@ -24,6 +24,7 @@
  * logic. This page just links out now.
  */
 import Link from 'next/link'
+import { useState } from 'react'
 import PageSEO from '../../../components/seo/PageSEO'
 import { usePdfList } from '../../../hooks/usePdfs'
 import { useAuth } from '../../../hooks/useAuth'
@@ -59,6 +60,20 @@ export async function getStaticProps({ params }) {
 export default function PdfLibraryByExam({ examSlug, meta }) {
   const { pdfs, isLoading } = usePdfList(meta?.fetchExam, meta?.fyqOnly, { enabled: !!meta })
   const { isLoggedIn } = useAuth()
+
+  // Genuinely useful once someone owns even 1 of 34 PDFs — otherwise it's
+  // buried alphabetically among everything else, and finding "what did I
+  // already buy" means scanning every card. Owned-first sort makes it
+  // visible without scrolling by default; the toggle lets it be isolated
+  // completely. Only shown at all when logged in — is_owned is always
+  // false for a logged-out visitor (see PdfListSerializer.get_is_owned),
+  // so the toggle would be pointless noise otherwise.
+  const [showOwnedOnly, setShowOwnedOnly] = useState(false)
+  const ownedCount = pdfs.filter(p => p.is_owned).length
+
+  const visiblePdfs = (showOwnedOnly ? pdfs.filter(p => p.is_owned) : pdfs)
+    .slice()
+    .sort((a, b) => (b.is_owned === true) - (a.is_owned === true))
 
   return (
     <>
@@ -113,15 +128,44 @@ export default function PdfLibraryByExam({ examSlug, meta }) {
             📦 Buy in bulk — save up to 69%
           </Link>
         )}
+
+        {/* Only shown once there's something real to filter — a
+            logged-out visitor's is_owned is always false (see
+            PdfListSerializer.get_is_owned), and an empty toggle would
+            just be confusing noise. */}
+        {isLoggedIn && ownedCount > 0 && (
+          <div style={{ marginTop:16, display:'flex', justifyContent:'center', gap:8 }}>
+            <button
+              onClick={() => setShowOwnedOnly(false)}
+              style={{
+                fontFamily:'var(--font-sans)', fontSize:12.5, fontWeight:600, padding:'6px 14px',
+                borderRadius:20, cursor:'pointer', border: !showOwnedOnly ? '2px solid var(--black)' : '1.5px solid var(--g300)',
+                background: !showOwnedOnly ? 'var(--black)' : '#fff', color: !showOwnedOnly ? '#fff' : 'var(--g700)',
+              }}
+            >
+              All {meta.label} PDFs
+            </button>
+            <button
+              onClick={() => setShowOwnedOnly(true)}
+              style={{
+                fontFamily:'var(--font-sans)', fontSize:12.5, fontWeight:600, padding:'6px 14px',
+                borderRadius:20, cursor:'pointer', border: showOwnedOnly ? '2px solid var(--black)' : '1.5px solid var(--g300)',
+                background: showOwnedOnly ? 'var(--black)' : '#fff', color: showOwnedOnly ? '#fff' : 'var(--g700)',
+              }}
+            >
+              ✓ Owned ({ownedCount})
+            </button>
+          </div>
+        )}
       </div>
 
       {isLoading ? (
         <div className="pdf-grid">{Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}</div>
-      ) : pdfs.length === 0 ? (
-        <p className="pdf-empty">No {meta.label} PDFs yet — check back soon.</p>
+      ) : visiblePdfs.length === 0 ? (
+        <p className="pdf-empty">{showOwnedOnly ? "You don't own any of these yet." : `No ${meta.label} PDFs yet — check back soon.`}</p>
       ) : (
         <div className="pdf-grid">
-          {pdfs.map((pdf) => <PdfCard key={pdf.id} pdf={pdf} />)}
+          {visiblePdfs.map((pdf) => <PdfCard key={pdf.id} pdf={pdf} />)}
         </div>
       )}
     </>
@@ -132,10 +176,13 @@ function PdfCard({ pdf }) {
   const isFree = pdf.is_free
   const owned = pdf.is_owned
   return (
-    <Link href={`/pdfs/${pdf.slug}`} className="pdf-card" style={{ textDecoration: 'none' }}>
+    <Link href={`/pdfs/${pdf.slug}`} className="pdf-card" style={{ textDecoration: 'none', ...(owned ? { borderColor:'#22c55e' } : {}) }}>
       <div className="pdf-cover" style={pdf.cover_image_url ? { backgroundImage: `url(${pdf.cover_image_url})` } : undefined}>
-        <span className={`pdf-badge${isFree ? ' free' : ''}`} style={pdf.is_upcoming ? { background:'#8a8a85' } : undefined}>
-          {pdf.is_upcoming ? 'Upcoming' : isFree ? 'Free' : `${pdf.page_count || ''} pages`.trim()}
+        {/* Owned takes priority over every other badge state — the most
+            useful thing to know about a card you already have access to
+            isn't its page count or price, it's that you own it. */}
+        <span className={`pdf-badge${isFree ? ' free' : ''}`} style={owned ? { background:'#22c55e' } : pdf.is_upcoming ? { background:'#8a8a85' } : undefined}>
+          {owned ? '✓ Owned' : pdf.is_upcoming ? 'Upcoming' : isFree ? 'Free' : `${pdf.page_count || ''} pages`.trim()}
         </span>
       </div>
       <div className="pdf-body">
