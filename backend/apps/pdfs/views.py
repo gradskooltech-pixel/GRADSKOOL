@@ -15,6 +15,7 @@ POST /api/v1/pdfs/{slug}/create-order/      → Create a Razorpay order for this
 import logging
 
 from django.core.cache import cache
+from django.db import transaction
 from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework import generics, serializers
@@ -383,10 +384,35 @@ class VerifyPdfPaymentSerializer(serializers.Serializer):
 
 
 class VerifyPdfPaymentView(APIView):
-    """Secondary, client-side check — used only to show the success screen
-    immediately while the webhook (source of truth) finishes processing."""
+    """
+    Client-side payment confirmation. Originally "secondary" — only showed
+    a success screen while the real webhook (PdfWebhookView) did the
+    actual activation. Changed to genuinely activate here too: GS does
+    not control the Razorpay account this project uses, so a second
+    webhook URL (needed alongside .../payments/webhook/ — see
+    PdfWebhookView's own docstring) can't actually be registered. Without
+    this fix, every PDF/bundle purchase would complete payment
+    successfully but never grant access — confirmed as a real, live
+    failure (see conversation: student paid ₹510 for a 30-PDF bundle,
+    Razorpay showed the payment as successful, but no PdfPurchase rows
+    were ever created because nothing ever told the backend the payment
+    happened).
+
+    This is genuinely safe to activate from, not a workaround that skips
+    verification: razorpay_signature is real cryptographic proof from
+    Razorpay's own servers (verify_payment_signature checks it against
+    RAZORPAY_KEY_SECRET, which only Razorpay and this backend know) — the
+    exact same trust mechanism the webhook itself relies on, just
+    delivered through the browser's checkout-success callback instead of
+    a server-to-server call. If Razorpay's webhook infrastructure IS
+    fixed later, both paths safely co-exist: mark_paid() on both models is
+    already idempotent (checks status=='paid' before doing anything), so
+    whichever path reaches a given order first does the real work, and
+    the other is a safe no-op.
+    """
     permission_classes = [IsAuthenticated]
 
+    @transaction.atomic
     def post(self, request):
         serializer = VerifyPdfPaymentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -398,11 +424,29 @@ class VerifyPdfPaymentView(APIView):
         if not is_valid:
             return Response({'error': {'message': 'Payment signature verification failed.'}}, status=400)
 
+        order_id = d['razorpay_order_id']
+
+        # Try single-PDF purchase first, then bundle — an order_id only
+        # ever belongs to one or the other (see create_pdf_order and
+        # create_pdf_bundle_order, which each generate their own).
         try:
-            purchase = PdfPurchase.objects.get(razorpay_order_id=d['razorpay_order_id'], user=request.user)
+            purchase = PdfPurchase.objects.select_for_update().get(razorpay_order_id=order_id, user=request.user)
+            if purchase.status != 'paid':
+                purchase.mark_paid(d['razorpay_payment_id'], d['razorpay_signature'])
             return Response({'verified': True, 'pdf_slug': purchase.pdf.slug})
         except PdfPurchase.DoesNotExist:
-            return Response({'verified': True})
+            pass
+
+        from .models import PdfBundlePurchase
+        try:
+            bundle = PdfBundlePurchase.objects.select_for_update().get(razorpay_order_id=order_id, user=request.user)
+            if bundle.status != 'paid':
+                bundle.mark_paid(d['razorpay_payment_id'], d['razorpay_signature'])
+            return Response({'verified': True, 'bundle_id': bundle.id, 'tier_count': bundle.tier_count})
+        except PdfBundlePurchase.DoesNotExist:
+            pass
+
+        return Response({'error': {'message': 'No matching order found for this payment.'}}, status=404)
 
 
 class PdfWebhookView(APIView):
