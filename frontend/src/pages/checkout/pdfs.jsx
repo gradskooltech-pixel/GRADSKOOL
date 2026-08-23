@@ -38,6 +38,36 @@ import { useAuth } from '../../hooks/useAuth'
 // 30-tier's total (both ₹510) — confirmed with GS as an accepted
 // consequence of applying the rule uniformly, not a bug.
 const BUNDLE_TIERS = { 1: 29, 5: 27, 10: 25, 15: 23, 20: 21, 25: 19, 30: 17, 34: 15 }
+
+// Real CAT Quant category groupings — matches GS's own actual topic tool
+// exactly (Number System, Algebra, Arithmetic, Geometry, PnC &
+// Probability), same source as apps.pdfs.management.commands.
+// seed_upcoming_quant_pdfs's QUANT_TOPICS. Matched against each PDF's
+// title with the " — CAT FYQs" suffix stripped, since that's the real,
+// consistent naming pattern the seed command uses. A topic that doesn't
+// match anything here (shouldn't happen for real CAT Quant PDFs, but a
+// genuinely different exam's FYQ PDF could show up if ?exam= is ever
+// something other than cat) falls into a plain "Other" group rather than
+// being silently dropped.
+const TOPIC_CATEGORIES = [
+  { name: 'Number System', topics: ['Base System', 'Classification of Numbers', 'Divisibility Rules', 'Factors and Multiples', 'HCF and LCM', 'Remainders'] },
+  { name: 'Algebra', topics: ['Diophantine Equations', 'Functions', 'Inequalities', 'Linear Equations', 'Logarithms', 'Maxima and Minima', 'Modulus', 'Polynomials', 'Quadratic Equations', 'Sequences and Series', 'Surds & Indices'] },
+  { name: 'Arithmetic', topics: ['Averages', 'Mixture & Alligations', 'Percentages', 'Profit, Loss & Discount', 'Ratio & Proportion', 'Simple & Compound Interest', 'Time & Work', 'Time, Speed & Distance'] },
+  { name: 'Geometry', topics: ['Circles', 'Coordinate Geometry', 'Lines and Angles', 'Mensuration', 'Polygons', 'Quadrilaterals', 'Triangles'] },
+  { name: 'PnC & Probability', topics: ['Permutation and Combination', 'Probability'] },
+]
+
+function topicCategoryFor(pdfTitle) {
+  // Matches both the em-dash the seed command uses ("Time and Work —
+  // CAT FYQs") AND a plain hyphen — the one real, pre-existing PDF
+  // (Percentages) genuinely uses "Percentages - CAT FYQs" with a regular
+  // hyphen, not an em-dash. Confirmed by testing this function against
+  // all 34 real titles directly before shipping — the em-dash-only
+  // version silently mismatched Percentages into "Other."
+  const bare = pdfTitle.replace(/\s*[-—]\s*CAT FYQs\s*$/i, '').trim()
+  const found = TOPIC_CATEGORIES.find(cat => cat.topics.includes(bare))
+  return found ? found.name : 'Other'
+}
 const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
 
 // Real Q&A content, not filler — the exact shape AI answer engines
@@ -108,6 +138,19 @@ export default function PdfBundleCheckout() {
     .filter(p => !p.is_owned && !p.is_free)
     .filter(p => p.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => a.title.localeCompare(b.title))
+
+  // Grouped by real CAT Quant category (Number System, Algebra, etc.) —
+  // TOPIC_CATEGORIES' own order preserved (not alphabetical by group
+  // name), matching the order GS's real topic tool itself uses. Empty
+  // groups (e.g. every topic in a category already owned, or filtered
+  // out by search) are skipped entirely rather than shown as empty
+  // headers.
+  const groupedList = [...TOPIC_CATEGORIES.map(c => c.name), 'Other']
+    .map(catName => ({
+      name: catName,
+      items: selectableList.filter(pdf => topicCategoryFor(pdf.title) === catName),
+    }))
+    .filter(group => group.items.length > 0)
 
   const startBundleCheckout = async () => {
     if (!isLoggedIn) {
@@ -219,6 +262,17 @@ export default function PdfBundleCheckout() {
 
         {tier !== null && (
           <div className="bco-box">
+            {/* When the top tier (34 = everything) is selected, this
+                confirms it up front — no need to scroll through 34
+                checked rows just to verify nothing's wrong. Genuinely
+                helps once all 34 real topics exist (currently only 1 —
+                seed_upcoming_quant_pdfs hasn't been run in production
+                yet), not just a cosmetic addition. */}
+            {tier === Math.max(...TIER_SIZES) && (
+              <div style={{ padding:'14px 18px', background:'#f0f9f4', borderBottom:'var(--border)', fontFamily:'var(--font-sans)', fontSize:13, color:'#166534', fontWeight:600 }}>
+                ✓ All {tier} CAT Quant FYQ topics selected — nothing more to choose.
+              </div>
+            )}
             <div className="bco-search">
               <input type="text" placeholder="Search topics…" value={search} onChange={e => setSearch(e.target.value)} />
             </div>
@@ -230,24 +284,35 @@ export default function PdfBundleCheckout() {
                   {search ? 'No topics match your search.' : 'Nothing available to bundle right now.'}
                 </p>
               ) : (
-                selectableList.map(pdf => {
-                  const isSelected = selected.has(pdf.id)
-                  const disabled = !isSelected && atCapacity
-                  return (
-                    <label key={pdf.id} className="bco-item" style={{ opacity: disabled ? 0.4 : 1, cursor: disabled ? 'default' : 'pointer' }}
-                      onClick={(e) => { e.preventDefault(); handleItemClick(pdf) }}>
-                      <input type="checkbox" checked={isSelected} readOnly disabled={disabled} style={{ width:18, height:18, flexShrink:0, accentColor:'var(--red)' }} />
-                      <span style={{ fontFamily:'var(--font-sans)', fontSize:14, color:'var(--black)' }}>
-                        {pdf.title}
-                        {pdf.is_upcoming && (
-                          <span style={{ marginLeft:8, fontSize:10, fontWeight:700, letterSpacing:'.06em', textTransform:'uppercase', color:'#8a8a85', border:'1px solid #d4d4d1', borderRadius:3, padding:'2px 6px' }}>
-                            Upcoming
+                groupedList.map(group => (
+                  <div key={group.name}>
+                    {/* Sticky within the scrollable list so the category
+                        stays visible while scrolling through its items —
+                        matters once a group has 8+ topics (Algebra,
+                        Arithmetic) and you've scrolled past the header. */}
+                    <div style={{ position:'sticky', top:0, zIndex:1, padding:'10px 18px', background:'var(--off)', borderBottom:'1px solid var(--g100)', fontFamily:'var(--font-sans)', fontSize:11, fontWeight:700, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--g500)' }}>
+                      {group.name} <span style={{ fontWeight:400, textTransform:'none', letterSpacing:'normal' }}>({group.items.length})</span>
+                    </div>
+                    {group.items.map(pdf => {
+                      const isSelected = selected.has(pdf.id)
+                      const disabled = !isSelected && atCapacity
+                      return (
+                        <label key={pdf.id} className="bco-item" style={{ opacity: disabled ? 0.4 : 1, cursor: disabled ? 'default' : 'pointer' }}
+                          onClick={(e) => { e.preventDefault(); handleItemClick(pdf) }}>
+                          <input type="checkbox" checked={isSelected} readOnly disabled={disabled} style={{ width:18, height:18, flexShrink:0, accentColor:'var(--red)' }} />
+                          <span style={{ fontFamily:'var(--font-sans)', fontSize:14, color:'var(--black)' }}>
+                            {pdf.title}
+                            {pdf.is_upcoming && (
+                              <span style={{ marginLeft:8, fontSize:10, fontWeight:700, letterSpacing:'.06em', textTransform:'uppercase', color:'#8a8a85', border:'1px solid #d4d4d1', borderRadius:3, padding:'2px 6px' }}>
+                                Upcoming
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
-                    </label>
-                  )
-                })
+                        </label>
+                      )
+                    })}
+                  </div>
+                ))
               )}
             </div>
           </div>
