@@ -25,16 +25,19 @@ import { useAuth } from '../../hooks/useAuth'
 // Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly. Kept in sync
 // manually — the real charge is always calculated server-side regardless
 // of what this shows.
-// Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly (-₹2/PDF every 5
-// PDFs). Kept in sync manually — the real charge is always calculated
-// server-side regardless of what this shows.
 // Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly. 34 is the real
 // ceiling — the CAT Quant FYQ library has exactly 34 topics total, so
-// "Buy 34" means "buy everything." Its rate (₹13) is deliberately not the
-// straight -₹2/5 continuation from 30 (which would tie its total with
-// the 30-tier) — confirmed with GS to keep "buy everything" a genuinely
-// better total, not an accidental tie.
-const BUNDLE_TIERS = { 1: 29, 5: 27, 10: 25, 15: 23, 20: 21, 25: 19, 30: 17, 34: 13 }
+// "Buy 34" means "buy everything." Its rate (₹15) is the straight -₹2/5
+// continuation from 30, which does make its total identical to the
+// 30-tier's total (both ₹510) — confirmed with GS as an accepted
+// consequence of applying the rule uniformly, not a bug.
+// Mirrors backend apps.pdfs.models.BUNDLE_TIERS exactly. 34 is the real
+// ceiling — the CAT Quant FYQ library has exactly 34 topics total, so
+// "Buy 34" means "buy everything." Its rate (₹15) is the straight -₹2/5
+// continuation from 30, which does make its total identical to the
+// 30-tier's total (both ₹510) — confirmed with GS as an accepted
+// consequence of applying the rule uniformly, not a bug.
+const BUNDLE_TIERS = { 1: 29, 5: 27, 10: 25, 15: 23, 20: 21, 25: 19, 30: 17, 34: 15 }
 const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
 
 // Real Q&A content, not filler — the exact shape AI answer engines
@@ -42,7 +45,7 @@ const TIER_SIZES = Object.keys(BUNDLE_TIERS).map(Number).sort((a, b) => a - b)
 // cite directly, which is what GS meant by AEO/GEO here specifically.
 const FAQS = [
   { q: 'What are FYQ PDFs?', a: 'FYQ stands for Future Year Question — GRADSKOOL\'s own topic-wise practice sets for CAT, solved and explained by ALP Sir, going beyond what\'s available in official past papers.' },
-  { q: 'How does bundle pricing work?', a: 'Each PDF costs ₹29 on its own. The price per PDF drops by ₹2 for every 5 PDFs in your bundle. The largest bundle, 34 PDFs — every CAT Quant FYQ topic — is priced at ₹13/PDF as a genuine "buy everything" discount.' },
+  { q: 'How does bundle pricing work?', a: 'Each PDF costs ₹29 on its own. The price per PDF drops by ₹2 for every 5 PDFs in your bundle — down to ₹15/PDF for all 34 CAT Quant FYQ topics.' },
   { q: 'Can I pick which topics I want?', a: 'Yes. After choosing a bundle size, you select exactly that many topics from the full FYQ library — Percentages, Ratios, Time & Work, and more.' },
   { q: 'Do I get access immediately after payment?', a: 'Yes. Once payment is confirmed, every selected PDF becomes available to read in your GRADSKOOL account right away.' },
 ]
@@ -167,7 +170,7 @@ export default function PdfBundleCheckout() {
     <>
       <PageSEO
         title="Buy CAT FYQ PDFs in Bulk — Save up to 69% | GRADSKOOL"
-        description="Buy GRADSKOOL's CAT Future Year Question (FYQ) PDFs in bulk. Prices drop from ₹29 to ₹13 per PDF as bundle size increases, up to all 34 CAT Quant FYQ topics."
+        description="Buy GRADSKOOL's CAT Future Year Question (FYQ) PDFs in bulk. Prices drop from ₹29 to ₹15 per PDF as bundle size increases, up to all 34 CAT Quant FYQ topics."
         canonical={`https://gradskool.in/checkout/pdfs?exam=${examSlug}`}
         breadcrumbs={[{ name:'Home', url:'/' }, { name:'FYQ Library', url:`/pdfs/exam/${examSlug}-fyqs` }, { name:'Buy in Bulk', url:`/checkout/pdfs?exam=${examSlug}` }]}
         schema={[faqSchema(FAQS)]}
@@ -286,7 +289,7 @@ export default function PdfBundleCheckout() {
             <li>Topic-wise, not exam-wise — practice exactly what you're weak on</li>
             <li>Every question solved and explained by ALP Sir</li>
             <li>Read directly in your GRADSKOOL account, no downloads needed</li>
-            <li>Cheaper per PDF the larger your bundle — down to ₹9/PDF at 50</li>
+            <li>Cheaper per PDF the larger your bundle — down to ₹15/PDF for all 34</li>
             <li>Instant access the moment payment is confirmed</li>
             <li>Same content used inside GRADSKOOL's live cohorts</li>
           </ul>

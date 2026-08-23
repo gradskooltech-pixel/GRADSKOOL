@@ -194,14 +194,14 @@ class PdfPurchase(models.Model):
 # these counts exactly. Rule: -₹2/PDF for every 5 PDFs, 1/5/10/15/20/25/30
 # steps normally — but the top tier is 34, not 35+, because the CAT Quant
 # FYQ library has exactly 34 real topics total (see
-# seed_upcoming_quant_pdfs's QUANT_TOPICS, sourced directly from
-# apps.tools.models.QATopic's real 34-topic taxonomy). "Buy 34" IS "buy
-# everything" — genuinely no reason for a 35+ tier to exist, since there's
-# nothing beyond 34 to sell. The 34-tier's rate (₹13/PDF) is deliberately
-# NOT the straight-line continuation of the -₹2/5 rule (which would land
-# on ₹15/PDF, making its total identical to the 30-tier's total, ₹510) —
-# confirmed with GS to give the "buy everything" tier a genuinely lower
-# total (₹442) as a real incentive, not an accidental tie.
+# seed_upcoming_quant_pdfs's QUANT_TOPICS, sourced directly from GS's own
+# confirmed real topic list). "Buy 34" IS "buy everything" — genuinely no
+# reason for a 35+ tier to exist, since there's nothing beyond 34 to sell.
+# The 34-tier's rate is the straight -₹2/5 continuation from 30 (₹17 → ₹15)
+# — this DOES make its total identical to the 30-tier's total (both
+# ₹510). Flagged explicitly to GS, who confirmed ₹15/PDF anyway rather
+# than a deliberately-lower rate — the tie is a known, accepted
+# consequence of applying the rule uniformly, not an oversight.
 BUNDLE_TIERS = {
     1:  29,
     5:  27,
@@ -210,7 +210,7 @@ BUNDLE_TIERS = {
     20: 21,
     25: 19,
     30: 17,
-    34: 13,
+    34: 15,
 }
 
 
