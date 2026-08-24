@@ -35,41 +35,6 @@ export default function PdfReaderPage() {
 
   const { src, isLoading: pageLoading, error: pageError } = usePdfPageImage(slug, sessionReady ? pageNum : null)
 
-  // Mouse-wheel / trackpad scroll advances pages, matching the ask —
-  // "scroll and change pages" — while keeping the underlying one-page-
-  // per-request architecture completely intact (see this file's own top
-  // comment: every page is watermarked server-side per fetch, this isn't
-  // a client-side document someone can scroll through freely). A small
-  // deadzone + cooldown stops one scroll gesture from firing multiple
-  // page changes, and scrolling is ignored while the current page image
-  // is still loading, so a slow connection can't queue up several page
-  // jumps from one motion.
-  const wheelAccum = useRef(0)
-  const wheelCooldown = useRef(false)
-  const pageCountRef = useRef(1)
-  useEffect(() => { pageCountRef.current = pdf?.page_count || 1 })
-
-  const handleWheel = useCallback((e) => {
-    if (pageLoading || wheelCooldown.current) return
-    wheelAccum.current += e.deltaY
-    const THRESHOLD = 120 // roughly one trackpad "notch" or mouse-wheel click
-    if (Math.abs(wheelAccum.current) < THRESHOLD) return
-
-    const direction = wheelAccum.current > 0 ? 1 : -1
-    wheelAccum.current = 0
-    wheelCooldown.current = true
-    setTimeout(() => { wheelCooldown.current = false }, 350)
-
-    setPageNum((p) => Math.min(pageCountRef.current, Math.max(1, p + direction)))
-  }, [pageLoading])
-
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    el.addEventListener('wheel', handleWheel, { passive: true })
-    return () => el.removeEventListener('wheel', handleWheel)
-  }, [handleWheel])
-
   // Prefetches the next page's image in the background while the current
   // one is being read, so scrolling forward feels instant instead of
   // showing "Loading page…" every single time. Plain in-memory cache
@@ -110,7 +75,11 @@ export default function PdfReaderPage() {
         .pdfr-nav { display:flex; align-items:center; gap:14px; font-family:var(--font-sans); font-size:13px; }
         .pdfr-nav button { border:2px solid var(--g300); background:#fff; border-radius:var(--radius); padding:6px 14px; cursor:pointer; font-family:var(--font-sans); font-size:13px; color:var(--black); }
         .pdfr-nav button:disabled { opacity:.4; cursor:not-allowed; }
-        .pdfr-stage { min-height:calc(100vh - 60px); display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; background:var(--off); }
+        .pdfr-stage { height:calc(100vh - 180px); overflow-y:scroll; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; background:var(--off); scrollbar-width:auto; scrollbar-color:var(--g300) var(--off); }
+        .pdfr-stage::-webkit-scrollbar { width:12px; }
+        .pdfr-stage::-webkit-scrollbar-track { background:var(--off); }
+        .pdfr-stage::-webkit-scrollbar-thumb { background:var(--g300); border-radius:6px; border:3px solid var(--off); }
+        .pdfr-stage::-webkit-scrollbar-thumb:hover { background:var(--g500); }
         .pdfr-page-wrap { max-width:820px; width:100%; user-select:none; -webkit-touch-callout:none; }
         .pdfr-page-img { width:100%; height:auto; display:block; border:var(--border); border-radius:4px; background:#fff; pointer-events:none; }
         .pdfr-page-loading { aspect-ratio:1/1.414; background:#fff; border:var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-sans); font-size:13px; color:var(--g500); }
@@ -125,7 +94,6 @@ export default function PdfReaderPage() {
             ← {pdf.title}
           </Link>
           <div className="pdfr-nav">
-            <span style={{ color:'var(--g500)', fontSize:11.5 }} title="Scroll anywhere on the page to move between pages">🖱️ scroll to flip pages</span>
             <button onClick={goPrev} disabled={pageNum <= 1}>← Prev</button>
             <span>Page {pageNum} of {pageCount}</span>
             <button onClick={goNext} disabled={pageNum >= pageCount}>Next →</button>
