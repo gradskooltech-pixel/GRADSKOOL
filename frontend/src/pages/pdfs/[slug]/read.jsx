@@ -70,12 +70,12 @@ export default function PdfReaderPage() {
       </Head>
 
       <style>{`
-        .pdfr-bar { position:sticky; top:0; z-index:50; background:#fff; border-bottom:var(--border); display:flex; align-items:center; justify-content:space-between; padding:12px 24px; }
+        .pdfr-bar { position:sticky; top:0; z-index:50; background:#fff; border-bottom:var(--border); display:flex; align-items:center; justify-content:space-between; padding:12px 24px; height:60px; }
         .pdfr-title { font-family:var(--font-serif); font-size:15px; color:var(--black); }
         .pdfr-nav { display:flex; align-items:center; gap:14px; font-family:var(--font-sans); font-size:13px; }
         .pdfr-nav button { border:2px solid var(--g300); background:#fff; border-radius:var(--radius); padding:6px 14px; cursor:pointer; font-family:var(--font-sans); font-size:13px; color:var(--black); }
         .pdfr-nav button:disabled { opacity:.4; cursor:not-allowed; }
-        .pdfr-stage { height:calc(100vh - 180px); overflow-y:scroll; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; background:var(--off); scrollbar-width:auto; scrollbar-color:var(--g300) var(--off); }
+        .pdfr-stage { height:calc(100vh - 60px); overflow-y:scroll; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; background:var(--off); scrollbar-width:auto; scrollbar-color:var(--g300) var(--off); }
         .pdfr-stage::-webkit-scrollbar { width:12px; }
         .pdfr-stage::-webkit-scrollbar-track { background:var(--off); }
         .pdfr-stage::-webkit-scrollbar-thumb { background:var(--g300); border-radius:6px; border:3px solid var(--off); }
@@ -147,3 +147,19 @@ const styles = {
     fontFamily: 'var(--font-body)', color: 'var(--g500)',
   },
 }
+
+// Real root cause of the "scrolling doesn't work" bug: this route isn't
+// in _app.jsx's BARE_PREFIXES list, so it was getting wrapped in the
+// normal site chrome — <div style={{display:'flex',flexDirection:
+// 'column',minHeight:'100vh'}}><Navbar/><div style={{flex:1}}>...
+// </div><Footer/></div>. .pdfr-stage's own height:calc(100vh-180px) was
+// structurally correct and DID scroll internally — verified directly —
+// but the outer wrapper's Footer (rendered below the flex child) pushed
+// the WHOLE PAGE taller than the viewport too, creating a second, outer
+// page-level scrollbar that visually dominated and made the inner one
+// easy to miss/ignore. getLayout is Next.js's real, supported way to opt
+// a specific page out of the shared Navbar/Footer chrome entirely (same
+// mechanism _app.jsx already uses for BARE_PREFIXES) — this makes
+// .pdfr-stage's 100vh math correct against the true, unencumbered
+// viewport, with no outer page scroll competing with it.
+PdfReaderPage.getLayout = (page) => page
