@@ -20,6 +20,7 @@ from .services import (
     create_razorpay_order,
     verify_payment_signature,
     process_webhook,
+    _handle_payment_captured,
 )
 
 logger = logging.getLogger(__name__)
@@ -106,9 +107,29 @@ class VerifyPaymentView(APIView):
     """
     POST /api/v1/payments/verify/
 
-    Verifies client-side signature. Returns success/failure.
-    Does NOT activate enrollment (webhook does that).
-    Used to show the success screen immediately while webhook processes.
+    Verifies client-side signature AND activates the enrollment directly
+    — changed from the original "webhook does that" design. GS does not
+    control the Razorpay account this project uses, so the second webhook
+    URL RazorpayWebhookView needs can't actually be registered — every
+    course payment was completing successfully on Razorpay's own side
+    while silently never reaching this backend at all, since the webhook
+    that's supposed to report it never fires. Confirmed as a real, live
+    failure (see: a SNAP+NMAT bundle payment that showed captured on
+    Razorpay but never appeared as an Order here) — same root cause
+    already fixed for PDF purchases (see apps.pdfs.views.
+    VerifyPdfPaymentView's own docstring for the full story).
+
+    Genuinely safe to activate from here, not a shortcut that skips
+    verification: razorpay_signature is real cryptographic proof from
+    Razorpay's own servers (verify_payment_signature checks it against
+    RAZORPAY_KEY_SECRET, known only to Razorpay and this backend) — the
+    same trust mechanism the webhook itself relies on, just delivered via
+    the browser's checkout-success callback instead of a server-to-server
+    call. Calls the REAL webhook logic directly (_handle_payment_captured)
+    rather than reimplementing it, so this can never drift out of sync
+    with what the webhook actually does — and _handle_payment_captured is
+    already idempotent (checks order.status=='paid' first), so if the
+    webhook DOES ever get fixed, both paths safely co-exist.
     """
     permission_classes = [IsAuthenticated]
 
@@ -129,20 +150,29 @@ class VerifyPaymentView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Find the order for the response
         try:
             order = Order.objects.get(
                 razorpay_order_id=d['razorpay_order_id'],
                 user=request.user
             )
-            return Response({
-                'verified': True,
-                'order_id': order.id,
-                'plan_name': order.plan.name,
-                'exam_slug': order.plan.exam.slug,
-            })
         except Order.DoesNotExist:
             return Response({'verified': True})
+
+        if order.status != 'paid':
+            _handle_payment_captured({
+                'order_id': d['razorpay_order_id'],
+                'id': d['razorpay_payment_id'],
+                'method': '',
+                'signature': d['razorpay_signature'],
+            })
+            order.refresh_from_db()
+
+        return Response({
+            'verified': True,
+            'order_id': order.id,
+            'plan_name': order.plan.name,
+            'exam_slug': order.plan.exam.slug,
+        })
 
 
 class RazorpayWebhookView(APIView):
