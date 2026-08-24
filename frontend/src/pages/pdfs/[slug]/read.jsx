@@ -7,12 +7,13 @@
  * re-checked on every single page fetch, not just once here. This page's
  * own login/ownership gate is UX only; the real boundary lives server-side.
  */
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
 import { usePdfDetail, usePdfPageImage } from '../../../hooks/usePdfs'
 import { useAuth } from '../../../hooks/useAuth'
+import api from '../../../lib/api'
 import { usePdfProtection, PdfBlurOverlay } from '../../../components/pdfs/PdfProtection'
 
 export default function PdfReaderPage() {
@@ -33,6 +34,59 @@ export default function PdfReaderPage() {
   }, [sessionReady, isLoggedIn, slug, router, router.isReady])
 
   const { src, isLoading: pageLoading, error: pageError } = usePdfPageImage(slug, sessionReady ? pageNum : null)
+
+  // Mouse-wheel / trackpad scroll advances pages, matching the ask —
+  // "scroll and change pages" — while keeping the underlying one-page-
+  // per-request architecture completely intact (see this file's own top
+  // comment: every page is watermarked server-side per fetch, this isn't
+  // a client-side document someone can scroll through freely). A small
+  // deadzone + cooldown stops one scroll gesture from firing multiple
+  // page changes, and scrolling is ignored while the current page image
+  // is still loading, so a slow connection can't queue up several page
+  // jumps from one motion.
+  const wheelAccum = useRef(0)
+  const wheelCooldown = useRef(false)
+  const pageCountRef = useRef(1)
+  useEffect(() => { pageCountRef.current = pdf?.page_count || 1 })
+
+  const handleWheel = useCallback((e) => {
+    if (pageLoading || wheelCooldown.current) return
+    wheelAccum.current += e.deltaY
+    const THRESHOLD = 120 // roughly one trackpad "notch" or mouse-wheel click
+    if (Math.abs(wheelAccum.current) < THRESHOLD) return
+
+    const direction = wheelAccum.current > 0 ? 1 : -1
+    wheelAccum.current = 0
+    wheelCooldown.current = true
+    setTimeout(() => { wheelCooldown.current = false }, 350)
+
+    setPageNum((p) => Math.min(pageCountRef.current, Math.max(1, p + direction)))
+  }, [pageLoading])
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    el.addEventListener('wheel', handleWheel, { passive: true })
+    return () => el.removeEventListener('wheel', handleWheel)
+  }, [handleWheel])
+
+  // Prefetches the next page's image in the background while the current
+  // one is being read, so scrolling forward feels instant instead of
+  // showing "Loading page…" every single time. Plain in-memory cache
+  // (Map, not state — doesn't need to trigger re-renders) keyed by page
+  // number; usePdfPageImage's own real fetch is untouched, this is
+  // purely a warm-the-network-cache side effect.
+  const prefetchCache = useRef(new Map())
+  useEffect(() => {
+    if (!sessionReady || !pdf?.is_owned || !slug) return
+    const nextPage = pageNum + 1
+    if (nextPage > (pdf.page_count || 1)) return
+    if (prefetchCache.current.has(nextPage)) return
+    prefetchCache.current.set(nextPage, true) // mark as requested immediately, avoid duplicate fetches on rapid page changes
+    api.get(`/pdfs/${slug}/pages/${nextPage}/`, { responseType: 'blob' }).catch(() => {
+      prefetchCache.current.delete(nextPage) // allow a retry later if this prefetch failed
+    })
+  }, [pageNum, sessionReady, pdf, slug])
 
   if (!sessionReady || isLoading || authLoading || !isLoggedIn) return <div style={styles.loadingPage}>Loading…</div>
   if (notFound || !pdf) return <NotFoundState />
@@ -71,6 +125,7 @@ export default function PdfReaderPage() {
             ← {pdf.title}
           </Link>
           <div className="pdfr-nav">
+            <span style={{ color:'var(--g500)', fontSize:11.5 }} title="Scroll anywhere on the page to move between pages">🖱️ scroll to flip pages</span>
             <button onClick={goPrev} disabled={pageNum <= 1}>← Prev</button>
             <span>Page {pageNum} of {pageCount}</span>
             <button onClick={goNext} disabled={pageNum >= pageCount}>Next →</button>
