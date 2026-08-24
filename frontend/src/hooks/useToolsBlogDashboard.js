@@ -1,7 +1,7 @@
 /**
  * GRADSKOOL — useTools + useBlog + useDashboard Hooks
  */
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import api from '../lib/api'
 
 // ── TOOL TOKEN STORAGE ────────────────────────────────────────────────────────
@@ -214,23 +214,40 @@ export function useBlogPosts(params = {}) {
 export function useBlogPost(slug, initialData = null) {
   const [post, setPost]    = useState(initialData)
   const [loading, setLoad] = useState(!initialData)
+  // Tracks which slug `post` actually belongs to — real fix for a bug
+  // the initialData-skip fix above introduced: useState(initialData)
+  // only seeds state on the component's FIRST mount. Clicking a related-
+  // article link keeps the same page component instance alive (same
+  // page file, just a new [slug] route param) — getServerSideProps DOES
+  // correctly re-run and produce a fresh initialData for the new slug,
+  // but React does NOT re-initialize existing state from a changed prop
+  // on a re-render, so `post` stayed stuck holding the OLD article's
+  // data. The old, unconditional fetch masked this by eventually
+  // overwriting the stale state; skipping the fetch when initialData
+  // exists (added specifically to stop the double view-count) removed
+  // that accidental safety net without accounting for this case. This
+  // ref is what lets the effect below tell "genuinely new navigation"
+  // apart from "same slug, same data, no work needed."
+  const loadedSlugRef = useRef(initialData ? slug : null)
 
   useEffect(() => {
     if (!slug) return
-    // Real bug fixed here: this effect used to run unconditionally on
-    // every mount, EVEN when initialData was already provided by
-    // getServerSideProps — meaning every single page load hit
-    // GET /blog/posts/{slug}/ TWICE (once server-side for the initial
-    // render/SEO, once again here client-side for no real reason, since
-    // the data was already fresh). BlogPostDetailView.retrieve()
-    // increments view_count on every real request it serves — this
-    // double-fetch is exactly why every page load was counting as +2
-    // views instead of +1. Skipping this effect when initialData exists
-    // avoids the redundant fetch entirely — the server-rendered data is
-    // already correct and current, there's nothing stale to refresh.
-    if (initialData) return
+    if (slug === loadedSlugRef.current) return // already have the right post for this slug — true no-op, not just "initialData exists"
+
+    if (initialData && initialData.slug === slug) {
+      // getServerSideProps already fetched the right post for this
+      // (possibly new) slug — use it directly instead of a redundant
+      // client fetch, same reasoning as before, just correctly re-
+      // checked on every slug change instead of only on first mount.
+      setPost(initialData)
+      loadedSlugRef.current = slug
+      setLoad(false)
+      return
+    }
+
+    setLoad(true)
     api.get(`/blog/posts/${slug}/`)
-      .then(({ data }) => setPost(data))
+      .then(({ data }) => { setPost(data); loadedSlugRef.current = slug })
       .catch(() => {})
       .finally(() => setLoad(false))
   }, [slug, initialData])

@@ -72,10 +72,19 @@ function getExamCourseForPost(post) {
   // email branching built earlier this session for the same distinction).
   // Keyed on the post's own slug, not its SNAP tag, since every OTHER
   // SNAP-tagged post should still link to the normal /courses/snap page.
+  //
+  // Extended to two more posts that are ALSO genuinely about EMV
+  // specifically (the ALP 6-step ethical framework article, and the
+  // "dedicated SNAP EMV prep course" comparison article) — same real
+  // destination and product, but each post's ctaTitle/ctaBody is
+  // written to match what THAT specific article is actually about,
+  // rather than reusing identical copy across three different pieces.
+  const EMV_HREF = 'https://courses.gradskool.in/learn/snap-2026-ethics-morality-values'
+  const EMV_BASE = { label: 'EMV', externalHref: EMV_HREF }
+
   if (post.slug === 'snap-2026-ethics-morality-values') {
     return {
-      label: 'EMV',
-      externalHref: 'https://courses.gradskool.in/learn/snap-2026-ethics-morality-values',
+      ...EMV_BASE,
       // Real product description, matching pages/courses/snap.jsx's own
       // EMV card exactly — self-paced recorded module + 150+ practice
       // questions, not a live cohort. The default cohort copy right
@@ -85,6 +94,23 @@ function getExamCourseForPost(post) {
       ctaBody: 'Complete recorded module + 150+ practice questions covering ethical frameworks, business ethics case studies, and situational dilemma practice.',
     }
   }
+
+  if (post.slug === 'the-alp-framework-a-6-step-method-for-solving-any-ethical-dilemma-snap-xat') {
+    return {
+      ...EMV_BASE,
+      ctaTitle: 'Practice the 6-Step Framework',
+      ctaBody: "You've read the framework — now apply it. 150+ practice questions and real EMV case studies to turn this into a repeatable exam skill, not just something you read once.",
+    }
+  }
+
+  if (post.slug === 'the-only-dedicated-snap-ethics-morality-values-prep-course-we-could-find') {
+    return {
+      ...EMV_BASE,
+      ctaTitle: "You Found It — Here's the Course",
+      ctaBody: 'The course this article was about. Complete recorded module + 150+ practice questions, built specifically for the SNAP EMV section.',
+    }
+  }
+
   for (const tag of post.tags || []) {
     const match = EXAM_TAG_TO_COURSE[(tag.name || '').toLowerCase()]
     if (match) return match

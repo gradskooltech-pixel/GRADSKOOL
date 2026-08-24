@@ -5,7 +5,7 @@
  * feels like the rest of the codebase, not a bolted-on module. Reuses the
  * same `useRazorpay` script-loader — no need to duplicate that.
  */
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import api from '../lib/api'
 import { useRazorpay } from './usePaymentsAndContent'
 
@@ -60,27 +60,44 @@ export function usePdfDetail(slug, { enabled = true, initialData = null } = {}) 
   const [pdf, setPdf] = useState(initialData)
   const [isLoading, setLoading] = useState(!initialData)
   const [notFound, setNotFound] = useState(false)
+  // Tracks which slug the CURRENT state actually belongs to. Two real,
+  // separate things this needs to get right, both broken by an earlier,
+  // too-simple fix:
+  //  1) initialData only seeds useState on first mount — if slug changes
+  //     via client-side navigation while this component instance stays
+  //     alive (same bug class hit for real in useBlogPost — see that
+  //     hook's comment), `pdf` would keep showing the OLD post's data
+  //     even though getServerSideProps correctly re-ran for the new slug.
+  //  2) initialData never carries the real per-user is_owned status
+  //     (can't be known server-side before auth resolves) — the client
+  //     fetch is INTENTIONALLY supposed to still run once to refine
+  //     ownership, not be skipped just because initialData exists.
+  const loadedSlugRef = useRef(null)
 
   const refetch = useCallback(() => {
     if (!slug || !enabled) return
     setLoading(true)
     api.get(`/pdfs/${slug}/`)
-      .then(({ data }) => setPdf(data))
+      .then(({ data }) => { setPdf(data); loadedSlugRef.current = slug })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false))
   }, [slug, enabled])
 
   useEffect(() => {
-    // Real bug fixed here: same class of issue as useBlogPost — this
-    // effect ran unconditionally on every mount even when initialData
-    // was already provided by a page's own getServerSideProps, causing
-    // a redundant second fetch of data that was already fresh. Doesn't
-    // increment a view counter here the way blog posts do, but it's
-    // still a real, unnecessary duplicate request on every single PDF
-    // detail page load — skipped now when initialData already exists.
-    if (initialData) { setLoading(false); return }
+    if (!slug || !enabled) return
+    if (initialData && initialData.slug === slug && loadedSlugRef.current !== slug) {
+      // Real data for the right slug, not yet reflected in state (either
+      // first mount, or slug just changed) — show it immediately without
+      // waiting on a network round-trip, same reasoning as before.
+      setPdf(initialData)
+      setLoading(false)
+      // Deliberately NOT setting loadedSlugRef.current here — initialData
+      // never has the real is_owned status, so the real fetch below still
+      // needs to run once to refine it, matching this hook's original,
+      // intended behavior.
+    }
     refetch()
-  }, [refetch, initialData])
+  }, [slug, enabled, initialData, refetch])
 
   return { pdf, isLoading, notFound, refetch }
 }
