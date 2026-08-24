@@ -64,17 +64,23 @@ export function usePdfDetail(slug, { enabled = true, initialData = null } = {}) 
   const refetch = useCallback(() => {
     if (!slug || !enabled) return
     setLoading(true)
-    console.log('[PDF DEBUG] Fetching:', `/pdfs/${slug}/`)
     api.get(`/pdfs/${slug}/`)
-      .then(({ data }) => { console.log('[PDF DEBUG] Success:', data); setPdf(data) })
-      .catch((err) => {
-        console.error('[PDF DEBUG] Failed - status:', err.response?.status, 'data:', err.response?.data, 'message:', err.message)
-        setNotFound(true)
-      })
+      .then(({ data }) => setPdf(data))
+      .catch(() => setNotFound(true))
       .finally(() => setLoading(false))
   }, [slug, enabled])
 
-  useEffect(() => { refetch() }, [refetch])
+  useEffect(() => {
+    // Real bug fixed here: same class of issue as useBlogPost — this
+    // effect ran unconditionally on every mount even when initialData
+    // was already provided by a page's own getServerSideProps, causing
+    // a redundant second fetch of data that was already fresh. Doesn't
+    // increment a view counter here the way blog posts do, but it's
+    // still a real, unnecessary duplicate request on every single PDF
+    // detail page load — skipped now when initialData already exists.
+    if (initialData) { setLoading(false); return }
+    refetch()
+  }, [refetch, initialData])
 
   return { pdf, isLoading, notFound, refetch }
 }

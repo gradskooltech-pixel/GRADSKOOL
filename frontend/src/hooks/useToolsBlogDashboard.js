@@ -217,11 +217,23 @@ export function useBlogPost(slug, initialData = null) {
 
   useEffect(() => {
     if (!slug) return
+    // Real bug fixed here: this effect used to run unconditionally on
+    // every mount, EVEN when initialData was already provided by
+    // getServerSideProps — meaning every single page load hit
+    // GET /blog/posts/{slug}/ TWICE (once server-side for the initial
+    // render/SEO, once again here client-side for no real reason, since
+    // the data was already fresh). BlogPostDetailView.retrieve()
+    // increments view_count on every real request it serves — this
+    // double-fetch is exactly why every page load was counting as +2
+    // views instead of +1. Skipping this effect when initialData exists
+    // avoids the redundant fetch entirely — the server-rendered data is
+    // already correct and current, there's nothing stale to refresh.
+    if (initialData) return
     api.get(`/blog/posts/${slug}/`)
       .then(({ data }) => setPost(data))
       .catch(() => {})
       .finally(() => setLoad(false))
-  }, [slug])
+  }, [slug, initialData])
 
   return { post, loading }
 }

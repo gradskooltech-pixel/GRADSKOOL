@@ -2,7 +2,7 @@
 GRADSKOOL — Blog Admin
 """
 from django.contrib import admin
-from .models import BlogTag, BlogPost
+from .models import BlogTag, BlogPost, BlogPostView
 
 
 @admin.register(BlogTag)
@@ -45,3 +45,21 @@ class BlogPostAdmin(admin.ModelAdmin):
             post.status = 'published'
             post.save()
     publish_selected.short_description = 'Publish selected posts'
+
+
+@admin.register(BlogPostView)
+class BlogPostViewAdmin(admin.ModelAdmin):
+    """
+    Read-only record of which IPs have already counted toward a post's
+    view_count — see BlogPostView's own model docstring. Genuinely just
+    for inspection (e.g. checking "has this IP already been counted for
+    this post"), not meant to be edited — the real enforcement is the
+    database-level UniqueConstraint, not anything in this admin page.
+    """
+    list_display    = ['post', 'ip_address', 'created_at']
+    list_filter     = ['created_at']
+    search_fields   = ['post__title', 'ip_address']
+    readonly_fields = ['post', 'ip_address', 'created_at']
+
+    def has_add_permission(self, request):
+        return False

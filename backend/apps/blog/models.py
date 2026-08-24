@@ -17,11 +17,11 @@ Views:
   GET /api/v1/blog/featured/        → Featured posts (homepage)
 """
 import math
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils import timezone
 from django.utils.text import slugify
 
-from shared.utils import sanitize_html
+from shared.utils import sanitize_html, get_client_ip
 from rest_framework import generics, serializers
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -73,9 +73,9 @@ class BlogPost(models.Model):
         null=True, blank=True, related_name='blog_posts'
     )
     og_image_url        = models.URLField(blank=True,
-                                          help_text='Paste Bunny CDN image URL — shown as article header and OG share image')
+        help_text='Paste Bunny CDN image URL — shown as article header and OG share image')
     thumbnail_video_url = models.URLField(blank=True,
-                                          help_text='Optional YouTube or Bunny Stream URL — renders as video thumbnail on blog listing and article hero instead of static image')
+        help_text='Optional YouTube or Bunny Stream URL — renders as video thumbnail on blog listing and article hero instead of static image')
     meta_title    = models.CharField(max_length=160, blank=True)
     meta_desc     = models.CharField(max_length=320, blank=True)
     status        = models.CharField(max_length=20, choices=STATUS, default='draft')
@@ -114,6 +114,34 @@ class BlogPost(models.Model):
         if self.status == 'published' and not self.published_at:
             self.published_at = timezone.now()
         super().save(*args, **kwargs)
+
+
+class BlogPostView(models.Model):
+    """
+    One row per (post, IP) that has already counted toward view_count —
+    confirmed with GS: an IP only ever counts once per post, permanently,
+    not on a rolling time window. The real uniqueness constraint lives at
+    the database level (UniqueConstraint below), not just as an
+    application-side check, so a race between two near-simultaneous
+    requests from the same IP can't both slip through and double-count —
+    the second INSERT genuinely fails at the DB layer, caught and treated
+    as "already viewed" (see BlogPostDetailView.retrieve()).
+
+    IP alone is an imperfect signal (shared IPs behind NAT/campus wifi
+    undercount real unique visitors; VPNs/dynamic IPs overcount them) —
+    but it's a real, honest improvement over the previous behavior, which
+    counted every single request with no deduplication at all, including
+    the same person refreshing the same page repeatedly.
+    """
+    post       = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='view_records')
+    ip_address = models.GenericIPAddressField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'blog_post_views'
+        constraints = [
+            models.UniqueConstraint(fields=['post', 'ip_address'], name='unique_view_per_post_per_ip'),
+        ]
 
 
 # ── SERIALIZERS ───────────────────────────────────────────────────────────────
@@ -212,8 +240,22 @@ class BlogPostDetailView(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        # Increment view count (async-safe enough for our scale)
-        BlogPost.objects.filter(pk=instance.pk).update(view_count=models.F('view_count') + 1)
+        # Real fix: previously incremented on EVERY request with zero
+        # deduplication — the same visitor refreshing the page repeatedly
+        # counted as a new view each time. Confirmed with GS: an IP
+        # should only ever count once per post, permanently (not a
+        # rolling time window). BlogPostView.objects.create() is the real
+        # enforcement — its UniqueConstraint on (post, ip_address) means
+        # a genuine duplicate INSERT fails at the database level, not
+        # just via an application-side "have I seen this before" check
+        # that a race condition could slip past.
+        ip = get_client_ip(request)
+        if ip:
+            try:
+                BlogPostView.objects.create(post=instance, ip_address=ip)
+                BlogPost.objects.filter(pk=instance.pk).update(view_count=models.F('view_count') + 1)
+            except IntegrityError:
+                pass  # this IP already has a real, counted view for this post — correctly not counted again
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -252,3 +294,4 @@ app_name = 'blog'
 
 
 # ── ADMIN ─────────────────────────────────────────────────────────────────────
+
