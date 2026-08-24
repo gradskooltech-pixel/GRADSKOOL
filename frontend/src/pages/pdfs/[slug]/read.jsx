@@ -2,10 +2,24 @@
  * GRADSKOOL — PDF Reader
  * Route: /pdfs/[slug]/read
  *
- * Every page image is fetched individually and watermarked server-side per
- * request (see backend apps/pdfs/views.PdfPageView) — ownership is
- * re-checked on every single page fetch, not just once here. This page's
- * own login/ownership gate is UX only; the real boundary lives server-side.
+ * Rebuilt (2026-08-24) as genuine continuous scroll — every page stacked
+ * vertically in one long scrollable column, the way a real PDF viewer
+ * works. GS was explicit: "I should be allowed to scroll pdf so that i
+ * don't have to click on next or previous using arrows" — the earlier
+ * single-page-plus-Prev/Next version, and even the later custom-
+ * scrollbar-within-one-page version, both missed this; neither let you
+ * actually scroll FROM one page INTO the next.
+ *
+ * Still respects the one real backend constraint (see apps/pdfs/views.
+ * PdfPageView): every page is watermarked server-side and fetched
+ * individually — there is no single "whole PDF" endpoint, and there
+ * shouldn't be one (each request re-checks ownership, each image is
+ * watermarked per-viewer). Continuous scroll doesn't need that to
+ * change — it just means rendering N page slots and lazy-loading each
+ * one's real image via IntersectionObserver as it scrolls near view,
+ * exactly like a normal lazy-loaded image gallery. A 43-page PDF never
+ * fetches all 43 images at once; only the ones near your current
+ * scroll position.
  */
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
@@ -13,7 +27,6 @@ import Link from 'next/link'
 import Head from 'next/head'
 import { usePdfDetail, usePdfPageImage } from '../../../hooks/usePdfs'
 import { useAuth } from '../../../hooks/useAuth'
-import api from '../../../lib/api'
 import { usePdfProtection, PdfBlurOverlay } from '../../../components/pdfs/PdfProtection'
 
 export default function PdfReaderPage() {
@@ -22,9 +35,83 @@ export default function PdfReaderPage() {
   const { isLoggedIn, isLoading: authLoading, sessionReady } = useAuth()
   const { pdf, isLoading, notFound } = usePdfDetail(slug, { enabled: sessionReady })
 
-  const [pageNum, setPageNum] = useState(1)
   const containerRef = useRef(null)
+  const scrollRef = useRef(null)
   const { blurred } = usePdfProtection(containerRef)
+
+  // Which page is currently most visible — drives the "Page X of Y"
+  // indicator in the toolbar. Updated by each PageSlot reporting its own
+  // visibility, not derived from scroll math — simpler and more accurate
+  // than computing it from scrollTop against variable page heights.
+  const [currentPage, setCurrentPage] = useState(1)
+  const visibilityRef = useRef({}) // pageNumber -> intersection ratio, used to pick the most-visible page
+
+  const reportVisibility = useCallback((pageNumber, ratio) => {
+    visibilityRef.current[pageNumber] = ratio
+    let best = 1
+    let bestRatio = 0
+    for (const [num, r] of Object.entries(visibilityRef.current)) {
+      if (r > bestRatio) { bestRatio = r; best = Number(num) }
+    }
+    if (bestRatio > 0) setCurrentPage(best)
+  }, [])
+
+  // Real, always-visible custom scrollbar for the whole page column —
+  // same reasoning as before (macOS Chrome's overlay scrollbars only
+  // show during active scroll/hover, no CSS can force them to stay
+  // visible), just now tracking the WHOLE document's scroll instead of
+  // one page's internal scroll.
+  const [scrollInfo, setScrollInfo] = useState({ thumbHeight: 100, thumbTop: 0, visible: false })
+  const updateScrollInfo = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const { scrollTop, scrollHeight, clientHeight } = el
+    if (scrollHeight <= clientHeight) { setScrollInfo({ thumbHeight: 100, thumbTop: 0, visible: false }); return }
+    const thumbHeightPct = Math.max((clientHeight / scrollHeight) * 100, 4)
+    const maxThumbTopPct = 100 - thumbHeightPct
+    const scrollPct = scrollTop / (scrollHeight - clientHeight)
+    setScrollInfo({ thumbHeight: thumbHeightPct, thumbTop: scrollPct * maxThumbTopPct, visible: true })
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    updateScrollInfo()
+    el.addEventListener('scroll', updateScrollInfo, { passive: true })
+    const ro = new ResizeObserver(updateScrollInfo)
+    ro.observe(el)
+    return () => { el.removeEventListener('scroll', updateScrollInfo); ro.disconnect() }
+  }, [updateScrollInfo, pdf])
+
+  const draggingRef = useRef(false)
+  const handleThumbMouseDown = useCallback((e) => {
+    e.preventDefault()
+    draggingRef.current = true
+    const el = scrollRef.current
+    const startY = e.clientY
+    const startScrollTop = el.scrollTop
+    const trackHeight = el.clientHeight
+    const onMove = (moveEvent) => {
+      if (!draggingRef.current) return
+      const deltaY = moveEvent.clientY - startY
+      const scrollable = el.scrollHeight - el.clientHeight
+      el.scrollTop = Math.max(0, Math.min(scrollable, startScrollTop + (deltaY / trackHeight) * el.scrollHeight))
+    }
+    const onUp = () => { draggingRef.current = false; window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }, [])
+  const handleTrackClick = useCallback((e) => {
+    if (e.target !== e.currentTarget) return
+    const el = scrollRef.current
+    const pct = (e.clientY - e.currentTarget.getBoundingClientRect().top) / e.currentTarget.clientHeight
+    el.scrollTop = pct * (el.scrollHeight - el.clientHeight)
+  }, [])
+
+  const jumpToPage = useCallback((pageNumber) => {
+    const el = document.getElementById(`pdfr-page-${pageNumber}`)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
 
   // Redirect unauthenticated users straight to login, preserving the reader as the return target
   useEffect(() => {
@@ -33,34 +120,12 @@ export default function PdfReaderPage() {
     }
   }, [sessionReady, isLoggedIn, slug, router, router.isReady])
 
-  const { src, isLoading: pageLoading, error: pageError } = usePdfPageImage(slug, sessionReady ? pageNum : null)
-
-  // Prefetches the next page's image in the background while the current
-  // one is being read, so scrolling forward feels instant instead of
-  // showing "Loading page…" every single time. Plain in-memory cache
-  // (Map, not state — doesn't need to trigger re-renders) keyed by page
-  // number; usePdfPageImage's own real fetch is untouched, this is
-  // purely a warm-the-network-cache side effect.
-  const prefetchCache = useRef(new Map())
-  useEffect(() => {
-    if (!sessionReady || !pdf?.is_owned || !slug) return
-    const nextPage = pageNum + 1
-    if (nextPage > (pdf.page_count || 1)) return
-    if (prefetchCache.current.has(nextPage)) return
-    prefetchCache.current.set(nextPage, true) // mark as requested immediately, avoid duplicate fetches on rapid page changes
-    api.get(`/pdfs/${slug}/pages/${nextPage}/`, { responseType: 'blob' }).catch(() => {
-      prefetchCache.current.delete(nextPage) // allow a retry later if this prefetch failed
-    })
-  }, [pageNum, sessionReady, pdf, slug])
-
   if (!sessionReady || isLoading || authLoading || !isLoggedIn) return <div style={styles.loadingPage}>Loading…</div>
   if (notFound || !pdf) return <NotFoundState />
   if (!pdf.is_owned) return <PurchaseGate pdf={pdf} />
 
   const pageCount = pdf.page_count || 1
-
-  const goPrev = () => setPageNum((p) => Math.max(1, p - 1))
-  const goNext = () => setPageNum((p) => Math.min(pageCount, p + 1))
+  const pageNumbers = Array.from({ length: pageCount }, (_, i) => i + 1)
 
   return (
     <>
@@ -71,48 +136,112 @@ export default function PdfReaderPage() {
 
       <style>{`
         .pdfr-bar { position:sticky; top:0; z-index:50; background:#fff; border-bottom:var(--border); display:flex; align-items:center; justify-content:space-between; padding:12px 24px; height:60px; }
-        .pdfr-title { font-family:var(--font-serif); font-size:15px; color:var(--black); }
-        .pdfr-nav { display:flex; align-items:center; gap:14px; font-family:var(--font-sans); font-size:13px; }
-        .pdfr-nav button { border:2px solid var(--g300); background:#fff; border-radius:var(--radius); padding:6px 14px; cursor:pointer; font-family:var(--font-sans); font-size:13px; color:var(--black); }
-        .pdfr-nav button:disabled { opacity:.4; cursor:not-allowed; }
-        .pdfr-stage { height:calc(100vh - 60px); overflow-y:scroll; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px 80px; background:var(--off); scrollbar-width:auto; scrollbar-color:var(--g300) var(--off); }
-        .pdfr-stage::-webkit-scrollbar { width:12px; }
-        .pdfr-stage::-webkit-scrollbar-track { background:var(--off); }
-        .pdfr-stage::-webkit-scrollbar-thumb { background:var(--g300); border-radius:6px; border:3px solid var(--off); }
-        .pdfr-stage::-webkit-scrollbar-thumb:hover { background:var(--g500); }
-        .pdfr-page-wrap { max-width:820px; width:100%; user-select:none; -webkit-touch-callout:none; }
+        .pdfr-title { font-family:var(--font-serif); font-size:15px; color:var(--black); text-decoration:none; }
+        .pdfr-nav { display:flex; align-items:center; gap:14px; font-family:var(--font-sans); font-size:13px; color:var(--g700); }
+        .pdfr-jump { border:2px solid var(--g300); background:#fff; border-radius:var(--radius); padding:6px 10px; font-family:var(--font-sans); font-size:13px; color:var(--black); width:52px; text-align:center; }
+        .pdfr-scroll-wrap { position:relative; }
+        .pdfr-scroll { height:calc(100vh - 60px); overflow-y:scroll; display:flex; flex-direction:column; align-items:center; gap:20px; padding:32px 16px 120px; background:var(--off); scrollbar-width:none; -ms-overflow-style:none; }
+        .pdfr-scroll::-webkit-scrollbar { display:none; }
+        .pdfr-scrollbar-track { position:absolute; top:0; right:6px; bottom:0; width:14px; background:var(--g200); border-radius:7px; cursor:pointer; z-index:60; }
+        .pdfr-scrollbar-thumb { position:absolute; left:0; right:0; background:var(--g500); border-radius:7px; cursor:grab; transition:background .15s; min-height:32px; }
+        .pdfr-scrollbar-thumb:hover, .pdfr-scrollbar-thumb:active { background:var(--red); }
+        .pdfr-page-wrap { max-width:820px; width:100%; user-select:none; -webkit-touch-callout:none; scroll-margin-top:16px; }
         .pdfr-page-img { width:100%; height:auto; display:block; border:var(--border); border-radius:4px; background:#fff; pointer-events:none; }
         .pdfr-page-loading { aspect-ratio:1/1.414; background:#fff; border:var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-sans); font-size:13px; color:var(--g500); }
-        @media print { .pdfr-stage, .pdfr-bar { display:none !important; } }
+        .pdfr-page-number { font-family:var(--font-sans); font-size:11px; color:var(--g500); text-align:center; margin-top:6px; }
+        @media print { .pdfr-scroll-wrap, .pdfr-bar { display:none !important; } }
       `}</style>
 
       <div ref={containerRef}>
         <PdfBlurOverlay visible={blurred} />
 
         <div className="pdfr-bar">
-          <Link href={`/pdfs/${slug}`} className="pdfr-title" style={{ textDecoration: 'none' }}>
+          <Link href={`/pdfs/${slug}`} className="pdfr-title">
             ← {pdf.title}
           </Link>
           <div className="pdfr-nav">
-            <button onClick={goPrev} disabled={pageNum <= 1}>← Prev</button>
-            <span>Page {pageNum} of {pageCount}</span>
-            <button onClick={goNext} disabled={pageNum >= pageCount}>Next →</button>
+            <span>Page</span>
+            <input
+              className="pdfr-jump"
+              type="number" min={1} max={pageCount} value={currentPage}
+              onChange={(e) => {
+                const n = Math.max(1, Math.min(pageCount, Number(e.target.value) || 1))
+                jumpToPage(n)
+              }}
+            />
+            <span>of {pageCount}</span>
           </div>
         </div>
 
-        <div className="pdfr-stage">
-          <div className="pdfr-page-wrap">
-            {pageError ? (
-              <div className="pdfr-page-loading">{pageError}</div>
-            ) : pageLoading || !src ? (
-              <div className="pdfr-page-loading">Loading page…</div>
-            ) : (
-              <img src={src} alt={`${pdf.title} — page ${pageNum}`} className="pdfr-page-img" draggable={false} />
-            )}
+        <div className="pdfr-scroll-wrap">
+          <div className="pdfr-scroll" ref={scrollRef}>
+            {pageNumbers.map((n) => (
+              <PageSlot
+                key={n}
+                pageNumber={n}
+                slug={slug}
+                scrollRoot={scrollRef}
+                onVisibilityChange={reportVisibility}
+              />
+            ))}
           </div>
+          {scrollInfo.visible && (
+            <div className="pdfr-scrollbar-track" onClick={handleTrackClick}>
+              <div
+                className="pdfr-scrollbar-thumb"
+                style={{ height: `${scrollInfo.thumbHeight}%`, top: `${scrollInfo.thumbTop}%` }}
+                onMouseDown={handleThumbMouseDown}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
+  )
+}
+
+// One page's slot in the long scroll column. Renders a placeholder until
+// it's within `rootMargin` of the visible scroll area, THEN calls
+// usePdfPageImage to actually fetch that page's real, watermarked image
+// — this is the lazy-load boundary that keeps a 43-page PDF from
+// fetching all 43 images the moment the reader opens. Once loaded, stays
+// loaded (doesn't unmount/refetch on scrolling away) — real images, not
+// re-fetched every time you scroll back up.
+function PageSlot({ pageNumber, slug, scrollRoot, onVisibilityChange }) {
+  const slotRef = useRef(null)
+  const [nearViewport, setNearViewport] = useState(pageNumber <= 3) // first few pages load immediately, no need to wait for a scroll event to even fire
+
+  useEffect(() => {
+    const el = slotRef.current
+    const root = scrollRoot.current
+    if (!el || !root) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setNearViewport(true)
+          onVisibilityChange(pageNumber, entry.intersectionRatio)
+        }
+      },
+      { root, rootMargin: '800px 0px', threshold: [0, 0.25, 0.5, 0.75, 1] } // 800px margin — starts loading a page well before it's actually on screen, so it's ready by the time you scroll to it
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [pageNumber, scrollRoot, onVisibilityChange])
+
+  const { src, isLoading, error } = usePdfPageImage(slug, nearViewport ? pageNumber : null)
+
+  return (
+    <div className="pdfr-page-wrap" id={`pdfr-page-${pageNumber}`} ref={slotRef}>
+      {error ? (
+        <div className="pdfr-page-loading">{error}</div>
+      ) : !nearViewport || isLoading || !src ? (
+        <div className="pdfr-page-loading">{nearViewport ? 'Loading page…' : ''}</div>
+      ) : (
+        <img src={src} alt={`Page ${pageNumber}`} className="pdfr-page-img" draggable={false} />
+      )}
+      <div className="pdfr-page-number">{pageNumber}</div>
+    </div>
   )
 }
 
@@ -148,18 +277,8 @@ const styles = {
   },
 }
 
-// Real root cause of the "scrolling doesn't work" bug: this route isn't
-// in _app.jsx's BARE_PREFIXES list, so it was getting wrapped in the
-// normal site chrome — <div style={{display:'flex',flexDirection:
-// 'column',minHeight:'100vh'}}><Navbar/><div style={{flex:1}}>...
-// </div><Footer/></div>. .pdfr-stage's own height:calc(100vh-180px) was
-// structurally correct and DID scroll internally — verified directly —
-// but the outer wrapper's Footer (rendered below the flex child) pushed
-// the WHOLE PAGE taller than the viewport too, creating a second, outer
-// page-level scrollbar that visually dominated and made the inner one
-// easy to miss/ignore. getLayout is Next.js's real, supported way to opt
-// a specific page out of the shared Navbar/Footer chrome entirely (same
-// mechanism _app.jsx already uses for BARE_PREFIXES) — this makes
-// .pdfr-stage's 100vh math correct against the true, unencumbered
-// viewport, with no outer page scroll competing with it.
+// Bypasses _app.jsx's shared Navbar/Footer wrapper entirely — real fix
+// from earlier this session, still needed: without this, the Footer
+// pushes the WHOLE page taller than the viewport, creating a second,
+// competing page-level scroll that fights with the reader's own.
 PdfReaderPage.getLayout = (page) => page
