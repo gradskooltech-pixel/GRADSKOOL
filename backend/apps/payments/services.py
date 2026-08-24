@@ -306,6 +306,26 @@ def _send_enrollment_email(order: Order):
                       border-radius:3px;font-family:sans-serif;font-size:14px;font-weight:600;
                       text-decoration:none;">Access Your Course →</a>
         """
+    elif order.plan.includes_mocks and not order.plan.includes_live:
+        # Every mocks-only plan we sell — any exam, any bundle — is
+        # activated manually, not automatically like live-teaching plans
+        # (confirmed by GS: "every mocks that we are selling lie under
+        # this, be it for any exam or any bundle"). Real distinguishing
+        # condition: includes_mocks=True AND includes_live=False — a
+        # live-teaching plan can also include mocks as one of its
+        # features (e.g. CAThlete, CATalysis both have includes_live=
+        # True, includes_mocks=True) and DOES get instant, automatic
+        # dashboard access, so it's correctly excluded here. Deliberately
+        # does NOT say "access is now active" or point at the dashboard —
+        # neither is true yet at the moment this email sends, since a
+        # human still has to grant access by hand.
+        access_block = """
+            <p style="margin:0 0 24px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
+              Your mocks are being set up on our end — this is done by hand for every order,
+              so it isn't instant. You'll have full access within 24 hours. No further action
+              needed from you; we'll notify you once it's ready.
+            </p>
+        """
     else:
         access_block = """
             <p style="margin:0 0 24px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
