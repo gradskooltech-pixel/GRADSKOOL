@@ -7,31 +7,50 @@
 #   Service 3: beat   → Celery Beat scheduler (cron-like)
 #
 # Each service uses the same repo + same env vars.
-# Set RAILWAY_SERVICE_NAME to distinguish them in logs.
+#
+# 2026-08-27: startCommand now points at start.sh, a dispatcher script that
+# reads RAILWAY_SERVICE_NAME and runs the correct real process (gunicorn,
+# celery worker, or celery beat). This ONE startCommand is what every
+# service actually runs — see start.sh's own comment for the full reason
+# this indirection is needed (short version: Railway's dashboard Start
+# Command field is locked by this file for every service, and new services
+# can no longer opt into per-service Config as Code as of 2026-08-28, so
+# there's no other way to give different services different commands from
+# one railway.toml).
+#
+# CRITICAL SETUP STEP for worker/beat services: each one needs
+# RAILWAY_SERVICE_NAME set correctly in ITS OWN Variables tab (worker or
+# beat — matching one of start.sh's case branches). Railway may already
+# set this automatically to match the service's dashboard name — verify it
+# actually does; if it doesn't match, the service silently falls through
+# to running as web instead.
 #
 # Setup:
 #   1. railway link             (link repo to Railway project)
 #   2. railway up               (deploy web service)
-#   3. Create worker service:   use Start Command below
-#   4. Create beat service:     use Start Command below
-#   5. Add all env vars from .env.example to Railway dashboard
+#   3. Create worker service:   set RAILWAY_SERVICE_NAME=worker in its Variables
+#   4. Create beat service:     set RAILWAY_SERVICE_NAME=beat in its Variables
+#   5. Add all env vars from .env.example to Railway dashboard (all three services)
 
 [build]
 builder = "NIXPACKS"
 buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
 
 [deploy]
-startCommand = "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 3 --timeout 120 --access-logfile - --error-logfile -"
-healthcheckPath = "/api/v1/courses/homepage/"
-healthcheckTimeout = 30
+startCommand = "bash start.sh"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
-
-# ── WORKER SERVICE START COMMAND ──────────────────────────────────────────────
-# celery -A config.celery worker --loglevel=info -Q default,high_priority --concurrency 2
-
-# ── BEAT SERVICE START COMMAND ────────────────────────────────────────────────
-# celery -A config.celery beat --loglevel=info
+# healthcheckPath deliberately removed from here — it was shared across
+# ALL THREE services via this one file, but only the web service actually
+# serves HTTP. A Celery worker/beat process has nothing to respond to an
+# HTTP healthcheck at all, so this would have made the worker/beat
+# services fail their deploy healthcheck forever (confirmed as a real,
+# common Railway failure pattern for non-HTTP services). Set
+# healthcheckPath = /api/v1/courses/homepage/ directly in the WEB
+# service's own dashboard settings instead (Settings → Deploy →
+# Healthcheck Path) — that field should still be dashboard-editable even
+# though Start Command isn't, since only Start Command was confirmed
+# locked by this file. Leave it blank/unset on worker and beat.
 
 # ── ENVIRONMENT VARIABLES (set in Railway dashboard) ─────────────────────────
 # See .env.example for full list.
@@ -51,3 +70,4 @@ restartPolicyMaxRetries = 3
 #   SENTRY_DSN
 #   OPENAI_API_KEY
 #   INTERAKT_API_KEY
+#   RAILWAY_SERVICE_NAME  (worker/beat services only — see start.sh)
