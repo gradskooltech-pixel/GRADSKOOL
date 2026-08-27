@@ -13,27 +13,36 @@
 #
 # The real, working fix: make railway.toml's ONE startCommand run THIS
 # script instead of gunicorn directly, and have this script decide which
-# real process to run based on RAILWAY_SERVICE_NAME — a Railway-provided
-# env var, already anticipated in railway.toml's own original comment
-# ("Set RAILWAY_SERVICE_NAME to distinguish them in logs"), just not
-# previously used to actually SELECT behavior. Each service still needs
-# RAILWAY_SERVICE_NAME set correctly in its own Variables tab (Railway may
-# set this automatically to the service's dashboard name — verify it
-# actually matches one of the cases below, since a mismatch silently falls
-# through to the default web case).
+# real process to run.
+#
+# REAL BUG FOUND AND FIXED (2026-08-28): originally read RAILWAY_SERVICE_NAME
+# for this. That variable turned out to be Railway's own AUTO-GENERATED
+# internal service name (a random two-word slug like "genuine-vision"), NOT
+# the human-readable name shown on the dashboard — confirmed live: a real
+# worker service logged RAILWAY_SERVICE_NAME=genuine-vision, matched none of
+# the case branches below, and silently started as web (gunicorn) instead of
+# the Celery worker it was meant to be. Switched to GRADSKOOL_ROLE, a
+# variable we fully control ourselves — guaranteed not to collide with
+# anything Railway auto-populates, so there's zero ambiguity about which
+# value is actually being read.
+#
+# Each service needs GRADSKOOL_ROLE set explicitly in its own Variables tab:
+#   web service    → GRADSKOOL_ROLE=web    (or leave unset — web is the default)
+#   worker service → GRADSKOOL_ROLE=worker
+#   beat service   → GRADSKOOL_ROLE=beat
 
 set -e
 
-SERVICE_NAME="${RAILWAY_SERVICE_NAME:-web}"
+SERVICE_ROLE="${GRADSKOOL_ROLE:-web}"
 
-echo "GRADSKOOL startup dispatcher: RAILWAY_SERVICE_NAME=${SERVICE_NAME}"
+echo "GRADSKOOL startup dispatcher: GRADSKOOL_ROLE=${SERVICE_ROLE} (RAILWAY_SERVICE_NAME=${RAILWAY_SERVICE_NAME:-unset}, for reference only — not used to decide behavior)"
 
-case "$SERVICE_NAME" in
-  worker|gradskool-worker)
+case "$SERVICE_ROLE" in
+  worker)
     echo "Starting as: Celery worker"
     exec celery -A config.celery worker --loglevel=info -Q default,high_priority --concurrency 2
     ;;
-  beat|gradskool-beat)
+  beat)
     echo "Starting as: Celery beat"
     exec celery -A config.celery beat --loglevel=info
     ;;

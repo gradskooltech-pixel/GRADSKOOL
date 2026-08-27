@@ -9,7 +9,7 @@
 # Each service uses the same repo + same env vars.
 #
 # 2026-08-27: startCommand now points at start.sh, a dispatcher script that
-# reads RAILWAY_SERVICE_NAME and runs the correct real process (gunicorn,
+# reads GRADSKOOL_ROLE and runs the correct real process (gunicorn,
 # celery worker, or celery beat). This ONE startCommand is what every
 # service actually runs — see start.sh's own comment for the full reason
 # this indirection is needed (short version: Railway's dashboard Start
@@ -19,7 +19,7 @@
 # one railway.toml).
 #
 # CRITICAL SETUP STEP for worker/beat services: each one needs
-# RAILWAY_SERVICE_NAME set correctly in ITS OWN Variables tab (worker or
+# GRADSKOOL_ROLE set correctly in ITS OWN Variables tab (worker or
 # beat — matching one of start.sh's case branches). Railway may already
 # set this automatically to match the service's dashboard name — verify it
 # actually does; if it doesn't match, the service silently falls through
@@ -28,8 +28,8 @@
 # Setup:
 #   1. railway link             (link repo to Railway project)
 #   2. railway up               (deploy web service)
-#   3. Create worker service:   set RAILWAY_SERVICE_NAME=worker in its Variables
-#   4. Create beat service:     set RAILWAY_SERVICE_NAME=beat in its Variables
+#   3. Create worker service:   set GRADSKOOL_ROLE=worker in its Variables
+#   4. Create beat service:     set GRADSKOOL_ROLE=beat in its Variables
 #   5. Add all env vars from .env.example to Railway dashboard (all three services)
 
 [build]
@@ -70,4 +70,4 @@ restartPolicyMaxRetries = 3
 #   SENTRY_DSN
 #   OPENAI_API_KEY
 #   INTERAKT_API_KEY
-#   RAILWAY_SERVICE_NAME  (worker/beat services only — see start.sh)
+#   GRADSKOOL_ROLE  (worker/beat services only — see start.sh)
