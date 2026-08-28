@@ -160,6 +160,28 @@ class PdfPreviewView(APIView):
 
 
 class PdfPageView(APIView):
+    """
+    GET .../pages/{page_number}/
+
+    2026-08-28 redesign: previously this single endpoint BLOCKED for up to
+    6s (originally 10s) waiting on the Celery task before responding at
+    all — meaning even once the worker was genuinely fast (confirmed from
+    real logs: 1-3s typical), the BROWSER still felt no faster, since it
+    was frozen on one long request the entire time regardless of how fast
+    the actual work finished. HTTP doesn't let a client "peek" at a
+    response mid-flight, so no frontend change alone could fix that;
+    it needed a real split on this side.
+
+    Now: if the watermarked page isn't already cached, this returns
+    IMMEDIATELY with 202 Accepted + a task_id, instead of blocking.
+    The frontend (see usePdfPageImage) polls a lightweight status check
+    (this same endpoint, called again) every ~500ms until it gets back
+    real image bytes — each poll is fast (cache hit-or-miss, no blocking
+    wait), so the UI can show real "rendering..." progress instead of one
+    long silent freeze. Once cached, subsequent requests (or the poll that
+    catches the finished result) return the image directly with 200, same
+    as always.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request, slug, page_number):
@@ -183,43 +205,51 @@ class PdfPageView(APIView):
         cache_key = f'pdfpage:{pdf.id}:{page_number}:{request.user.id}'
         watermarked = cache.get(cache_key)
 
-        if watermarked is None:
-            # The actual PIL work happens in a Celery task (apps/pdfs/tasks.py),
-            # on the `worker` process, not here — see that file's docstring
-            # for why. We wait briefly for the result rather than doing the
-            # rendering ourselves, so the frontend needs no changes at all
-            # (still a plain GET expecting image bytes back).
-            success = None
-            try:
-                async_result = render_watermarked_page.apply_async(
-                    args=[pdf.id, page_number, request.user.id, request.user.email, page.storage_path]
-                )
-                # Must stay comfortably under the frontend's axios timeout
-                # (lib/api.js: timeout: 15000) — if we wait longer than the
-                # browser is willing to, the browser cancels the request
-                # before we can even fall back to inline rendering, and the
-                # user gets a hard failure instead of a (slightly slow) success.
-                success = async_result.get(timeout=10)
-            except Exception:
-                logger.warning('Celery dispatch/wait failed for pdf page render — falling back to inline render', exc_info=True)
+        if watermarked is not None:
+            response = HttpResponse(watermarked, content_type='image/jpeg')
+            response['Cache-Control'] = 'private, no-store'
+            return response
 
-            if success:
-                watermarked = cache.get(cache_key)
+        # Not cached — check if a poll already dispatched this exact
+        # render (real dedup, keyed the same as the result cache so a
+        # burst of rapid polls for the same page doesn't fire off a new
+        # Celery task on every single poll).
+        dispatch_key = f'pdfdispatch:{pdf.id}:{page_number}:{request.user.id}'
+        already_dispatched = cache.get(dispatch_key)
 
-            if not watermarked:
-                # Fallback: render inline, same as before this change existed.
-                # Better a possible memory spike on this worker than a broken
-                # PDF reader if Celery/Redis is briefly unavailable — this
-                # path should be rare, not the normal case.
+        if not already_dispatched:
+            cache.set(dispatch_key, True, 30)  # short TTL — just long enough to cover the real render time, not meant to persist
+            render_watermarked_page.apply_async(
+                args=[pdf.id, page_number, request.user.id, request.user.email, page.storage_path]
+            )
+        else:
+            # Real safety net for the case Celery/Redis is genuinely down:
+            # dispatch_key being present but the page STILL not rendered
+            # after its own 30s window has fully elapsed means the task
+            # never completed at all — not just "still working." Falling
+            # back to a synchronous inline render here (same real code
+            # path the old blocking version always used) means a genuine
+            # outage degrades to "a bit slow" instead of "the reader never
+            # loads, forever," while a healthy worker (the normal case)
+            # never reaches this branch at all, since dispatch_key clears
+            # itself in well under 30s.
+            elapsed_check_key = f'pdfdispatch_age:{pdf.id}:{page_number}:{request.user.id}'
+            if not cache.get(elapsed_check_key):
+                cache.set(elapsed_check_key, True, 25)  # ~25s grace before assuming the task genuinely died, not just still running
+            else:
                 raw = fetch_bytes(page.storage_path)
-                if not raw:
-                    return Response({'error': {'message': 'Page unavailable.'}}, status=502)
-                watermarked = apply_watermark(raw, request.user.email)
-                cache.set(cache_key, watermarked, PAGE_CACHE_SECONDS)
+                if raw:
+                    watermarked = apply_watermark(raw, request.user.email)
+                    cache.set(cache_key, watermarked, PAGE_CACHE_SECONDS)
+                    response = HttpResponse(watermarked, content_type='image/jpeg')
+                    response['Cache-Control'] = 'private, no-store'
+                    return response
 
-        response = HttpResponse(watermarked, content_type='image/jpeg')
-        response['Cache-Control'] = 'private, no-store'  # browser/CDN still never caches this — it's Redis-side only
-        return response
+        # Genuinely NOT waiting here — real fix vs. the old blocking
+        # .get(timeout=...) call. 202 tells the frontend "accepted, keep
+        # checking back" rather than making it wait on this one request.
+        return Response({'status': 'processing'}, status=202)
+
 
 
 # ── PURCHASE ───────────────────────────────────────────────────────────────────

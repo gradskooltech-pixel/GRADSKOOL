@@ -229,14 +229,16 @@ function PageSlot({ pageNumber, slug, scrollRoot, onVisibilityChange }) {
     return () => observer.disconnect()
   }, [pageNumber, scrollRoot, onVisibilityChange])
 
-  const { src, isLoading, error } = usePdfPageImage(slug, nearViewport ? pageNumber : null)
+  const { src, isLoading, error, isRendering } = usePdfPageImage(slug, nearViewport ? pageNumber : null)
 
   return (
     <div className="pdfr-page-wrap" id={`pdfr-page-${pageNumber}`} ref={slotRef}>
       {error ? (
         <div className="pdfr-page-loading">{error}</div>
       ) : !nearViewport || isLoading || !src ? (
-        <div className="pdfr-page-loading">{nearViewport ? 'Loading page…' : ''}</div>
+        <div className="pdfr-page-loading">
+          {!nearViewport ? '' : isRendering ? 'Preparing your page…' : 'Loading page…'}
+        </div>
       ) : (
         <img src={src} alt={`Page ${pageNumber}`} className="pdfr-page-img" draggable={false} />
       )}

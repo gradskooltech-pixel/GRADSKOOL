@@ -212,32 +212,73 @@ export function usePdfPageImage(slug, pageNumber) {
   const [src, setSrc] = useState(null)
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  // Real progress signal for the UI — distinguishes "haven't asked yet"
+  // from "backend accepted it and is actively rendering," so the reader
+  // can show something more honest than a generic spinner the whole time.
+  const [isRendering, setIsRendering] = useState(false)
 
   useEffect(() => {
     if (!slug || !pageNumber) return
     let objectUrl = null
     let cancelled = false
+    let pollTimer = null
 
     setLoading(true)
     setError(null)
+    setIsRendering(false)
 
-    api.get(`/pdfs/${slug}/pages/${pageNumber}/`, { responseType: 'blob' })
-      .then(({ data }) => {
-        if (cancelled) return
-        objectUrl = URL.createObjectURL(data)
-        setSrc(objectUrl)
-      })
-      .catch((err) => {
-        if (cancelled) return
-        setError(err.response?.status === 403 ? 'Purchase required.' : 'Could not load this page.')
-      })
-      .finally(() => { if (!cancelled) setLoading(false) })
+    // 2026-08-28: the backend endpoint no longer blocks for several
+    // seconds before responding — it now answers IMMEDIATELY, either with
+    // the real image (200, already cached) or a "processing" signal (202,
+    // just dispatched to the worker). This function polls on 202 rather
+    // than waiting on one long request, so the UI can show real feedback
+    // (isRendering) instead of one long silent freeze — see apps/pdfs/
+    // views.PdfPageView's own docstring for the full backend-side reasoning.
+    const attemptFetch = () => {
+      api.get(`/pdfs/${slug}/pages/${pageNumber}/`, { responseType: 'blob' })
+        .then(({ data, status }) => {
+          if (cancelled) return
+          // A 202 with an empty/JSON body arrives here as a blob too (axios
+          // doesn't know the content-type ahead of the real response) —
+          // genuinely distinguishing "still processing" from "here's your
+          // real image" requires checking the actual response, not just
+          // assuming success means done.
+          if (status === 202) {
+            setIsRendering(true)
+            pollTimer = setTimeout(attemptFetch, 500) // real, short poll interval — each check is fast (cache hit-or-miss), not another long block
+            return
+          }
+          objectUrl = URL.createObjectURL(data)
+          setSrc(objectUrl)
+          setIsRendering(false)
+          setLoading(false)
+        })
+        .catch((err) => {
+          if (cancelled) return
+          if (err.response?.status === 202) {
+            // Axios treats non-2xx as errors by default, but 202 IS a
+            // success status — some proxy/blob-response configurations
+            // route it through .catch anyway depending on how the
+            // response body is interpreted. Handled the same as the
+            // .then branch above: keep polling, don't treat as failure.
+            setIsRendering(true)
+            pollTimer = setTimeout(attemptFetch, 500)
+            return
+          }
+          setError(err.response?.status === 403 ? 'Purchase required.' : 'Could not load this page.')
+          setIsRendering(false)
+          setLoading(false)
+        })
+    }
+
+    attemptFetch()
 
     return () => {
       cancelled = true
+      if (pollTimer) clearTimeout(pollTimer)
       if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
   }, [slug, pageNumber])
 
-  return { src, isLoading, error }
+  return { src, isLoading, error, isRendering }
 }
