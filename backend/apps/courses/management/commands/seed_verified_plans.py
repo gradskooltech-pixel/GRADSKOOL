@@ -69,6 +69,22 @@ class Command(BaseCommand):
                          is_featured=True, badge_text='Recommended', sort_order=10,
                          includes_live=True, includes_mocks=True, mock_exams_covered=['CAT'],
                          razorpay_sku='cathlete-with-mocks')),
+            # Sectional CAThlete courses — VARC, LRDI, and QA taught as
+            # genuinely separate courses, each on its own Learnyst link
+            # (same real pattern as snap-emv above: real courses hosted
+            # entirely outside GRADSKOOL's own dashboard/checkout flow —
+            # matched by slug in apps/payments/services.py._send_
+            # enrollment_email(), keep the two in sync if these ever
+            # change). VARC/LRDI priced at ₹1 — confirmed accepted on the
+            # real, live Razorpay account despite general docs suggesting
+            # a stricter minimum; QA priced separately and higher,
+            # reflecting its real, different value/scope per GS.
+            ('cat', dict(name='CAThlete — VARC', slug='cathlete-varc', price_inr=Decimal('1'),
+                         sort_order=11, razorpay_sku='cathlete-varc')),
+            ('cat', dict(name='CAThlete — LRDI', slug='cathlete-lrdi', price_inr=Decimal('1'),
+                         sort_order=12, razorpay_sku='cathlete-lrdi')),
+            ('cat', dict(name='CAThlete — QA', slug='cathlete-qa', price_inr=Decimal('4499'),
+                         sort_order=13, razorpay_sku='cathlete-qa')),
             ('cat', dict(name='ALPgebra — 99 Theorems', slug='alpgebra', price_inr=Decimal('999'),
                          badge_text='Early Bird', sort_order=11, mock_exams_covered=['CAT'],
                          razorpay_sku='cat-alpgebra')),

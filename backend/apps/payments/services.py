@@ -295,13 +295,31 @@ def _send_enrollment_email(order: Order):
     # Checked by plan slug rather than exam+name, since that's the one
     # field guaranteed stable and unique regardless of how the plan's
     # display name gets edited later.
-    if order.plan.slug == 'snap-emv':
+    # Plans that run entirely on our partner platform (Learnyst) instead of
+    # GRADSKOOL's own dashboard — checked by plan slug, the one field
+    # guaranteed stable regardless of how a plan's display name gets
+    # edited later. Real dict instead of repeated if/elif blocks: this
+    # started as one course (snap-emv) but GS added three more sectional
+    # CAThlete courses (VARC, LRDI, QA) taught the same real way — a dict
+    # keeps adding a fifth, sixth, etc. genuinely cheap (one line) rather
+    # than copy-pasting a near-identical block each time, and keeps the
+    # real URLs in one place instead of scattered across several elif
+    # branches. Keep in sync with apps.courses.management.commands.
+    # seed_verified_plans.py if these slugs or links ever change.
+    EXTERNAL_COURSE_LINKS = {
+        'snap-emv': 'https://courses.gradskool.in/learn/snap-2026-ethics-morality-values',
+        'cathlete-varc': 'https://courses.gradskool.in/learn/cat-varc-cathlete-2026',
+        'cathlete-lrdi': 'https://courses.gradskool.in/learn/cat-lrdi-cathlete-2026',
+        'cathlete-qa': 'https://courses.gradskool.in/learn/cat-quant-cathlete-2026',
+    }
+
+    if order.plan.slug in EXTERNAL_COURSE_LINKS:
         access_block = f"""
             <p style="margin:0 0 24px;font-family:sans-serif;font-size:13px;color:#555;line-height:1.6;">
               This course runs on our partner platform. Sign up or log in there using
               <strong>{order.user.email}</strong> — the same email you used to pay here — to access it.
             </p>
-            <a href="https://courses.gradskool.in/learn/snap-2026-ethics-morality-values"
+            <a href="{EXTERNAL_COURSE_LINKS[order.plan.slug]}"
                style="display:inline-block;padding:14px 28px;background:#0f0f0f;color:#fff;
                       border-radius:3px;font-family:sans-serif;font-size:14px;font-weight:600;
                       text-decoration:none;">Access Your Course →</a>

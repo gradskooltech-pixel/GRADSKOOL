@@ -155,6 +155,17 @@ export default function CheckoutPage() {
 }
 
 function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId, selectedPlan, groupId, setGroupId, isLoggedIn, user }) {
+  // Real bug caught before shipping: router.push() was being called inside
+  // this component for the new plan-switch URL fix, but `router` was never
+  // actually in scope here — it exists in the PARENT component (the default
+  // export below), not passed down as a prop. Calling an undefined `router`
+  // would have thrown at runtime the moment anyone touched the dropdown or
+  // a plan card. useRouter() is a real, safe hook to call directly in any
+  // component, so calling it again here (same real router instance Next.js
+  // already tracks) is the correct, simple fix rather than threading it
+  // through as an extra prop.
+  const router = useRouter()
+
   // CATalysis is the flagship cohort for next year's exam (the 2027
   // intake), while every other CAT product (CAThlete, ALPgebra, mocks,
   // books) targets the upcoming 2026 exam — so the displayed exam label
@@ -206,7 +217,18 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                   const newGroup = CAT_PLAN_GROUPS.find(g => g.title === e.target.value)
                   setGroupId(newGroup.title)
                   const firstPlan = newGroup.slugs.map(slug => plans.find(p => p.slug === slug)).find(Boolean)
-                  if (firstPlan) setSelectedId(firstPlan.id)
+                  if (firstPlan) {
+                    setSelectedId(firstPlan.id)
+                    // Real bug fixed here: this used to only update local
+                    // component state, never the URL — so the address bar
+                    // (and any link copied/shared/refreshed from it) kept
+                    // showing whichever plan the page originally loaded
+                    // with, even after picking a completely different one
+                    // from this dropdown. shallow:true avoids a full
+                    // reload/refetch, matching switchExam's own pattern
+                    // right above.
+                    router.push(`/checkout/${examSlug}?plan=${firstPlan.slug}`, undefined, { shallow: true })
+                  }
                 }}
                 style={{ width:'100%', fontFamily:'var(--font-sans)', fontSize:15, fontWeight:500, padding:'12px 14px', border:'1px solid var(--g300)', borderRadius:4, background:'#fff', color:'var(--black)', cursor:'pointer' }}
               >
@@ -232,7 +254,13 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                         key={plan.id}
                         plan={plan}
                         isSelected={plan.id === selectedId}
-                        onSelect={() => setSelectedId(plan.id)}
+                        onSelect={() => {
+                          setSelectedId(plan.id)
+                          // Same real fix as the dropdown above — clicking
+                          // a plan card directly has the identical gap:
+                          // local state updated, URL never did.
+                          router.push(`/checkout/${examSlug}?plan=${plan.slug}`, undefined, { shallow: true })
+                        }}
                       />
                     ))}
                   </>
@@ -244,7 +272,10 @@ function CheckoutContent({ examSlug, examName, plans, selectedId, setSelectedId,
                   key={plan.id}
                   plan={plan}
                   isSelected={plan.id === selectedId}
-                  onSelect={() => setSelectedId(plan.id)}
+                  onSelect={() => {
+                    setSelectedId(plan.id)
+                    router.push(`/checkout/${examSlug}?plan=${plan.slug}`, undefined, { shallow: true })
+                  }}
                 />
               ))
             )}
