@@ -48,7 +48,7 @@ export function Footer() {
           {/* Courses */}
           <div className="gs-footer-col">
             <h4>Courses</h4>
-            <Link href="/courses/cat/cathlete">CAThlete — Crash Course</Link>
+            <Link href="/courses/cat/cat-crash-course-2026">CAThlete — Crash Course</Link>
             <Link href="/courses/cat/catalysis">CATalysis 2027</Link>
             <Link href="/courses/cat/alpgebra">ALPgebra</Link>
             <Link href="/courses/gmat">GMAT</Link>

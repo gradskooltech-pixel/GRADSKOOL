@@ -16,7 +16,7 @@ const FALLBACK_EXAM_DATE = '2026-11-29'
 const catalysisYear = new Date(FALLBACK_EXAM_DATE).getFullYear() + 1
 
 const TABS = [
-  { href:'/courses/cat/cathlete',  label:'CAThlete — Crash Course',                  key:'cathlete' },
+  { href:'/courses/cat/cat-crash-course-2026',  label:'CAThlete — Crash Course',                  key:'cathlete' },
   { href:'/courses/cat/catalysis', label:`CATalysis ${catalysisYear} Flagship Cohort`, key:'catalysis' },
   { href:'/courses/cat/alpgebra',  label:'ALPgebra',                    key:'alpgebra' },
   { href:'/courses/cat/mocks',     label:'Mocks',                       key:'mocks' },

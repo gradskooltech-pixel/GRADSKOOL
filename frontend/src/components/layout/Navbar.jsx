@@ -17,7 +17,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '../../hooks/useAuth'
 
 const COURSES_DROP = [
-  { href:'/courses/cat/cathlete', label:'CAThlete — Crash Course' },
+  { href:'/courses/cat/cat-crash-course-2026', label:'CAThlete — Crash Course' },
   { href:'/courses/cat/catalysis', label:'CATalysis 2027' },
   { href:'/courses/gmat',         label:'GMAT Focus Edition' },
   { href:'/courses/xat',          label:'XAT' },

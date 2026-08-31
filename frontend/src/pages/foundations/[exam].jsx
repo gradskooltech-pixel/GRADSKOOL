@@ -14,7 +14,7 @@ import { FoundationsListing } from '../../components/foundations/FoundationsList
 
 const EXAM_META = {
   xat: { name:'XAT', full:'Xavier Aptitude Test', color:'#5b3fa0', course:'/courses/xat', courseLabel:'Full XAT Course', isFullCourse:false, requireLogin:true, mocksCheckoutUrl:'/checkout?course=xat&plan=mocks', mocksPrice:'₹1,499' },
-  cat: { name:'CAT', full:'Common Admission Test', color:'#d94f50', course:'/courses/cat/cathlete', courseLabel:'CAThlete — Full CAT Course', isFullCourse:false, requireLogin:true, mocksCheckoutUrl:'/checkout?course=cat&plan=cat-mocks', mocksPrice:'₹2,999' },
+  cat: { name:'CAT', full:'Common Admission Test', color:'#d94f50', course:'/courses/cat/cat-crash-course-2026', courseLabel:'CAThlete — Full CAT Course', isFullCourse:false, requireLogin:true, mocksCheckoutUrl:'/checkout?course=cat&plan=cat-mocks', mocksPrice:'₹2,999' },
 }
 
 export default function FoundationsPage({ exam }) {

@@ -138,7 +138,7 @@ const APPLY_1_1_URL = '/apply-1-1'
 // for), each linking to its own real course page with its own real
 // featured-plan price.
 const SEGMENTS = [
-  { key:'CAT',  label:'CAT',  href:'/courses/cat/cathlete',
+  { key:'CAT',  label:'CAT',  href:'/courses/cat/cat-crash-course-2026',
     featured: { name:'CAThlete', price:'6,999', note:'CAT 2026 crash course · starts September' } },
   { key:'GMAT', label:'GMAT', href:'/courses/gmat',
     featured: GMAT_DATA.plans.find(p => p.featured) },
@@ -461,7 +461,7 @@ export default function HomeV2() {
                   <li><span className="li-dash">—</span>Session PDFs + cheat sheets</li>
                 </ul>
                 <Link href="/refund-policy" style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)', textDecoration:'underline', marginBottom:14 }}>Refund policy</Link>
-                <Link href="/courses/cat/cathlete" className="btn btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
+                <Link href="/courses/cat/cat-crash-course-2026" className="btn btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
               </div>
 
               <div className="tier-card featured fi">
@@ -542,7 +542,7 @@ export default function HomeV2() {
           <div className="container">
             <h2 className="d-lg" style={{ color:'#fff', marginBottom:24 }}>Ready to prepare the right way?</h2>
             <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-              <Link href="/courses/cat/cathlete" className="btn btn-red">Enrol in CAThlete — ₹6,999</Link>
+              <Link href="/courses/cat/cat-crash-course-2026" className="btn btn-red">Enrol in CAThlete — ₹6,999</Link>
               <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
                 <span className="wa-dot" />WhatsApp ALP Sir first
               </a>
@@ -553,7 +553,7 @@ export default function HomeV2() {
 
       <div className="mob-sticky">
         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-wa" style={{ flex:1, justifyContent:'center' }}>WhatsApp</a>
-        <Link href="/courses/cat/cathlete" className="btn btn-red" style={{ flex:1, justifyContent:'center' }}>Enrol · ₹6,999</Link>
+        <Link href="/courses/cat/cat-crash-course-2026" className="btn btn-red" style={{ flex:1, justifyContent:'center' }}>Enrol · ₹6,999</Link>
       </div>
     </>
   )

@@ -37,6 +37,7 @@ const nextConfig = {
       { source: '/mhcet',          destination: '/courses/mhcet',          permanent: true },
       { source: '/cmat',           destination: '/courses/cmat',           permanent: true },
       { source: '/cathlete',       destination: '/courses/cat#cathlete',   permanent: true },
+      { source: '/courses/cat/cathlete', destination: '/courses/cat/cat-crash-course-2026', permanent: true },
       { source: '/nmat-snap',      destination: '/courses/nmat-snap',      permanent: true },
       { source: '/cat-mocks',      destination: '/courses/cat-mocks',      permanent: true },
       { source: '/cat-books',      destination: '/courses/cat-books',      permanent: true },

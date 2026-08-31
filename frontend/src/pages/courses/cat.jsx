@@ -119,7 +119,7 @@ export default function CATPage({ examData }) {
         speakableSelectors={['h1']}
         schema={[
           courseSchema({name:`CATalysis — CAT ${catalysisYear} Preparation`,altName:'CATalysis',description:`GRADSKOOL's flagship CAT ${catalysisYear} cohort by Abhishek Leela Pandey. ${cohortSize} students per cohort.`,url:'/courses/cat/catalysis',price:String(catalysisPrice)}),
-          courseSchema({name:`CAThlete — CAT ${examYear} Crash Course`,altName:'CAThlete',description:`Intensive CAT ${examYear} crash course starting ${cathleteStartFormatted}.`,url:'/courses/cat/cathlete',price:String(cathleteBasePrice)}),
+          courseSchema({name:`CAThlete — CAT ${examYear} Crash Course`,altName:'CAThlete',description:`Intensive CAT ${examYear} crash course starting ${cathleteStartFormatted}.`,url:'/courses/cat/cat-crash-course-2026',price:String(cathleteBasePrice)}),
           faqSchema(FAQS),
         ]}
       />
@@ -171,7 +171,7 @@ export default function CATPage({ examData }) {
                 <span style={{ fontFamily:'var(--font-sans)', fontSize:11, color:'var(--g500)' }}>incl. GST · from</span>
               </div>
               <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
-                <Link href="/courses/cat/cathlete" className="btn btn-red">Explore CAThlete →</Link>
+                <Link href="/courses/cat/cat-crash-course-2026" className="btn btn-red">Explore CAThlete →</Link>
                 <Link href={`/checkout?course=cathlete&plan=base`} className="btn btn-outline">Enrol Now →</Link>
               </div>
             </div>
@@ -316,7 +316,7 @@ export default function CATPage({ examData }) {
               <span className="wa-dot" />WhatsApp ALP Sir
             </a>
             <Link href="/courses/cat/catalysis" className="btn btn-ghost">Explore CATalysis →</Link>
-            <Link href="/courses/cat/cathlete" className="btn btn-ghost">Explore CAThlete →</Link>
+            <Link href="/courses/cat/cat-crash-course-2026" className="btn btn-ghost">Explore CAThlete →</Link>
           </div>
         </div>
       </section>

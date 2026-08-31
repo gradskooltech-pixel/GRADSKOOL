@@ -28,7 +28,7 @@ const C = {
 // that map to one of the actual pages/courses/*.jsx files.
 const EXAM_TAG_TO_COURSE = {
   // CAT specifically points to CAThlete (the actual crash-course product,
-  // /courses/cat/cathlete) rather than the general /courses/cat overview
+  // /courses/cat/cat-crash-course-2026) rather than the general /courses/cat overview
   // page — every other exam still links to its general course page since
   // only CAT has this more specific "which exact product" distinction.
   cat:   { slug: 'cat/cathlete', label: 'CAT' },

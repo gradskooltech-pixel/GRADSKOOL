@@ -189,7 +189,7 @@ export default function Home() {
             "@context":"https://schema.org","@type":"ItemList","name":"GRADSKOOL Courses",
             "numberOfItems":7,
             "itemListElement":[
-              {position:1,item:{name:'CAThlete — CAT Crash Course',url:'https://gradskool.in/courses/cat/cathlete',offers:{price:'6999',priceCurrency:'INR'}}},
+              {position:1,item:{name:'CAThlete — CAT Crash Course',url:'https://gradskool.in/courses/cat/cat-crash-course-2026',offers:{price:'6999',priceCurrency:'INR'}}},
               {position:2,item:{name:'CATalysis — CAT 2027',url:'https://gradskool.in/courses/cat',offers:{price:'27999',priceCurrency:'INR'}}},
               {position:3,item:{name:'XAT Course',url:'https://gradskool.in/courses/xat',offers:{price:'5999',priceCurrency:'INR'}}},
               {position:4,item:{name:'NMAT Mocks',url:'https://gradskool.in/courses/nmat',offers:{price:'2999',priceCurrency:'INR'}}},
@@ -236,13 +236,13 @@ export default function Home() {
               <h1 className="d-xl" style={{ margin:'0 0 12px' }}>India's most<br /><em style={R}>structured</em><br />CAT &amp; GMAT prep.</h1>
               <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:24 }}>
                 <span style={{ width:6, height:6, borderRadius:'50%', background:'var(--red)', flexShrink:0 }} />
-                <Link href="/courses/cat/cathlete" style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--black)', textDecoration:'none' }}>CAThlete — our CAT 2026 Crash Course — is live</Link>
+                <Link href="/courses/cat/cat-crash-course-2026" style={{ fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color:'var(--black)', textDecoration:'none' }}>CAThlete — our CAT 2026 Crash Course — is live</Link>
               </div>
               <p style={{ fontFamily:'var(--font-body)', fontSize:15, color:'var(--g700)', lineHeight:1.85, maxWidth:440, marginBottom:36 }}>
                 Founded by Abhishek Leela Pandey — 99.93 percentile CAT, 770 GMAT. Live two-way teaching, not recorded lectures. Every cohort capped at 27 students. No exceptions.
               </p>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <Link href="/courses/cat/cathlete" className="btn btn-red">Explore CAThlete →</Link>
+                <Link href="/courses/cat/cat-crash-course-2026" className="btn btn-red">Explore CAThlete →</Link>
                 <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20more%20about%20GRADSKOOL"
                   target="_blank" rel="noopener noreferrer" className="btn btn-wa">
                   <span className="wa-dot" />WhatsApp ALP Sir
@@ -382,7 +382,7 @@ export default function Home() {
                 ['/courses/gmat',  'MBA Abroad · Self-Paced',    'GMAT Focus Edition', '₹19,999 · ISB, INSEAD, LBS & global MBA'],
                 ['/courses/xat',   'MBA India',                  'XAT',                'XLRI Jamshedpur & XAT B-schools'],
                 ['/courses/nmat-snap', 'MBA India · Mocks Bundle',   'SNAP + NMAT',       '₹4,499 · NMIMS · Symbiosis'],
-                ['/courses/cat/cathlete', 'CAT 2026 · Crash · Featured', 'CAThlete',    '₹6,999 · Starts September 2026'],
+                ['/courses/cat/cat-crash-course-2026', 'CAT 2026 · Crash · Featured', 'CAThlete',    '₹6,999 · Starts September 2026'],
                 ['/courses/mhcet', 'MBA Maharashtra',             'MH CET',             'JBIMS, SIMSREE, KJ Somaiya'],
               ].map(([href, tag, name, desc]) => (
                 <Link key={href} href={href} className="course-cell">
@@ -642,7 +642,7 @@ export default function Home() {
             </p>
             <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
               <Link href="/courses/cat/catalysis" className="btn btn-white">Explore CATalysis →</Link>
-              <Link href="/courses/cat/cathlete"  className="btn btn-ghost">CAThlete 2026 →</Link>
+              <Link href="/courses/cat/cat-crash-course-2026"  className="btn btn-ghost">CAThlete 2026 →</Link>
               <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20more%20about%20GRADSKOOL"
                 target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><span className="wa-dot" />WhatsApp us first</a>
             </div>

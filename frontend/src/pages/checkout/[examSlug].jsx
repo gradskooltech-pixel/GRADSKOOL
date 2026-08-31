@@ -50,7 +50,7 @@ const FREE_CLASSES_CONFIG = {
 // this and keep the simple flat list below.
 const CAT_PLAN_GROUPS = [
   { title: 'CATalysis', subtitle: 'The complete, flagship CAT cohort', slugs: ['live-mocks', 'live-all-mba-mocks', 'live-cat-mocks-books', 'live-all-mba-mocks-books'] },
-  { title: 'CAThlete', subtitle: 'Intensive crash course for the final stretch', slugs: ['base', 'with-mocks'] },
+  { title: 'CAThlete', subtitle: 'Intensive crash course for the final stretch', slugs: ['base', 'with-mocks', 'cathlete-varc', 'cathlete-lrdi', 'cathlete-qa'] },
   { title: 'ALPgebra', subtitle: '99 theorems covering the full Algebra syllabus', slugs: ['alpgebra'] },
   { title: 'CAT Mocks', subtitle: 'Full-length mocks and sectional tests', slugs: ['cat-mocks'] },
   { title: 'CAT Books', subtitle: "Curated physical books with ALP Sir's notes", slugs: ['cat-books'] },

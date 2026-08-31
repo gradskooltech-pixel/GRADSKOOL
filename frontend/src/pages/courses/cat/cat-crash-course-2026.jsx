@@ -1,6 +1,12 @@
 /**
  * GRADSKOOL — CAThlete Page
- * Route: /courses/cat/cathlete
+ * Route: /courses/cat/cat-crash-course-2026
+ *
+ * Renamed (2026-08-31) from /courses/cat/cathlete — "CAThlete" isn't
+ * something students actually search for; "CAT crash course 2026" is a
+ * genuine, real search query, per GS. Old URL now 301-redirects here
+ * (see next.config.js) so any existing search ranking / bookmarked links
+ * carry over rather than breaking.
  *
  * Rebuilt to match CATalysis's structure and visual style: light
  * 2-column hero (text + stats on the left, pricing card on the right),
@@ -78,11 +84,11 @@ export default function CathletePage({ examData }) {
         title={`CAThlete — CAT ${examYear} Crash Course by ALP Sir | From ${fmtPrice(cathleteBasePrice)}`}
         description={`CAThlete is GRADSKOOL's intensive CAT ${examYear} crash course starting ${cathleteStartFormatted}. Structured rapid preparation, live sessions, 31 mocks.`}
         keywords="CAThlete, CAT crash course, CAT 2026 preparation, ALP Sir CAT, GRADSKOOL CAThlete, last minute CAT prep"
-        canonical="https://gradskool.in/courses/cat/cathlete"
+        canonical="https://gradskool.in/courses/cat/cat-crash-course-2026"
         ogImage="/assets/og-cathlete.jpg"
-        breadcrumbs={[{name:'Home',url:'/'},{name:'CAT',url:'/courses/cat'},{name:'CAThlete',url:'/courses/cat/cathlete'}]}
+        breadcrumbs={[{name:'Home',url:'/'},{name:'CAT',url:'/courses/cat'},{name:'CAThlete',url:'/courses/cat/cat-crash-course-2026'}]}
         schema={[
-          courseSchema({name:'CAThlete', description:`GRADSKOOL's intensive CAT ${examYear} crash course. Structured rapid preparation, live sessions, 31 mocks.`, url:'/courses/cat/cathlete', price:String(cathleteBasePrice), startDate:FALLBACK.cathleteStart}),
+          courseSchema({name:'CAThlete', description:`GRADSKOOL's intensive CAT ${examYear} crash course. Structured rapid preparation, live sessions, 31 mocks.`, url:'/courses/cat/cat-crash-course-2026', price:String(cathleteBasePrice), startDate:FALLBACK.cathleteStart}),
         ]}
         speakableSelectors={['h1', '.eyebrow']}
       />

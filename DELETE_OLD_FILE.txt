@@ -1,0 +1,1 @@
+IMPORTANT: cathlete.jsx must be DELETED (not just left alongside the new file) — see instructions.

@@ -219,7 +219,7 @@ export default function CatalysisPage({ examData }) {
             <style>{`@media(max-width:800px){.also-grid-3{grid-template-columns:1fr!important}}`}</style>
             {[
               ['/courses/cat/alpgebra', 'ALPgebra', '₹999', "99 theorems covering CAT's full Algebra syllabus, from first principles."],
-              ['/courses/cat/cathlete', 'CAThlete', '₹6,999', 'A shorter, intensive crash course — for the final stretch before exam day.'],
+              ['/courses/cat/cat-crash-course-2026', 'CAThlete', '₹6,999', 'A shorter, intensive crash course — for the final stretch before exam day.'],
               ['/courses/cat/books', 'CAT Books', '₹3,999', "Curated physical books with ALP Sir's own notes in the margins."],
             ].map(([href, name, price, desc]) => (
               <Link key={href} href={href} style={{ background:'var(--off)', border:'var(--border)', borderRadius:4, padding:'24px', textDecoration:'none', display:'block' }}>
