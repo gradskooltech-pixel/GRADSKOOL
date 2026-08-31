@@ -53,6 +53,7 @@ const CAT_PLAN_GROUPS = [
   { title: 'CAThlete', subtitle: 'Intensive crash course for the final stretch', slugs: ['base', 'with-mocks', 'cathlete-varc', 'cathlete-lrdi', 'cathlete-qa'] },
   { title: 'ALPgebra', subtitle: '99 theorems covering the full Algebra syllabus', slugs: ['alpgebra'] },
   { title: 'CAT Mocks', subtitle: 'Full-length mocks and sectional tests', slugs: ['cat-mocks'] },
+  { title: 'All MBA Mocks', subtitle: 'Self-paced mocks across CAT and every OMET', slugs: ['all-mba-mocks'] },
   { title: 'CAT Books', subtitle: "Curated physical books with ALP Sir's notes", slugs: ['cat-books'] },
   { title: 'All MBA Mocks + Books', subtitle: 'Self-paced mocks across CAT and every OMET, plus printed books', slugs: ['all-mba-mocks-books'] },
 ]

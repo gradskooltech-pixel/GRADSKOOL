@@ -93,6 +93,17 @@ const FAQS = [
 
 const TESTFUNDA_URL = 'https://gradskool.testfunda.com/TestCentre/full-length--tests/cat' // CONFIRM BEFORE DEPLOY
 
+// Real mocks-only PricingPlan slug per exam — matches apps.courses.
+// management.commands.seed_verified_plans.py exactly. Only exams with a
+// genuine, real standalone mocks plan get the "Enrol Now" checkout
+// button; an exam not in this map simply doesn't show it, rather than
+// linking to a plan slug that doesn't actually exist.
+const MOCKS_PLAN_SLUGS = {
+  cat: 'cat-mocks',
+  snap: 'snap-mocks',
+  nmat: 'nmat-mocks',
+}
+
 
 // ── MOCK CARD with hover ─────────────────────────────────────────────────────
 function MockCard({ accentColor, children }) {
@@ -201,6 +212,23 @@ export default function MocksPage({ examSlugProp = 'cat' }) {
               <a href="#schedule" style={s.btnOutline}>
                 Buy Mocks
               </a>
+              {/* Real, direct link to GRADSKOOL's own checkout for this
+                  exam's mocks-only PricingPlan — added alongside the
+                  existing Testfunda/schedule buttons, not replacing
+                  either. Confirmed with GS: Testfunda stays exactly
+                  as-is; this is purely additive, a second real path for
+                  someone who already knows they want to buy and doesn't
+                  need to scroll through the schedule first. Real plan
+                  slugs differ per exam (cat-mocks, snap-mocks,
+                  nmat-mocks — see apps.courses.management.commands.
+                  seed_verified_plans.py) — this page is a shared dynamic
+                  route across exams, so the slug is looked up rather
+                  than hardcoded to 'cat-mocks' alone. */}
+              {MOCKS_PLAN_SLUGS[examSlug] && (
+                <a href={`/checkout/${examSlug}?plan=${MOCKS_PLAN_SLUGS[examSlug]}`} style={s.btnOutline}>
+                  Enrol Now
+                </a>
+              )}
             </div>
             <div style={s.heroStats}>
               {[

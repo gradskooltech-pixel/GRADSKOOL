@@ -91,6 +91,13 @@ class Command(BaseCommand):
             ('cat', dict(name='CAT Mocks', slug='cat-mocks', price_inr=Decimal('2999'),
                          sort_order=12, includes_mocks=True, mock_exams_covered=['CAT'],
                          razorpay_sku='cat-mocks')),
+            # Same real exam coverage as 'All MBA Mocks + Books' below
+            # (CAT, XAT, SNAP, NMAT, CMAT), confirmed with GS — just the
+            # standalone mocks-only version, without the printed books.
+            ('cat', dict(name='All MBA Mocks', slug='all-mba-mocks', price_inr=Decimal('4999'),
+                         sort_order=13, includes_mocks=True,
+                         mock_exams_covered=['CAT', 'XAT', 'SNAP', 'NMAT', 'CMAT'],
+                         razorpay_sku='all-mba-mocks')),
             ('cat', dict(name='CAT Books', slug='cat-books', price_inr=Decimal('3999'),
                          sort_order=8, includes_books=True, mock_exams_covered=['CAT'],
                          razorpay_sku='cat-books')),
