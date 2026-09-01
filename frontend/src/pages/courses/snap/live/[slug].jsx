@@ -11,7 +11,7 @@
 import { FoundationsClassDetail } from '../../../../components/foundations/FoundationsClassDetail'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://gradskool-production.up.railway.app/api/v1'
-const META = { name:'SNAP', color:'#1a5c8a', course:'/courses/snap', isFullCourse:true }
+const META = { name:'SNAP', color:'#1a5c8a', course:'/courses/snap', isFullCourse:true, mocksCheckoutUrl:'/checkout?course=snap', mocksPrice:'₹1,499' }
 
 export async function getServerSideProps({ params, req }) {
   const { slug } = params
