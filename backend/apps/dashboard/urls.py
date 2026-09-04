@@ -6,6 +6,7 @@ from .admin_views import (
 from .seo_views import SitemapView, RobotsView
 from apps.foundations.urls import admin_urlpatterns as foundation_admin_urls
 from apps.fyq.urls import admin_urlpatterns as fyq_admin_urls
+from apps.mocks.urls import admin_urlpatterns as mocks_admin_urls
 from .views import (
     AdminStudentListView, AdminEnrollmentListView,
     AdminEnrollmentActionView, AdminEnrolView, AdminOrderListView,
@@ -187,4 +188,7 @@ urlpatterns = [
 
     # FYQ — Future Year Questions
     path('fyq/', include(fyq_admin_urls)),
+
+    # Mock Tests — Full Mock / Sectional / Topic-wise
+    path('mocks/', include(mocks_admin_urls)),
 ]

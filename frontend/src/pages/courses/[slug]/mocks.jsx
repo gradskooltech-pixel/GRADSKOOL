@@ -17,6 +17,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { MockScheduleCard, MockScheduleTable } from '../../../components/mocks/MockSchedule'
+import { NATIVE_MOCKS_EXAMS } from '../../../lib/nativeMocksExams'
 
 // Exam-specific free mock URLs — one per exam, accessible without login
 const FREE_MOCK_URLS = {
@@ -92,6 +93,11 @@ const FAQS = [
 ]
 
 const TESTFUNDA_URL = 'https://gradskool.testfunda.com/TestCentre/full-length--tests/cat' // CONFIRM BEFORE DEPLOY
+
+// NATIVE_MOCKS_EXAMS (exams with a real, on-site /mocks/<slug> hub, as
+// opposed to just this third-party Testfunda page) now lives in
+// lib/nativeMocksExams.js — it's also used by Navbar.jsx to decide which
+// exam the "Mocks" link should point to, so it needed a shared home.
 
 // Real mocks-only PricingPlan slug per exam — matches apps.courses.
 // management.commands.seed_verified_plans.py exactly. Only exams with a
@@ -191,6 +197,20 @@ export default function MocksPage({ examSlugProp = 'cat' }) {
           <span style={{ color:C.black }}>Mock Tests</span>
         </div>
       </div>
+
+      {/* ── NATIVE MOCKS CALLOUT — only for exams with real on-site content ── */}
+      {NATIVE_MOCKS_EXAMS.includes(examSlug) && (
+        <div style={{ background: C.black, padding: '0.875rem 2rem' }}>
+          <div style={{ maxWidth: '1160px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.85rem', color: '#fff', lineHeight: 1.6 }}>
+              <strong>New on GRADSKOOL:</strong> take full {(examSlug||'').toUpperCase()} mock tests directly on this site — topic-wise practice, sectionals, and full mocks with instant scoring.
+            </p>
+            <Link href={`/mocks/${examSlug}`} style={{ flexShrink: 0, background: C.red, color: '#fff', padding: '0.6rem 1.25rem', borderRadius: '4px', fontFamily: 'var(--font-sans)', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              Try Native {(examSlug||'').toUpperCase()} Mocks →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <section style={s.hero}>

@@ -66,7 +66,7 @@ export default function SNAPPage() {
         title="SNAP Sessions — Free Live Classes by ALP Sir | GRADSKOOL"
         description="Free SNAP Sessions, taught live by ALP Sir — every topic, no cost. Plus SNAP Mocks (₹1,499): 20 full-length mocks, 9 sectional tests, area-wise tests."
         keywords="SNAP sessions, SNAP free classes, SNAP mock tests, SNAP sectional tests, SCMHRD coaching, Symbiosis MBA, ALP Sir SNAP, GRADSKOOL SNAP"
-        canonical="https://gradskool.in/courses/snap"
+        canonical="https://snap.gradskool.in/"
         ogImage="/assets/og-nmat.jpg"
         breadcrumbs={[{name:'Home',url:'/'},{name:'OMETs',url:'/omets'},{name:'SNAP',url:'/courses/snap'}]}
         schema={[

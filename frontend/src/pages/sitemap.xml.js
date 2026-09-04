@@ -43,7 +43,10 @@ const STATIC_PAGES = [
   { path: '/courses/cat/alpgebra',      priority: '0.75', changefreq: 'monthly' },
   { path: '/courses/cat/books',         priority: '0.7', changefreq: 'monthly' },
   { path: '/courses/xat',               priority: '0.85', changefreq: 'weekly' },
-  { path: '/courses/snap',              priority: '0.85', changefreq: 'weekly' },
+  // /courses/snap deliberately NOT listed here — it 301-redirects to
+  // snap.gradskool.in now (see middleware.js). Its subdomain entry is
+  // added separately below, in SUBDOMAIN_PAGES, since it needs a
+  // different base URL than every other entry in this list.
   { path: '/courses/nmat',              priority: '0.85', changefreq: 'weekly' },
   { path: '/courses/nmat-snap',         priority: '0.8', changefreq: 'weekly' },
   { path: '/courses/gmat',              priority: '0.8', changefreq: 'monthly' },
@@ -54,6 +57,24 @@ const STATIC_PAGES = [
   { path: '/courses/clat',              priority: '0.6', changefreq: 'monthly' },
   { path: '/courses/ipmat',             priority: '0.6', changefreq: 'monthly' },
   { path: '/courses/pi-wat-gd',         priority: '0.65', changefreq: 'monthly' },
+  // Native mock-test hub (/mocks/[examSlug], public since it's now a
+  // crawlable catalog page, not gated behind login — see student_views.
+  // MockTestHubView). Only list an exam here once it actually has native
+  // topic-wise/sectional/full-mock content authored AND it isn't on its
+  // own subdomain (see SUBDOMAIN_PAGES below) — SNAP is the only exam
+  // with native content today, and it's already on its own subdomain, so
+  // there's nothing to add here yet. Add the next exam's entry here once
+  // it has content authored, unless it also gets its own subdomain, in
+  // which case it belongs in SUBDOMAIN_PAGES instead.
+]
+
+// Pages that live on an exam's own subdomain (see middleware.js /
+// lib/subdomainRouting.js) rather than under gradskool.in — these need a
+// different base URL than everything in STATIC_PAGES above, so they're
+// listed here as already-complete absolute URLs instead of paths.
+const SUBDOMAIN_PAGES = [
+  { loc: 'https://snap.gradskool.in/',      priority: '0.85', changefreq: 'weekly' },
+  { loc: 'https://snap.gradskool.in/mocks', priority: '0.75', changefreq: 'weekly' },
 ]
 
 // Fetch helper — never throws; a failed content source just contributes
@@ -78,6 +99,7 @@ function urlEntry(loc, { lastmod, changefreq, priority } = {}) {
 
 export async function getServerSideProps({ res }) {
   const entries = STATIC_PAGES.map(p => urlEntry(`${SITE}${p.path}`, p))
+  for (const p of SUBDOMAIN_PAGES) entries.push(urlEntry(p.loc, p))
 
   // Blog posts
   const blog = await safeFetchJson(`${API}/blog/posts/?page_size=200`)

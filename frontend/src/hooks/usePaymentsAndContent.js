@@ -97,16 +97,20 @@ export function useExamAccess(examSlug) {
   }
 }
 
-export function useAccessSummary() {
+export function useAccessSummary(enabled = true) {
   const [accesses, setAccesses] = useState([])
   const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Requires auth (IsAuthenticated on the backend) — callers that render for
+    // logged-out visitors too (e.g. the navbar) should pass enabled=false
+    // until the user is actually logged in, to avoid a pointless 401.
+    if (!enabled) { setAccesses([]); setLoading(false); return }
     api.get('/enrollments/access/')
       .then(({ data }) => setAccesses(data))
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [])
+  }, [enabled])
 
   return { accesses, isLoading }
 }

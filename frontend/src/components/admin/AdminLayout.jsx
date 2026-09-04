@@ -63,6 +63,7 @@ const NAV_ITEMS = [
   { href: '/admin-panel/faqs-manage',     label: 'FAQs',             icon: '❓', group: 'Content' },
   { href: '/admin-panel/homepage',        label: 'Homepage',         icon: '🏠', group: 'Content' },
   { href: '/admin-panel/mock-schedule',   label: 'Mock Schedule',    icon: '📅', group: 'Content' },
+  { href: '/admin-panel/mocks',           label: 'Mock Tests',       icon: '🧪', group: 'Content' },
   { href: '/admin-panel/pages',           label: 'Dynamic Pages',    icon: '📃', group: 'Content' },
   { href: '/admin-panel/tools-manage',    label: 'Tools',            icon: '🧰', group: 'Content' },
 

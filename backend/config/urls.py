@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/v1/foundations/',   include('apps.foundations.urls',       namespace='foundations')),
     path('api/v1/fyq/',           include('apps.fyq.urls',               namespace='fyq')),
     path('api/v1/pdfs/',          include('apps.pdfs.urls',              namespace='pdfs')),
+    path('api/v1/mocks/',         include('apps.mocks.urls',             namespace='mocks')),
     path('api/v1/admin/',         include('apps.dashboard.admin_views', namespace='admin_analytics')),
 ]
 

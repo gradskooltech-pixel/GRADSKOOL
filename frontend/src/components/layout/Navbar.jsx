@@ -15,6 +15,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuth } from '../../hooks/useAuth'
+import { useAccessSummary } from '../../hooks/usePaymentsAndContent'
+import { NATIVE_MOCKS_EXAMS } from '../../lib/nativeMocksExams'
 
 const COURSES_DROP = [
   { href:'/courses/cat/cat-crash-course-2026', label:'CAThlete — Crash Course' },
@@ -32,6 +34,29 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const router = useRouter()
   const { isLoggedIn, sessionReady, logout } = useAuth()
+
+  // Only fetch access once we know the user's actually logged in — the
+  // endpoint is auth-only, so calling it for a logged-out visitor would
+  // just be a pointless 401 on every page load.
+  const { accesses } = useAccessSummary(isLoggedIn && sessionReady)
+  // can_take_mocks is a plan-level entitlement flag per exam — it can be
+  // true for an exam (e.g. CAT) that doesn't actually have a native mocks
+  // hub built yet, since it just means "this plan includes mock-test
+  // access" as a marketing bullet, not "there's content at /mocks/<slug>".
+  // Cross-reference against NATIVE_MOCKS_EXAMS so the link only ever
+  // points somewhere that actually has content — otherwise a user who
+  // bought (say) a CAT course bundle would get redirected to an empty
+  // /mocks/cat instead of the SNAP mocks they actually bought.
+  const mocksExams = accesses.filter(
+    a => a.can_take_mocks && NATIVE_MOCKS_EXAMS.includes(a.exam_slug)
+  )
+  // If access to more than one native-mocks exam is ever unlocked at
+  // once, there's no multi-exam picker yet — send them to the first one.
+  const mocksHref = mocksExams.length ? `/mocks/${mocksExams[0].exam_slug}` : null
+
+  // Sends a logged-out visitor back to wherever they clicked Log in from,
+  // same redirect convention used by the mocks hub / ProtectedRoute.
+  const loginHref = `/auth/login?redirect=${encodeURIComponent(router.asPath)}`
 
   const handleLogout = async () => {
     await logout()
@@ -115,9 +140,13 @@ export function Navbar() {
 
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }} className="gs-nav-actions">
             {isLoggedIn && sessionReady ? (
-              <button onClick={handleLogout} className="gs-btn gs-btn-outline gs-nav-actions-outline" style={{ cursor:'pointer' }}>Log out</button>
+              <>
+                {mocksHref && <Link href={mocksHref} className="gs-btn gs-btn-red">Mocks →</Link>}
+                <button onClick={handleLogout} className="gs-btn gs-btn-outline gs-nav-actions-outline" style={{ cursor:'pointer' }}>Log out</button>
+              </>
             ) : (
               <>
+                <Link href={loginHref} className="gs-btn gs-btn-outline gs-nav-actions-outline">Log in</Link>
                 <Link href="/courses"  className="gs-btn gs-btn-outline gs-nav-actions-outline">All Courses</Link>
                 <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red">Enrol Now →</Link>
               </>
@@ -149,9 +178,15 @@ export function Navbar() {
         </div>
         <div style={{ marginTop:'auto', display:'flex', flexDirection:'column', gap:'10px', paddingTop:'24px' }}>
           {isLoggedIn && sessionReady ? (
-            <button onClick={handleLogout} className="gs-btn gs-btn-red" style={{ justifyContent:'center', cursor:'pointer' }}>Log out</button>
+            <>
+              {mocksHref && <Link href={mocksHref} className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Mocks →</Link>}
+              <button onClick={handleLogout} className="gs-btn gs-btn-outline" style={{ justifyContent:'center', cursor:'pointer' }}>Log out</button>
+            </>
           ) : (
-            <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
+            <>
+              <Link href="/checkout?course=cathlete" className="gs-btn gs-btn-red" style={{ justifyContent:'center' }}>Enrol Now →</Link>
+              <Link href={loginHref} className="gs-btn gs-btn-outline" style={{ justifyContent:'center' }}>Log in</Link>
+            </>
           )}
           <a href="https://wa.me/917838737388?text=Hi%20ALP%20Sir%2C%20I%20want%20to%20know%20more%20about%20GRADSKOOL"
             target="_blank" rel="noopener noreferrer" className="gs-btn gs-btn-outline" style={{ justifyContent:'center' }}>

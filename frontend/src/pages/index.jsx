@@ -266,7 +266,7 @@ export default function Home() {
         {/* ── STATS ── */}
         <div style={{ background:'var(--black)', borderBottom:'var(--border)' }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', maxWidth:1200, margin:'0 auto', padding:'0 40px' }} className="stats-grid">
-            <style>{`@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr)!important;padding:0 20px!important}.stats-grid>div{padding:24px 16px!important}}`}</style>
+            <style dangerouslySetInnerHTML={{ __html: `@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr)!important;padding:0 20px!important}.stats-grid>div{padding:24px 16px!important}}` }} />
             {[['100K+','Students Mentored'],['5,000+','IIM & Top B-School Converts'],['27','Students Per Cohort, Always'],['4.9★','347 Student Reviews']].map(([n,l]) => (
               <div key={l} style={{ padding:'32px 36px', borderRight:'1px solid rgba(255,255,255,.08)' }}>
                 <div style={{ fontFamily:'var(--font-serif)', fontSize:34, fontWeight:400, color:'#fff', lineHeight:1, marginBottom:5 }}>{n}</div>

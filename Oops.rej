@@ -1,0 +1,67 @@
+@@ -27,11 +27,18 @@
+  *    real (indexable, linkable) home for that content instead of leaving
+  *    two live copies around.
+  *
+- * Deliberately NOT moved under the subdomain (still only reachable on the
+- * main site, unchanged): /courses/snap/mocks (the old third-party
+- * Testfunda mocks page — being phased out in favor of the native /mocks
+- * hub, not worth relocating) and /courses/snap/pricing (not a real,
+- * linked-to page — pricing is presented inline on the course page).
++ * 3. A few more main-site paths don't have a matching page on the
++ *    subdomain at all, but should still redirect there rather than stay
++ *    reachable on the main site — see LEGACY_REDIRECTS below. Unlike
++ *    SUBDOMAIN_ROUTES, these are one-way: they consolidate an old/
++ *    secondary main-site URL into an EXISTING subdomain route, rather
++ *    than defining a page that also exists in mirrored form on the
++ *    subdomain itself. Right now that's /courses/snap/mocks (the old
++ *    third-party Testfunda mocks page — folded into the real native
++ *    /mocks hub, which now lives on the subdomain) and
++ *    /courses/snap/pricing (not a real linked-to page, but redirected to
++ *    the subdomain homepage just in case anything old points at it —
++ *    pricing is shown inline on the course page).
+  *
+  * Not every route makes sense for every exam. /mocks only means something
+  * for an exam with real native mock content authored (see NATIVE_MOCKS_EXAMS
+@@ -44,6 +51,12 @@
+  * homepage and checkout, both backed by dynamic/fallback pages that
+  * resolve for any slug). When adding a new exam's subdomain, check this
+  * gating before assuming all 5 routes will work for it.
++ *
++ * NOT covered here: /courses/nmat-snap, the SNAP+NMAT bundle page. It's
++ * genuinely mixed content (both exams, one bundle price) and there's no
++ * established home for it on either exam's subdomain — left on the main
++ * site deliberately rather than guessed at. Worth a real decision if you
++ * want it moved too.
+  */
+ 
+ // Exams that have their own dedicated subdomain live. Add a slug here only
+@@ -83,6 +96,18 @@
+   return !route.exams || route.exams.includes(exam)
+ }
+ 
++// One-way consolidation redirects: an old/secondary main-site path that
++// has no mirrored page on the subdomain, but should still send visitors
++// there instead of staying reachable on the main site. mainPath(exam) is
++// the main-site path being retired; subdomainPath is the (already
++// existing, from SUBDOMAIN_ROUTES) short path on the subdomain it folds
++// into. Only used for the main-site -> subdomain redirect direction —
++// these deliberately do NOT get a matching subdomain-side rewrite.
++const LEGACY_REDIRECTS = [
++  { mainPath: (exam) => `/courses/${exam}/mocks`,   subdomainPath: '/mocks', exams: ['snap'] },
++  { mainPath: (exam) => `/courses/${exam}/pricing`, subdomainPath: '' },
++]
++
+ // Extracts the leading label of a hostname when it looks like a subdomain
+ // — "snap.gradskool.in" → "snap", "snap.localhost" → "snap" (for local
+ // testing via an /etc/hosts entry or a browser that resolves *.localhost
+@@ -122,6 +147,10 @@
+       if (route) {
+         return { action: 'redirect', exam: e, pathname: route.path === '' ? '/' : route.path }
+       }
++      const legacy = LEGACY_REDIRECTS.find((r) => r.mainPath(e) === clean && routeAppliesTo(r, e))
++      if (legacy) {
++        return { action: 'redirect', exam: e, pathname: legacy.subdomainPath === '' ? '/' : legacy.subdomainPath }
++      }
+     }
+   }
+ 
