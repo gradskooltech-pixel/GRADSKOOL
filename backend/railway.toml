@@ -34,7 +34,15 @@
 
 [build]
 builder = "NIXPACKS"
-buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
+# migrate was REMOVED from here on purpose (2026-09-04): this buildCommand is
+# shared by all three services (web/worker/beat). Running `migrate` in all
+# three builds means they can race against each other on the same Supabase
+# DB when a new migration creates a table for the first time — two builds'
+# CREATE TABLE statements collide with a
+# "duplicate key value violates unique constraint pg_type_typname_nsp_index"
+# error. Migrate now runs exactly once, from start.sh, only on the web
+# service. Do not add migrate back here.
+buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput"
 
 [deploy]
 startCommand = "bash start.sh"

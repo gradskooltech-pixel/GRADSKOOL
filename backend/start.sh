@@ -48,6 +48,13 @@ case "$SERVICE_ROLE" in
     ;;
   *)
     echo "Starting as: web (default — gunicorn)"
+    # Migrations run here (once, on web only) instead of in railway.toml's
+    # buildCommand — that command used to run in all three services' builds
+    # and could race against itself on the shared Supabase DB when a new
+    # migration created a table for the first time (pg_type unique-violation
+    # crash). Only web runs this, and only one web replica exists, so it's
+    # safe without a migration lock for now.
+    python manage.py migrate --noinput
     exec gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 3 --timeout 120 --access-logfile - --error-logfile -
     ;;
 esac
