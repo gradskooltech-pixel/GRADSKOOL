@@ -62,7 +62,16 @@
 // Exams that have their own dedicated subdomain live. Add a slug here only
 // once DNS + the Railway custom domain for "<slug>.gradskool.in" are
 // actually set up — see DEPLOYMENT.md at the repo root for that runbook.
-export const SUBDOMAIN_EXAMS = ['snap']
+//
+// Empty for now — SNAP is deliberately back on the main domain, same as
+// every other exam, until the subdomain is actually ready to turn on.
+// This whole file (and middleware.js, which just calls
+// resolveSubdomainRouting() below) is otherwise fully built and tested;
+// re-enabling later is just: add 'snap' back here, restore the canonical
+// URLs in pages/courses/snap.jsx and pages/mocks/[examSlug]/index.jsx, and
+// restore SUBDOMAIN_PAGES in pages/sitemap.xml.js — see the git history
+// around 2026-08-31/09-01 for the exact prior values.
+export const SUBDOMAIN_EXAMS = []
 
 // The apex domain every subdomain hangs off. Redirect targets are always
 // built against this, never against whatever host the request actually

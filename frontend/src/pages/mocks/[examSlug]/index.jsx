@@ -112,7 +112,7 @@ function Inner({ initialData, examSlugProp }) {
       <PageSEO
         title={seoTitle}
         description={seoDescription}
-        canonical={examSlug === 'snap' ? 'https://snap.gradskool.in/mocks' : `/mocks/${examSlug}`}
+        canonical={`/mocks/${examSlug}`}
         breadcrumbs={[{ name: 'Home', url: '/' }, { name: `${data.exam_name} Mocks`, url: `/mocks/${examSlug}` }]}
         schema={[courseSchema({
           name: `${data.exam_name} Mock Tests`,
