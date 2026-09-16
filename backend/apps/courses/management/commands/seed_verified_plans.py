@@ -79,9 +79,9 @@ class Command(BaseCommand):
             # real, live Razorpay account despite general docs suggesting
             # a stricter minimum; QA priced separately and higher,
             # reflecting its real, different value/scope per GS.
-            ('cat', dict(name='CAThlete — VARC', slug='cathlete-varc', price_inr=Decimal('1'),
+            ('cat', dict(name='CAThlete — VARC', slug='cathlete-varc', price_inr=Decimal('699'),
                          sort_order=11, razorpay_sku='cathlete-varc')),
-            ('cat', dict(name='CAThlete — LRDI', slug='cathlete-lrdi', price_inr=Decimal('1'),
+            ('cat', dict(name='CAThlete — LRDI', slug='cathlete-lrdi', price_inr=Decimal('499'),
                          sort_order=12, razorpay_sku='cathlete-lrdi')),
             ('cat', dict(name='CAThlete — QA', slug='cathlete-qa', price_inr=Decimal('4499'),
                          sort_order=13, razorpay_sku='cathlete-qa')),
