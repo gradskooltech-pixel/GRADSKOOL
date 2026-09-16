@@ -30,7 +30,13 @@ class PdfListSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return PdfPurchase.objects.filter(user=request.user, pdf=obj, status='paid').exists()
+        user = request.user
+        # Staff/admin accounts see every PDF as "owned" in the UI too —
+        # keeps this in sync with the real access gate (_owns() in
+        # apps.pdfs.views), which grants the same bypass.
+        if user.is_staff or getattr(user, 'role', '') == 'admin':
+            return True
+        return PdfPurchase.objects.filter(user=user, pdf=obj, status='paid').exists()
 
 
 class PdfPurchaseSerializer(serializers.ModelSerializer):

@@ -49,10 +49,15 @@ def _owns(user, pdf: Pdf) -> bool:
     Uniform for free and paid: a free PDF is NOT auto-accessible. It still
     requires login and an explicit claim (which captures a phone number) —
     see ClaimFreePdfView. The only thing that grants access, either way, is
-    a PdfPurchase row with status == 'paid'.
+    a PdfPurchase row with status == 'paid' — EXCEPT staff/admin accounts,
+    which can view any PDF's pages without a purchase record. Same
+    is_staff-or-role=='admin' check already used for admin gating in
+    apps.dashboard.views and apps.fyq.views.
     """
     if not user or not user.is_authenticated:
         return False
+    if user.is_staff or getattr(user, 'role', '') == 'admin':
+        return True
     return PdfPurchase.objects.filter(user=user, pdf=pdf, status='paid').exists()
 
 
